@@ -2,3 +2,11 @@ Environment Requirement:
 Python >= 3.7
 Django the latest version
 Bootstrap the latest version
+MySQL
+
+Configure:
+MySQL:
+	Passward:"software"
+	建议使用相同密码，方便调试
+	参考教程:"https://blog.csdn.net/bobo553443/article/details/81383194"
+	
