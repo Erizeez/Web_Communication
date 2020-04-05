@@ -40,10 +40,93 @@ class User(AbstractUser):
         return self.get_username()
     
     
-class Article(models.Model):
-    title = models.CharField(
-            max_length = 30
+class Section(models.Model):
+    name = models.CharField(
+            max_length = 20
             )
+    manager = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            related_name = 'section_manager'
+            )
+    parent_section = models.ForeignKey(
+            'self',
+            blank = True,
+            null = True,
+            related_name = 'child_section'
+            )
+    description = models.CharField(
+            max_length = 200,
+            verbose_name = u'描述'
+            )
+    img = models.CharField(
+            max_length = 200,
+            default = '/static/avatar/default.jpg',
+            verbose_name = u'图标'
+            )
+    content_number = models.IntegerField(
+            default = 0
+            )
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_run = True)
+
+    class Meta:
+        db_table = 'section'
+        verbose_name = u'区块'
+        verbose_name_plural = u'区块'
+        ordering = ['-content_number']
+    
+    def __unicode__(self):
+        return self.name
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return ('section_detail', (), {'section_pk' : self.pk})
+    
+    
+class Post(models.Model):
+    title = models.CharField(
+            max_length = 20
+            )
+    author = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            related_name = 'post_author'
+            )
+    section = 
+    view_times = models.IntegerField(
+            default = 0
+            )
+    content_quantity = models.IntegerField(
+            default = 1
+            )
+    last_response = models.ForeignKey(
+            settings.AUTH_USER_MODEL
+            )
+    created_at = models.DateTimeField(
+            auto_now_add = True
+            )
+    updated_at = models.DateTimeField(
+            auto_now = True
+            )
+    
+    class Meta:
+        db_table = 'post'
+        verbose_name = u'主题帖'
+        verbose_name_plural = u'主题帖'
+        ordering = ['-created-at']
+    
+    def __unicode__(self):
+        return self.title
+    
+    def description(self):
+        return u' %s 发表了主题帖 %s' % (self.author, self.title)
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return ('post_detail', (), {'post_pk' : self.pk})
+    
+    
+class Comment(models.Model):
+    
     author = models.ForeignKey(
             settings.AUTH_USER_MODEL,
             related_name = 'article_author'
