@@ -9,6 +9,51 @@ import datetime
 
 # Create your models here.
 
+class Permission(models.Model):
+    name = models.Model(
+            max_length = 30,
+            unique = True
+            )
+    created_time = models.DateTimeField(
+            u'创建时间',
+            default = datetime.datetime.now,
+            auto_now_add = True
+            )
+    
+    class Meta:
+        db_table = 'permission'
+        verbose_name = u'权限'
+        verbose_name_plural = u'权限'
+        ordering = ['-created_time']
+    
+    def __unicode__(self):
+        return self.name
+
+
+class Group(models.Model):
+    name = models.CharField(
+            max_length = 20,
+            unique = True
+            )
+    permissions = models.ManyToManyField(
+            'Permission'
+            )
+    created_time = models.DateTimeField(
+            u'创建时间',
+            default = datetime.datetime.now,
+            auto_now_add = True
+            )
+    
+    class Meta:
+        db_table = 'group'
+        verbose_name = u'用户组'
+        verbose_name_plural = u'用户组'
+        ordering = ['-created_time']
+    
+    def __unicode__(self):
+        return self.name
+
+
 class User(AbstractUser):
     avatar = models.CharField(
             max_length = 200,
@@ -22,11 +67,10 @@ class User(AbstractUser):
             verbose_name = u'权限'
             )
     #表示无小组，其他序号后续添加
-    group = models.CharField(
-            max_length = 200,
-            default = 0,
-            verbose_name = u'小组'
+    groups = models.ManyToManyField(
+            'Group'
             )
+    ip_address = models.GenericIPAddressField()
     
     class Meta:
         db_table = 'user'
@@ -38,6 +82,7 @@ class User(AbstractUser):
     #无需重写__str__，会自动生成
     def __unicode__(self):
         return self.get_username()
+
     
 class Navigation(models.Model):
     name = models.CharField(
