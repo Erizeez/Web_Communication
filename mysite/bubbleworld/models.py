@@ -122,6 +122,26 @@ class Navigation(models.Model):
         return self.name
     
     
+class Tag(models.Model):
+    name = models.CharField(
+            max_length = 20
+            )
+    created_time = models.DateTimeField(
+            u'创建时间',
+            default = datetime.datetime.now,
+            auto_now_add = True
+            )
+    
+    class Meta:
+        db_table = 'tag'
+        verbose_name = u'标签'
+        verbose_name_plural = u'标签'
+        ordering = ['-created_time']
+    
+    def __unicode__(self):
+        return self.name
+    
+    
 class Section(models.Model):
     name = models.CharField(
             max_length = 20
@@ -147,6 +167,11 @@ class Section(models.Model):
     content_number = models.IntegerField(
             default = 0
             )
+    
+    tags = models.ManyToManyField(
+            Tag
+            )
+    
     created_at = models.DateTimeField(
             auto_now_add = True
             )
@@ -166,14 +191,7 @@ class Section(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('section_detail', (), {'section_pk' : self.pk})
-    
-
-class Tag(models.Model):
-    name = models.CharField(
-            max_length = 20
-            )
-    
-    
+        
     
 class Post(models.Model):
     title = models.CharField(
@@ -202,6 +220,10 @@ class Post(models.Model):
     #是否加精
     essence = models.BooleanField(
             default = False
+            )
+    
+    tags = models.ManyToManyField(
+            Tag
             )
     
     created_at = models.DateTimeField(
