@@ -48,7 +48,10 @@ class Group(models.Model):
             unique = True
             )
     permissions = models.ManyToManyField(
-            Permission
+            'Permission',
+            blank = True,
+            null = True,
+            related_name = 'permissions'
             )
     created_time = models.DateTimeField(
             u'创建时间',
@@ -72,15 +75,24 @@ class User(AbstractUser):
             default = '/static/avatar/default.jpg',
             verbose_name = u'头像'
             )
-    #权限默认为0，即已注册用户
+    #权限默认为0，即已注册用户,1为管理员，2为被封禁，-1为游客
     privilege = models.CharField(
             max_length = 200,
             default = 0,
             verbose_name = u'权限'
             )
-    #表示无小组，其他序号后续添加
+    follow_to = models.ManyToManyField(
+            'self',
+            blank = True,
+            null = True,
+            related_name = 'followto'
+            )    
+    
     groups = models.ManyToManyField(
-            Group
+            'Group',
+            blank = True,
+            null = True,
+            related_name = 'groups'
             )
     ip_address = models.GenericIPAddressField()
     
@@ -94,6 +106,32 @@ class User(AbstractUser):
     #无需重写__str__，会自动生成
     def __unicode__(self):
         return self.get_username()
+
+
+class Follow(models.Model):
+    follow_from = models.ForeignKey(
+            'User',
+            related_name = 'follow_from'
+            )
+    follow_to = models.ForeignKey(
+            'User',
+            related_name = 'follow_to'
+            )
+    
+    created_time = models.DateTimeField(
+            u'创建时间',
+            default = datetime.datetime.now,
+            auto_now_add = True
+            )
+    
+    class Meta:
+        db_table = 'follow'
+        verbose_name = u'关注'
+        verbose_name_plural = u'关注'
+        ordering = ['-created_time']
+    
+    def description(self):
+        return u' %s 关注了 %s' % (self.follow_from, self.follow_to)
 
     
 class Navigation(models.Model):
@@ -147,7 +185,10 @@ class Section(models.Model):
             max_length = 20
             )
     users = models.ManyToManyField(
-            User
+            'User',
+            blank = True,
+            null = True,
+            related_name = 'users'
             )
     parent_section = models.ForeignKey(
             'self',
@@ -169,7 +210,10 @@ class Section(models.Model):
             )
     
     tags = models.ManyToManyField(
-            Tag
+            'Tag',
+            blank = True,
+            null = True,
+            related_name = 'tags'
             )
     
     created_at = models.DateTimeField(
@@ -202,7 +246,8 @@ class Post(models.Model):
             related_name = 'post_author'
             )
     section = models.ForeignKey(
-            Section
+            Section,
+            related_name = 'section'
             )
     view_times = models.IntegerField(
             default = 0
@@ -211,7 +256,8 @@ class Post(models.Model):
             default = 1
             )
     last_response = models.ForeignKey(
-            settings.AUTH_USER_MODEL
+            settings.AUTH_USER_MODEL,
+            related_name = 'last_responce'
             )
     
     upper_placed = models.BooleanField(
@@ -223,7 +269,10 @@ class Post(models.Model):
             )
     
     tags = models.ManyToManyField(
-            Tag
+            'Tag',
+            blank = True,
+            null = True,
+            related_name = 'tags'
             )
     
     created_at = models.DateTimeField(
@@ -252,7 +301,8 @@ class Post(models.Model):
     
 class PostPart(models.Model):
     post = models.ForeignKey(
-            Post
+            Post,
+            related_name = 'post'
             )
     author = models.ForeignKey(
             settings.AUTH_USER_MODEL,
@@ -293,7 +343,8 @@ class PostPart(models.Model):
 
 class Comment(models.Model):
     section = models.ForeignKey(
-            Section
+            Section,
+            related_name = 'section'
             )
     star = models.IntegerField(
             default = 3
@@ -335,7 +386,8 @@ class Comment(models.Model):
     
 class CommentReport(models.Model):
     comment = models.ForeignKey(
-            Comment
+            Comment,
+            related_name = 'comment'
             )
     status = models.BooleanField(
             default = False
@@ -376,7 +428,8 @@ class Notice(models.Model):
             related_name = 'notice_receiver'
             )
     content_type = models.ForeignKey(
-            ContentType
+            ContentType,
+            related_name = 'content_type'
             )
     object_id = models.PositiveIntegerField()
     event = generic.GenericForeignKey(
