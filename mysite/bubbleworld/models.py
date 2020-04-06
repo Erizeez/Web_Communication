@@ -14,6 +14,18 @@ class Permission(models.Model):
             max_length = 30,
             unique = True
             )
+    access_permission = models.BooleanField(
+            default = False
+            )
+    add_permission = models.BooleanField(
+            default = False
+            )
+    modify_permission = models.BooleanField(
+            default = False
+            )
+    delete_permission = models.BooleanField(
+            default = False
+            )
     created_time = models.DateTimeField(
             u'创建时间',
             default = datetime.datetime.now,
@@ -36,7 +48,7 @@ class Group(models.Model):
             unique = True
             )
     permissions = models.ManyToManyField(
-            'Permission'
+            Permission
             )
     created_time = models.DateTimeField(
             u'创建时间',
@@ -68,7 +80,7 @@ class User(AbstractUser):
             )
     #表示无小组，其他序号后续添加
     groups = models.ManyToManyField(
-            'Group'
+            Group
             )
     ip_address = models.GenericIPAddressField()
     
@@ -114,9 +126,8 @@ class Section(models.Model):
     name = models.CharField(
             max_length = 20
             )
-    manager = models.ForeignKey(
-            settings.AUTH_USER_MODEL,
-            related_name = 'section_manager'
+    users = models.ManyToManyField(
+            User
             )
     parent_section = models.ForeignKey(
             'self',
@@ -156,6 +167,13 @@ class Section(models.Model):
     def get_absolute_url(self):
         return ('section_detail', (), {'section_pk' : self.pk})
     
+
+class Tag(models.Model):
+    name = models.CharField(
+            max_length = 20
+            )
+    
+    
     
 class Post(models.Model):
     title = models.CharField(
@@ -177,6 +195,15 @@ class Post(models.Model):
     last_response = models.ForeignKey(
             settings.AUTH_USER_MODEL
             )
+    
+    upper_placed = models.BooleanField(
+            default = False
+            )
+    #是否加精
+    essence = models.BooleanField(
+            default = False
+            )
+    
     created_at = models.DateTimeField(
             auto_now_add = True
             )
@@ -254,6 +281,14 @@ class Comment(models.Model):
             related_name = 'comment_author'
             )
     content = models.TextField()
+    
+    like_number = models.IntegerField(
+            default = 0
+            )
+    dislike_number = models.IntegerField(
+            default = 0
+            )
+    
     created_at = models.DateTimeField(
             auto_now_add = True
             )
@@ -275,10 +310,39 @@ class Comment(models.Model):
                 self.author, self.section, 
                 self.content)
     
-    @models.permalink
-    def get_absolute_url(self):
-        return ('author_detail', (), {'author_pk' : self.pk})
     
+class CommentReport(models.Model):
+    comment = models.ForeignKey(
+            Comment
+            )
+    status = models.BooleanField(
+            default = False
+            )
+    author = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            related_name = 'commentreport_author'
+            )
+    title = models.CharField(
+            max_length = 40
+            )
+    reason = models.TextField()
+    
+    created_at = models.DateTimeField(
+            auto_now_add = True
+            )
+    updated_at = models.DateTimeField(
+            auto_now = True
+            )
+    
+    class Meta:
+        db_table = 'commentreport'
+        verbose_name = u'评论举报'
+        verbose_name_plural = u'评论举报'
+        ordering = ['-created_at']
+    
+    def __unicode__(self):
+        return self.title
+     
     
 class Notice(models.Model):
     sender = models.ForeignKey(
