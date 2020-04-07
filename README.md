@@ -1,7 +1,7 @@
 # -
 具体结构：django+bootstrap
 一下均为让我们的小伙伴更了解这个项目的结构。
-强烈建议先看django官方文档
+强烈建议先看django官方文档https://docs.djangoproject.com/zh-hans/3.0/
 如有错误请及时更正
 
 首先建立project，以此作为根目录，项目中文件夹名为mysite
