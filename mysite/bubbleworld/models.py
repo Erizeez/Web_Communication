@@ -109,26 +109,29 @@ class User(AbstractUser):
 
 
 class Follow(models.Model):
-    follow_from = models.ForeignKey(
-            'User',
+    sender = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
             related_name = 'follow_from'
             )
-    follow_to = models.ForeignKey(
-            'User',
+    receiver = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
             related_name = 'follow_to'
             )
-    
-    created_time = models.DateTimeField(
-            u'创建时间',
-            default = datetime.datetime.now,
-            auto_now_add = True
+    #0-不允许 1-允许 
+    status = models.IntegerField(
+            default=1
+            )
+    created_at = models.DateTimeField(
+            auto_now_add=True
+            )
+    updated_at = models.DateTimeField(
+            auto_now=True
             )
     
     class Meta:
         db_table = 'follow'
         verbose_name = u'关注'
         verbose_name_plural = u'关注'
-        ordering = ['-created_time']
     
     def description(self):
         return u' %s 关注了 %s' % (self.follow_from, self.follow_to)
@@ -438,6 +441,7 @@ class Notice(models.Model):
     status = models.BooleanField(
             default = False
             )
+    #通知类型：0-系统通知 1-评论 2-follow相关通知
     type = models.IntegerField()
     created_at = models.DateTimeField(
             auto_now_add = True
@@ -457,7 +461,10 @@ class Notice(models.Model):
                 )
     
     def description(self):
-        return self.event
+        if self.event:
+            return self.event
+        else:
+            return "No event"
     
     def read(self):
        if not self.status:
@@ -500,18 +507,24 @@ def comment_delete(sender, instance, signal, *args, **kwargs):
     section.content_number -= 1
     section.save()
     
-def notice_save(sender, instance, signal, *args, **kwargs):
+def follow_save(sender, instance, signal, *args, **kwargs):
     entity = instance
     event = Notice(
-            entity.sender,
-            entity.receiver,
-            entity,
-            0
+            sender = entity.sender,
+            receiver = entity.receiver,
+            event = entity,
+            type = 2
             )
     event.save()
     
-    
-    
+#注册消息响应函数
+signals.comment_save.connect(comment_save, sender=Comment)
+signals.comment_delete.connect(comment_delete, sender=Comment)
+signals.follow_save.connect(follow_save, sender=Follow)
+signals.post_save.connect(post_save, sender=Post)
+signals.post_delete.connect(post_delete, sender=Post)
+signals.postpart_save.connect(postpart_save, sender=PostPart)
+signals.postpart_delete.connect(postpart_delete, sender=PostPart)
     
     
     
