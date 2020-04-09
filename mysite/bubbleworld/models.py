@@ -94,6 +94,12 @@ class User(AbstractUser):
             null = True,
             related_name = 'groups'
             )
+    black_list = models.Model(
+            'null',
+            blank = True,
+            null = True,
+            related_name = 'black_list'
+            )
     ip_address = models.GenericIPAddressField()
     
     class Meta:
@@ -419,7 +425,33 @@ class CommentReport(models.Model):
     
     def __unicode__(self):
         return self.title
-     
+
+
+#私信
+class Message(models.Model):  
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        related_name='message_sender'
+        )
+    receiver = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        related_name='message_receiver'
+        )
+    content = models.TextField()
+    created_at = models.DateTimeField(
+            auto_now_add=True
+            )
+    updated_at = models.DateTimeField(
+            auto_now=True
+            )
+
+    def description(self):
+        return u'%s 向你发送了信息 %s' % (self.sender, self.content)
+
+    class Meta:
+        db_table = 'message'
+        verbose_name = u'信息'
+        verbose_name_plural = u'信息'     
     
 class Notice(models.Model):
     sender = models.ForeignKey(
@@ -441,7 +473,7 @@ class Notice(models.Model):
     status = models.BooleanField(
             default = False
             )
-    #通知类型：0-系统通知 1-评论 2-follow相关通知
+    #通知类型：0-系统通知 1-评论 2-follow相关通知 3-私信
     type = models.IntegerField()
     created_at = models.DateTimeField(
             auto_now_add = True
@@ -517,6 +549,16 @@ def follow_save(sender, instance, signal, *args, **kwargs):
             )
     event.save()
     
+def message_save(sender, instance, signal, *args, **kwargs):
+    entity = instance
+    event = Notice(
+        sender = entity.sender,
+        receiver = entity.receiver,
+        event = entity,
+        type = 3
+        )
+    event.save()
+    
 #注册消息响应函数
 signals.comment_save.connect(comment_save, sender=Comment)
 signals.comment_delete.connect(comment_delete, sender=Comment)
@@ -525,7 +567,7 @@ signals.post_save.connect(post_save, sender=Post)
 signals.post_delete.connect(post_delete, sender=Post)
 signals.postpart_save.connect(postpart_save, sender=PostPart)
 signals.postpart_delete.connect(postpart_delete, sender=PostPart)
-    
+signals.message_save.connect(message_save, sender=Message)
     
     
     
