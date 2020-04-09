@@ -117,7 +117,15 @@ class PostPartForm(forms.ModelForm):
 class CommentForm(forms.ModelForm):
     class Meta:
         fields = (
-                
+                'star',
+                'content'
+                )
+        
+class CommentReportForm(forms.ModelForm):
+    class Meta:
+        fields = (
+                'title',
+                'reason'
                 )
 
 
