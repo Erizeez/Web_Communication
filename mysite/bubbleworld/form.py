@@ -1,9 +1,9 @@
 #coding:utf-8
 from django import forms
-from forum.models import User, Post, PostPart, Comment, CommentReport, Message
+from forum.models import User, Tag, Section, Post, PostPart, Comment, CommentReport, Message
 
 
-class LoginUserForm(forms.ModelForm):
+class UserForm(forms.ModelForm):
     error_messages = {
             'mismatch_password':u'两次输入的密码不一致',
             'duplicate_username':u'此用户已存在',
@@ -60,7 +60,65 @@ class LoginUserForm(forms.ModelForm):
     def clean_confirm_password(self):
         password = self.cleaned_data.get('password')
         confirm_password = self.cleaned_data.get('confirm_password')
-        if password != confirm_password and password and confirm_password
+        if password != confirm_password and password and confirm_password:
+            raise forms.ValidationError(self.error_messages['mismatch_password'])
+        else:
+            return confirm_password
+        
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        try:
+            User._default_manager.get(email = email)
+        except User.DoesNotExist:
+            return email
+        raise forms.ValidationError(self.error_messages['duplicate_email'])
+    
+    def save(self, commit = True): 
+        user = super(UserForm).save(commit = False)
+        user.set_password(self.cleaned_data['password'])
+        if commit:
+            user.save()
+        else:
+            return user
+        
+class TagForm(forms.ModelForm):
+    class Meta:
+        model = Tag
+        fields = (
+                'name'
+                )
+        
+class SectionForm(forms.ModelForm):
+    class Meta:
+        model = Section
+        fields = (
+                'name',
+                'description',
+                'img'
+                )
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = (
+                'title',
+                'section'
+                )
+        
+class PostPartForm(forms.ModelForm):
+    class Meta:
+        model = PostPart
+        fields = (
+                'Post',
+                'parent_postpart',
+                'content'
+                )
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        fields = (
+                
+                )
 
 
 class MessageForm(forms.ModelForm):
@@ -70,4 +128,6 @@ class MessageForm(forms.ModelForm):
                 'content'
                 )
         
-class 
+
+        
+
