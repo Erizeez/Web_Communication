@@ -1,5 +1,5 @@
 from django.contrib import admin
-from forum.models import Permission, Group, User, Follow, Navigation, Tag, Section, Post, PostPart, Comment, CommentReport, Notice, Message
+from bubbleworld.models import Permission, Group, User, Follow, Navigation, Tag, Section, Post, PostPart, Comment, CommentReport, Notice, Message
 
 # Register your models here.
 admin.site.register(Permission)

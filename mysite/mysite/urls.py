@@ -18,7 +18,8 @@ from django.contrib import admin
 
 admin.autodiscover()
 
-urlpatterns = [
+urlpatterns = patterns(
+    '',
     url(r'^admin/', include(admin.site.urls)),
-    url(r'', include('forum.urls')),
-]
+    url(r'', include('bubbleworld.urls')),
+    )

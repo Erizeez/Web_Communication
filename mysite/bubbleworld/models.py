@@ -3,14 +3,14 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes import fields
 from django.db.models import signals
 import datetime
 
 # Create your models here.
 
 class Permission(models.Model):
-    name = models.Model(
+    name = models.CharField(
             max_length = 30,
             unique = True
             )
@@ -94,7 +94,7 @@ class User(AbstractUser):
             null = True,
             related_name = 'groups'
             )
-    black_list = models.Model(
+    black_list = models.ManyToManyField(
             'null',
             blank = True,
             null = True,
@@ -117,11 +117,13 @@ class User(AbstractUser):
 class Follow(models.Model):
     sender = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'follow_from'
+            related_name = 'follow_from',
+            on_delete = models.CASCADE
             )
     receiver = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'follow_to'
+            related_name = 'follow_to',
+            on_delete = models.CASCADE
             )
     #0-不允许 1-允许 
     status = models.IntegerField(
@@ -203,7 +205,8 @@ class Section(models.Model):
             'self',
             blank = True,
             null = True,
-            related_name = 'child_section'
+            related_name = 'child_section',
+            on_delete = models.CASCADE
             )
     description = models.CharField(
             max_length = 200,
@@ -229,7 +232,7 @@ class Section(models.Model):
             auto_now_add = True
             )
     updated_at = models.DateTimeField(
-            auto_run = True
+            auto_now = True
             )
 
     class Meta:
@@ -241,10 +244,6 @@ class Section(models.Model):
     def __unicode__(self):
         return self.name
     
-    @models.permalink
-    def get_absolute_url(self):
-        return ('section_detail', (), {'section_pk' : self.pk})
-        
     
 class Post(models.Model):
     title = models.CharField(
@@ -252,11 +251,13 @@ class Post(models.Model):
             )
     author = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'post_author'
+            related_name = 'post_author',
+            on_delete = models.CASCADE
             )
     section = models.ForeignKey(
             Section,
-            related_name = 'section'
+            related_name = 'section',
+            on_delete = models.CASCADE
             )
     view_times = models.IntegerField(
             default = 0
@@ -266,7 +267,8 @@ class Post(models.Model):
             )
     last_response = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'last_responce'
+            related_name = 'last_responce',
+            on_delete = models.CASCADE
             )
     
     upper_placed = models.BooleanField(
@@ -303,25 +305,24 @@ class Post(models.Model):
     def description(self):
         return u' %s 发表了主题帖 %s' % (self.author, self.title)
     
-    @models.permalink
-    def get_absolute_url(self):
-        return ('post_detail', (), {'post_pk' : self.pk})
-    
     
 class PostPart(models.Model):
     post = models.ForeignKey(
             Post,
-            related_name = 'post'
+            related_name = 'post',
+            on_delete = models.CASCADE
             )
     author = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'postpart_author'
+            related_name = 'postpart_author',
+            on_delete = models.CASCADE
             )
     parent_postpart = models.ForeignKey(
             'self',
             blank = True,
             null = True,
-            related_name = 'child_postpart'
+            related_name = 'child_postpart',
+            on_delete = models.CASCADE
             )
     content = models.TextField()
     created_at = models.DateTimeField(
@@ -345,22 +346,20 @@ class PostPart(models.Model):
                 self.author, self.post, 
                 self.content)
     
-    @models.permalink
-    def get_absolute_url(self):
-        return ('post_detail', (), {'post_pk' : self.pk})
-    
 
 class Comment(models.Model):
     section = models.ForeignKey(
             Section,
-            related_name = 'section'
+            related_name = 'section',
+            on_delete = models.CASCADE
             )
     star = models.IntegerField(
             default = 3
             )
     author = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'comment_author'
+            related_name = 'comment_author',
+            on_delete = models.CASCADE
             )
     content = models.TextField()
     
@@ -396,14 +395,16 @@ class Comment(models.Model):
 class CommentReport(models.Model):
     comment = models.ForeignKey(
             Comment,
-            related_name = 'comment'
+            related_name = 'comment',
+            on_delete = models.CASCADE
             )
     status = models.BooleanField(
             default = False
             )
     author = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'commentreport_author'
+            related_name = 'commentreport_author',
+            on_delete = models.CASCADE
             )
     title = models.CharField(
             max_length = 40
@@ -431,11 +432,13 @@ class CommentReport(models.Model):
 class Message(models.Model):  
     sender = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
-        related_name='message_sender'
+        related_name='message_sender',
+        on_delete = models.CASCADE
         )
     receiver = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
-        related_name='message_receiver'
+        related_name='message_receiver',
+        on_delete = models.CASCADE
         )
     content = models.TextField()
     created_at = models.DateTimeField(
@@ -456,18 +459,21 @@ class Message(models.Model):
 class Notice(models.Model):
     sender = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'notice_sender'
+            related_name = 'notice_sender',
+            on_delete = models.CASCADE
             )
     receiver = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'notice_receiver'
+            related_name = 'notice_receiver',
+            on_delete = models.CASCADE
             )
     content_type = models.ForeignKey(
             ContentType,
-            related_name = 'content_type'
+            related_name = 'content_type',
+            on_delete = models.CASCADE
             )
     object_id = models.PositiveIntegerField()
-    event = generic.GenericForeignKey(
+    event = fields.GenericForeignKey(
             'content_type','object_id'
             )
     status = models.BooleanField(
@@ -560,14 +566,14 @@ def message_save(sender, instance, signal, *args, **kwargs):
     event.save()
     
 #注册消息响应函数
-signals.comment_save.connect(comment_save, sender=Comment)
-signals.comment_delete.connect(comment_delete, sender=Comment)
-signals.follow_save.connect(follow_save, sender=Follow)
+signals.post_save.connect(comment_save, sender=Comment)
+signals.post_delete.connect(comment_delete, sender=Comment)
+signals.post_save.connect(follow_save, sender=Follow)
 signals.post_save.connect(post_save, sender=Post)
 signals.post_delete.connect(post_delete, sender=Post)
-signals.postpart_save.connect(postpart_save, sender=PostPart)
-signals.postpart_delete.connect(postpart_delete, sender=PostPart)
-signals.message_save.connect(message_save, sender=Message)
+signals.post_save.connect(postpart_save, sender=PostPart)
+signals.post_delete.connect(postpart_delete, sender=PostPart)
+signals.post_save.connect(message_save, sender=Message)
     
     
     

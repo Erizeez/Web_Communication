@@ -1,6 +1,6 @@
 #coding:utf-8
 from django import forms
-from forum.models import User, Tag, Section, Post, PostPart, Comment, CommentReport, Message
+from bubbleworld.models import User, Tag, Section, Post, PostPart, Comment, CommentReport, Message
 
 
 class UserForm(forms.ModelForm):
