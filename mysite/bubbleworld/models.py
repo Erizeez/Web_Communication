@@ -28,8 +28,7 @@ class Permission(models.Model):
             )
     created_time = models.DateTimeField(
             u'创建时间',
-            default = datetime.datetime.now,
-            auto_now_add = True
+            default = datetime.datetime.now
             )
     
     class Meta:
@@ -55,8 +54,7 @@ class Group(models.Model):
             )
     created_time = models.DateTimeField(
             u'创建时间',
-            default = datetime.datetime.now,
-            auto_now_add = True
+            default = datetime.datetime.now
             )
     
     class Meta:
@@ -117,13 +115,13 @@ class User(AbstractUser):
 class Follow(models.Model):
     sender = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'follow_from',
-            on_delete = models.CASCADE
+            on_delete = models.CASCADE,
+            related_name = 'sender',
             )
     receiver = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'follow_to',
-            on_delete = models.CASCADE
+            on_delete = models.CASCADE,
+            related_name = 'receiver',
             )
     #0-不允许 1-允许 
     status = models.IntegerField(
@@ -157,12 +155,11 @@ class Navigation(models.Model):
     
     created_time = models.DateTimeField(
             u'创建时间',
-            default = datetime.datetime.now,
-            auto_now_add = True
+            default = datetime.datetime.now
             )
     
     class Meta:
-        db_table = 'section'
+        db_table = 'navigation'
         verbose_name = u'导航'
         verbose_name_plural = u'导航'
         ordering = ['-created_time']
@@ -177,8 +174,7 @@ class Tag(models.Model):
             )
     created_time = models.DateTimeField(
             u'创建时间',
-            default = datetime.datetime.now,
-            auto_now_add = True
+            default = datetime.datetime.now
             )
     
     class Meta:
@@ -205,8 +201,8 @@ class Section(models.Model):
             'self',
             blank = True,
             null = True,
-            related_name = 'child_section',
-            on_delete = models.CASCADE
+            on_delete = models.CASCADE,
+            related_name = 'section_parent_section',
             )
     description = models.CharField(
             max_length = 200,
@@ -251,13 +247,13 @@ class Post(models.Model):
             )
     author = models.ForeignKey(
             settings.AUTH_USER_MODEL,
+            on_delete = models.CASCADE,
             related_name = 'post_author',
-            on_delete = models.CASCADE
             )
     section = models.ForeignKey(
             Section,
-            related_name = 'section',
-            on_delete = models.CASCADE
+            on_delete = models.CASCADE,
+            related_name = 'post_section',
             )
     view_times = models.IntegerField(
             default = 0
@@ -267,8 +263,8 @@ class Post(models.Model):
             )
     last_response = models.ForeignKey(
             settings.AUTH_USER_MODEL,
+            on_delete = models.CASCADE,
             related_name = 'last_responce',
-            on_delete = models.CASCADE
             )
     
     upper_placed = models.BooleanField(
@@ -283,7 +279,7 @@ class Post(models.Model):
             'Tag',
             blank = True,
        #     null = True,
-            related_name = 'tags'
+            related_name = 'post_tags'
             )
     
     created_at = models.DateTimeField(
@@ -350,7 +346,7 @@ class PostPart(models.Model):
 class Comment(models.Model):
     section = models.ForeignKey(
             Section,
-            related_name = 'section',
+            related_name = 'comment_section',
             on_delete = models.CASCADE
             )
     star = models.IntegerField(
@@ -395,7 +391,7 @@ class Comment(models.Model):
 class CommentReport(models.Model):
     comment = models.ForeignKey(
             Comment,
-            related_name = 'comment',
+            related_name = 'commentreport_comment',
             on_delete = models.CASCADE
             )
     status = models.BooleanField(

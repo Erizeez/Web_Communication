@@ -19,7 +19,6 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = [
-    '',
     url('admin/', admin.site.urls),
     url('bubbleworld/', include('bubbleworld.urls')),
     ]

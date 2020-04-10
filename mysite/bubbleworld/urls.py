@@ -8,7 +8,6 @@ from bubbleworld.views import user_login, user_logout, user_register
 admin.autodiscover()
 
 urlpatterns = [
-    '',
     url(r'^accounts/login/$', 
         user_login, 
         name='user_login'
