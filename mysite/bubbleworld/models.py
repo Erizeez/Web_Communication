@@ -50,7 +50,7 @@ class Group(models.Model):
     permissions = models.ManyToManyField(
             'Permission',
             blank = True,
-            null = True,
+          #  null = True,
             related_name = 'permissions'
             )
     created_time = models.DateTimeField(
@@ -84,20 +84,20 @@ class User(AbstractUser):
     follow_to = models.ManyToManyField(
             'self',
             blank = True,
-            null = True,
+        #   null = True,
             related_name = 'followto'
             )    
     
     groups = models.ManyToManyField(
             'Group',
             blank = True,
-            null = True,
+         #   null = True,
             related_name = 'groups'
             )
     black_list = models.ManyToManyField(
-            'null',
+            'self',
             blank = True,
-            null = True,
+         #   null = True,
             related_name = 'black_list'
             )
     ip_address = models.GenericIPAddressField()
@@ -198,7 +198,7 @@ class Section(models.Model):
     users = models.ManyToManyField(
             'User',
             blank = True,
-            null = True,
+     #       null = True,
             related_name = 'users'
             )
     parent_section = models.ForeignKey(
@@ -224,7 +224,7 @@ class Section(models.Model):
     tags = models.ManyToManyField(
             'Tag',
             blank = True,
-            null = True,
+      #      null = True,
             related_name = 'tags'
             )
     
@@ -282,7 +282,7 @@ class Post(models.Model):
     tags = models.ManyToManyField(
             'Tag',
             blank = True,
-            null = True,
+       #     null = True,
             related_name = 'tags'
             )
     

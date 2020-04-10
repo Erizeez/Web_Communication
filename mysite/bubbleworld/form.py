@@ -85,7 +85,7 @@ class TagForm(forms.ModelForm):
     class Meta:
         model = Tag
         fields = (
-                'name'
+                'name',
                 )
         
 class SectionForm(forms.ModelForm):
@@ -94,7 +94,7 @@ class SectionForm(forms.ModelForm):
         fields = (
                 'name',
                 'description',
-                'img'
+                'img',
                 )
 
 class PostForm(forms.ModelForm):
@@ -102,14 +102,14 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = (
                 'title',
-                'section'
+                'section',
                 )
         
 class PostPartForm(forms.ModelForm):
     class Meta:
         model = PostPart
         fields = (
-                'Post',
+                'post',
                 'parent_postpart',
                 'content'
                 )
@@ -125,7 +125,7 @@ class CommentReportForm(forms.ModelForm):
     class Meta:
         fields = (
                 'title',
-                'reason'
+                'reason',
                 )
 
 
@@ -133,7 +133,7 @@ class MessageForm(forms.ModelForm):
     class Meta:
         model = Message
         fields = (
-                'content'
+                'content',
                 )
         
 

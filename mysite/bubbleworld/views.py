@@ -1,24 +1,21 @@
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View, TemplateView, ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
-from forum.models import Permission, Group, User, Follow, Navigation, Tag, Section, Post, PostPart, Comment, CommentReport, Notice
-from forum.form import UserForm, TagForm, SectionForm, PostForm, PostPartForm, CommentForm, CommentReportForm, MessageForm
-from django.core.urlresolvers import reverse_lazy
+from bubbleworld.models import Permission, Group, User, Follow, Navigation, Tag, Section, Post, PostPart, Comment, CommentReport, Notice
+from bubbleworld.form import UserForm, TagForm, SectionForm, PostForm, PostPartForm, CommentForm, CommentReportForm, MessageForm
+from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.sites.models import get_current_site
+#from django.contrib.sites.models import get_current_site
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.utils.timezone import now, timedelta
 from datetime import datetime
 from django.core.cache import cache
 from bubbleworld.captcha import create_captcha
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+from io import StringIO
 import logging
 # Create your views here.
 
@@ -45,7 +42,7 @@ def user_login(request, template_name = 'login.html'):
         next = request.GET.get('next', None)
         if next is None:
             next = reverse_lazy('index')
-        return render_to_response(
+        return render(
                 template_name, 
                 {'next':next}
                 )
@@ -73,7 +70,7 @@ def user_register(request):
             message = u'你好！%s！\n\n' % username + \
                 u'请记录以下信息：\n' + \
                 u'    用户名：%s\n' % username + \
-                u'    密码：%s\n' % password  + \
+                u'    密码：%s\n' % password
             from_email = None
             try:
                 send_mail(
@@ -99,12 +96,12 @@ def user_register(request):
         else:
             for k, v in form.errors.items():
                 errors.append(v.as_text())
-        return render_to_response(
+        return render(
                 'user_ok.html', 
                 {'errors':errors}
                 )
     else:
-        return render_to_response('register.html')
+        return render('register.html')
     
 
         
