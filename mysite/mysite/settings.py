@@ -33,7 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'bubbleworld',
+    'bubbleworld.apps.BubbleworldConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -120,7 +120,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-AUTH_USER_MODEL = "forum.LoginUser"
+AUTH_USER_MODEL = "bubbleworld.User"
 
 #登录超时设置
 

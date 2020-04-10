@@ -3,14 +3,14 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes import fields
 from django.db.models import signals
 import datetime
 
 # Create your models here.
 
 class Permission(models.Model):
-    name = models.Model(
+    name = models.CharField(
             max_length = 30,
             unique = True
             )
@@ -28,8 +28,7 @@ class Permission(models.Model):
             )
     created_time = models.DateTimeField(
             u'创建时间',
-            default = datetime.datetime.now,
-            auto_now_add = True
+            default = datetime.datetime.now
             )
     
     class Meta:
@@ -50,13 +49,12 @@ class Group(models.Model):
     permissions = models.ManyToManyField(
             'Permission',
             blank = True,
-            null = True,
+          #  null = True,
             related_name = 'permissions'
             )
     created_time = models.DateTimeField(
             u'创建时间',
-            default = datetime.datetime.now,
-            auto_now_add = True
+            default = datetime.datetime.now
             )
     
     class Meta:
@@ -84,15 +82,21 @@ class User(AbstractUser):
     follow_to = models.ManyToManyField(
             'self',
             blank = True,
-            null = True,
+        #   null = True,
             related_name = 'followto'
             )    
     
     groups = models.ManyToManyField(
             'Group',
             blank = True,
-            null = True,
+         #   null = True,
             related_name = 'groups'
+            )
+    black_list = models.ManyToManyField(
+            'self',
+            blank = True,
+         #   null = True,
+            related_name = 'black_list'
             )
     ip_address = models.GenericIPAddressField()
     
@@ -109,26 +113,31 @@ class User(AbstractUser):
 
 
 class Follow(models.Model):
-    follow_from = models.ForeignKey(
-            'User',
-            related_name = 'follow_from'
+    sender = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            on_delete = models.CASCADE,
+            related_name = 'sender',
             )
-    follow_to = models.ForeignKey(
-            'User',
-            related_name = 'follow_to'
+    receiver = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            on_delete = models.CASCADE,
+            related_name = 'receiver',
             )
-    
-    created_time = models.DateTimeField(
-            u'创建时间',
-            default = datetime.datetime.now,
-            auto_now_add = True
+    #0-不允许 1-允许 
+    status = models.IntegerField(
+            default=1
+            )
+    created_at = models.DateTimeField(
+            auto_now_add=True
+            )
+    updated_at = models.DateTimeField(
+            auto_now=True
             )
     
     class Meta:
         db_table = 'follow'
         verbose_name = u'关注'
         verbose_name_plural = u'关注'
-        ordering = ['-created_time']
     
     def description(self):
         return u' %s 关注了 %s' % (self.follow_from, self.follow_to)
@@ -146,12 +155,11 @@ class Navigation(models.Model):
     
     created_time = models.DateTimeField(
             u'创建时间',
-            default = datetime.datetime.now,
-            auto_now_add = True
+            default = datetime.datetime.now
             )
     
     class Meta:
-        db_table = 'section'
+        db_table = 'navigation'
         verbose_name = u'导航'
         verbose_name_plural = u'导航'
         ordering = ['-created_time']
@@ -166,8 +174,7 @@ class Tag(models.Model):
             )
     created_time = models.DateTimeField(
             u'创建时间',
-            default = datetime.datetime.now,
-            auto_now_add = True
+            default = datetime.datetime.now
             )
     
     class Meta:
@@ -187,14 +194,15 @@ class Section(models.Model):
     users = models.ManyToManyField(
             'User',
             blank = True,
-            null = True,
+     #       null = True,
             related_name = 'users'
             )
     parent_section = models.ForeignKey(
             'self',
             blank = True,
             null = True,
-            related_name = 'child_section'
+            on_delete = models.CASCADE,
+            related_name = 'section_parent_section',
             )
     description = models.CharField(
             max_length = 200,
@@ -212,7 +220,7 @@ class Section(models.Model):
     tags = models.ManyToManyField(
             'Tag',
             blank = True,
-            null = True,
+      #      null = True,
             related_name = 'tags'
             )
     
@@ -220,7 +228,7 @@ class Section(models.Model):
             auto_now_add = True
             )
     updated_at = models.DateTimeField(
-            auto_run = True
+            auto_now = True
             )
 
     class Meta:
@@ -232,10 +240,6 @@ class Section(models.Model):
     def __unicode__(self):
         return self.name
     
-    @models.permalink
-    def get_absolute_url(self):
-        return ('section_detail', (), {'section_pk' : self.pk})
-        
     
 class Post(models.Model):
     title = models.CharField(
@@ -243,11 +247,13 @@ class Post(models.Model):
             )
     author = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'post_author'
+            on_delete = models.CASCADE,
+            related_name = 'post_author',
             )
     section = models.ForeignKey(
             Section,
-            related_name = 'section'
+            on_delete = models.CASCADE,
+            related_name = 'post_section',
             )
     view_times = models.IntegerField(
             default = 0
@@ -257,7 +263,8 @@ class Post(models.Model):
             )
     last_response = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'last_responce'
+            on_delete = models.CASCADE,
+            related_name = 'last_responce',
             )
     
     upper_placed = models.BooleanField(
@@ -271,8 +278,8 @@ class Post(models.Model):
     tags = models.ManyToManyField(
             'Tag',
             blank = True,
-            null = True,
-            related_name = 'tags'
+       #     null = True,
+            related_name = 'post_tags'
             )
     
     created_at = models.DateTimeField(
@@ -294,25 +301,24 @@ class Post(models.Model):
     def description(self):
         return u' %s 发表了主题帖 %s' % (self.author, self.title)
     
-    @models.permalink
-    def get_absolute_url(self):
-        return ('post_detail', (), {'post_pk' : self.pk})
-    
     
 class PostPart(models.Model):
     post = models.ForeignKey(
             Post,
-            related_name = 'post'
+            related_name = 'post',
+            on_delete = models.CASCADE
             )
     author = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'postpart_author'
+            related_name = 'postpart_author',
+            on_delete = models.CASCADE
             )
     parent_postpart = models.ForeignKey(
             'self',
             blank = True,
             null = True,
-            related_name = 'child_postpart'
+            related_name = 'child_postpart',
+            on_delete = models.CASCADE
             )
     content = models.TextField()
     created_at = models.DateTimeField(
@@ -336,22 +342,20 @@ class PostPart(models.Model):
                 self.author, self.post, 
                 self.content)
     
-    @models.permalink
-    def get_absolute_url(self):
-        return ('post_detail', (), {'post_pk' : self.pk})
-    
 
 class Comment(models.Model):
     section = models.ForeignKey(
             Section,
-            related_name = 'section'
+            related_name = 'comment_section',
+            on_delete = models.CASCADE
             )
     star = models.IntegerField(
             default = 3
             )
     author = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'comment_author'
+            related_name = 'comment_author',
+            on_delete = models.CASCADE
             )
     content = models.TextField()
     
@@ -387,14 +391,16 @@ class Comment(models.Model):
 class CommentReport(models.Model):
     comment = models.ForeignKey(
             Comment,
-            related_name = 'comment'
+            related_name = 'commentreport_comment',
+            on_delete = models.CASCADE
             )
     status = models.BooleanField(
             default = False
             )
     author = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'commentreport_author'
+            related_name = 'commentreport_author',
+            on_delete = models.CASCADE
             )
     title = models.CharField(
             max_length = 40
@@ -416,28 +422,60 @@ class CommentReport(models.Model):
     
     def __unicode__(self):
         return self.title
-     
+
+
+#私信
+class Message(models.Model):  
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        related_name='message_sender',
+        on_delete = models.CASCADE
+        )
+    receiver = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        related_name='message_receiver',
+        on_delete = models.CASCADE
+        )
+    content = models.TextField()
+    created_at = models.DateTimeField(
+            auto_now_add=True
+            )
+    updated_at = models.DateTimeField(
+            auto_now=True
+            )
+
+    def description(self):
+        return u'%s 向你发送了信息 %s' % (self.sender, self.content)
+
+    class Meta:
+        db_table = 'message'
+        verbose_name = u'信息'
+        verbose_name_plural = u'信息'     
     
 class Notice(models.Model):
     sender = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'notice_sender'
+            related_name = 'notice_sender',
+            on_delete = models.CASCADE
             )
     receiver = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'notice_receiver'
+            related_name = 'notice_receiver',
+            on_delete = models.CASCADE
             )
     content_type = models.ForeignKey(
             ContentType,
-            related_name = 'content_type'
+            related_name = 'content_type',
+            on_delete = models.CASCADE
             )
     object_id = models.PositiveIntegerField()
-    event = generic.GenericForeignKey(
+    event = fields.GenericForeignKey(
             'content_type','object_id'
             )
     status = models.BooleanField(
             default = False
             )
+    #通知类型：0-系统通知 1-评论 2-follow相关通知 3-私信
     type = models.IntegerField()
     created_at = models.DateTimeField(
             auto_now_add = True
@@ -457,7 +495,10 @@ class Notice(models.Model):
                 )
     
     def description(self):
-        return self.event
+        if self.event:
+            return self.event
+        else:
+            return "No event"
     
     def read(self):
        if not self.status:
@@ -500,19 +541,35 @@ def comment_delete(sender, instance, signal, *args, **kwargs):
     section.content_number -= 1
     section.save()
     
-def notice_save(sender, instance, signal, *args, **kwargs):
+def follow_save(sender, instance, signal, *args, **kwargs):
     entity = instance
     event = Notice(
-            entity.sender,
-            entity.receiver,
-            entity,
-            0
+            sender = entity.sender,
+            receiver = entity.receiver,
+            event = entity,
+            type = 2
             )
     event.save()
     
+def message_save(sender, instance, signal, *args, **kwargs):
+    entity = instance
+    event = Notice(
+        sender = entity.sender,
+        receiver = entity.receiver,
+        event = entity,
+        type = 3
+        )
+    event.save()
     
-    
-    
+#注册消息响应函数
+signals.post_save.connect(comment_save, sender=Comment)
+signals.post_delete.connect(comment_delete, sender=Comment)
+signals.post_save.connect(follow_save, sender=Follow)
+signals.post_save.connect(post_save, sender=Post)
+signals.post_delete.connect(post_delete, sender=Post)
+signals.post_save.connect(postpart_save, sender=PostPart)
+signals.post_delete.connect(postpart_delete, sender=PostPart)
+signals.post_save.connect(message_save, sender=Message)
     
     
     
