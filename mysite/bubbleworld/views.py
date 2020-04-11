@@ -22,6 +22,42 @@ import logging
 logger = logging.getLogger(__name__)
 PAGE_NUM = 50
 
+def get_online_ips_count():
+    online_ips = cache.get('online_ips', [])
+    if online_ips:
+        online_ips = cache.get_many(online_ips).keys()
+        return len(online_ips)
+    return 0
+
+
+def get_forum_info():
+    one_day = timedelta(days=1)
+    today = now().date()
+    last_day = today - one_day
+    today_end = today + one_day
+    post_number = Post.objects.count()
+    account_number = User.objects.count()
+
+    lastday_post_number = cache.get('lastday_post_number', None)
+    today_post_number = cache.get('today_post_number', None)
+
+    if lastday_post_number is None:
+        lastday_post_number = Post.objects.filter(
+            created_at__range=[lastday, today]).count()
+        cache.set('lastday_post_number', lastday_post_number, 60 * 60)
+
+    if today_post_number is None:
+        today_post_number = Post.objects.filter(
+            created_at__range=[today, todayend]).count()
+        cache.set('today_post_number', today_post_number, 60 * 60)
+
+    info = {
+        "post_number": post_number,
+        "account_number": account_number,
+        "lastday_post_number": lastday_post_number,
+        "today_post_number": today_post_number
+    }
+    return info
 
 
 #用户登录
