@@ -281,9 +281,9 @@ class PostCreate(CreateView):
     success_url = reverse_lazy('user_post')
 
     def form_valid(self, form):
-        validate = self.request.POST.get('validate', None)
+        captcha = self.request.POST.get('captcha', None)
         formdata = form.cleaned_data
-        if self.request.session.get('validate', None) != validate:
+        if self.request.session.get('captcha', None) != captcha:
             return HttpResponse("验证码错误！<a href='/'>返回</a>")
         user = User.objects.get(username=self.request.user.username)
         formdata['author'] = user
@@ -306,10 +306,17 @@ class PostDelete(DeleteView):
     success_url = reverse_lazy('user_post')      
     
 #评论
+    
+#编辑评论
+    
+#删除评论
 
 
 #回帖
     
+#编辑回帖
+
+#删除回帖
 
     
 #所有版块
