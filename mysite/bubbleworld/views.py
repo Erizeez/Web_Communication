@@ -306,18 +306,64 @@ class PostDelete(DeleteView):
     success_url = reverse_lazy('user_post')      
     
 #评论
-    
+class CommentCreate(CreateView):
+    model = Comment
+    template_name = 'comment_form.html'
+    form_class = CommentForm
+    success_url = reverse_lazy('user_comment')
+
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        if self.request.session.get('captcha', None) != captcha:
+            return HttpResponse("验证码错误！<a href='/'>返回</a>")
+        user = User.objects.get(username=self.request.user.username)
+        formdata['author'] = user
+        p = Comment(**formdata)
+        p.save()
+        return HttpResponse("评价成功！<a href='/'>返回</a>")
 #编辑评论
-    
+class CommentUpdate(UpdateView):
+    model = Post
+    template_name = 'comment_form.html'
+    success_url = reverse_lazy('user_comment')
+
 #删除评论
+class CommentDelete(DeleteView):
+    model = Post
+    template_name = 'delete_confirm.html'
+    success_url = reverse_lazy('user_comment') 
 
+#回帖(未完工)
+class PostPartCreate(CreateView):
+    model = PostPart
+    template_name = 'form.html'
+    form_class = PostPartForm
+    success_url = reverse_lazy('user_postpart')
 
-#回帖
-    
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        if self.request.session.get('captcha', None) != captcha:
+            return HttpResponse("验证码错误！<a href='/'>返回</a>")
+        user = User.objects.get(username=self.request.user.username)
+        formdata['author'] = user
+        
+        p = Post(**formdata)
+        p.save()
+        return HttpResponse("发贴成功！<a href='/'>返回</a>") 
+  
 #编辑回帖
-
+class PostPartUpdate(UpdateView):
+    model = PostPart
+    template_name = 'form.html'
+    success_url = reverse_lazy('user_postpart')
+    
 #删除回帖
-
+class PostPartDelete(DeleteView):
+    model = PostPart
+    template_name = 'delete_confirm.html'
+    success_url = reverse_lazy('user_postpart')
     
 #所有版块
 def sectionall(request):
@@ -326,7 +372,7 @@ def sectionall(request):
         'section_list.html', {'section_list': section_list},
         context_instance=RequestContext(request))     
 
-#单个板块(需要细化)
+#单个板块
 def sectiondetail(request, section_pk):
     section_obj = Section.objects.get(pk=section_pk)
     section_posts = section_obj.post_set.all()
