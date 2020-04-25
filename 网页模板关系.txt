@@ -1,0 +1,10 @@
+form - 带验证码的文本编辑器		关系：
+base - 主要通用结构
+navigation - 导航栏
+user - 用户页面
+login - 登录页面
+register - 注册页面
+user_reserve - 底部常驻用户栏（包括登陆，登出，信息等）
+section_list - 区块主页详情
+section_detail - 区块页面
+search_result - 搜索结果页面
