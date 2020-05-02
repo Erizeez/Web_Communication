@@ -198,11 +198,7 @@ def commentdetail(request, comment_pk):
 def postdetail(request, post_pk):
     post_pk = int(post_pk)
     post = Post.objects.get(pk=post_pk)
-    comment_list = post.comment_set.all()
-    if request.user.is_authenticated():
-        k = Notice.objects.filter(receiver=request.user, status=False).count()
-    else:
-        k = 0
+    postpart_list = post.postpart_list.all()
         
     #统计帖子的访问访问次数
     if 'HTTP_X_FORWARDED_FOR' in request.META:
@@ -220,8 +216,7 @@ def postdetail(request, post_pk):
     return render(
         'post_detail.html', {
             'post': post,
-            'comment_list': comment_list,
-            'message_number': k
+            'postpart_list': postpart_list
         },
         context_instance=RequestContext(request))
     
