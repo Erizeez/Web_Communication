@@ -3,7 +3,7 @@ from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View, TemplateView, ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
-from bubbleworld.models import Permission, Group, User, Follow, Navigation, Tag, Section, Post, PostPart, Comment, CommentReport, Notice
+from bubbleworld.models import Permission, Group, User, Follow, Navigation, Tag, Section, Post, PostPart, PostPartComment, Comment, CommentReport, Notice
 from bubbleworld.form import UserForm, TagForm, SectionForm, PostForm, PostPartForm, CommentForm, CommentReportForm, MessageForm
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
@@ -256,7 +256,7 @@ def noticedetail(request, pk):
         return HttpResponseRedirect(
             reverse_lazy('notice_detail', kwargs={"pk": notice_id}))
 
-#已发帖
+#已发帖子
 class UserPostView(ListView):
     template_name = 'user_posts.html'
     context_object_name = 'user_posts'
@@ -269,6 +269,7 @@ class UserPostView(ListView):
 
     
 #发帖
+@login_required(login_url=reverse_lazy('user_login'))
 class PostCreate(CreateView):
     model = Post
     template_name = 'form.html'
@@ -282,18 +283,22 @@ class PostCreate(CreateView):
         user = User.objects.get(username=self.request.user.username)
         formdata['author'] = user
         formdata['last_response'] = user
-        p = Post(**formdata)
-        p.save()
-        PostPartCreate.form_valid(self, form)
-        postpart_list = p.postpart_list.all()
+        post_instance = Post(**formdata)
+        post_instance.save()
+        
+        formdata['post'] = post_instance
+        postpart_instance = PostPart(**formdata)
+        postpart_instance.save()
+        postpart_list = post_instance.postpart_list.all()
         return render(
         'post_detail.html', {
-            'post': p,
+            'post': post_instance,
             'postpart_list': postpart_list
         },
         context_instance=RequestContext(request))   
     
 #编辑贴
+@login_required(login_url=reverse_lazy('user_login'))
 class PostUpdate(UpdateView):
     model = Post
     template_name = 'form.html'
@@ -301,80 +306,86 @@ class PostUpdate(UpdateView):
 
     
 #删帖
+@login_required(login_url=reverse_lazy('user_login'))
 class PostDelete(DeleteView):
     model = Post
     template_name = 'delete_confirm.html'
     success_url = reverse_lazy('user_post')      
-    
-#评论
-class CommentCreate(CreateView):
-    model = Comment
-    template_name = 'comment_form.html'
-    form_class = CommentForm
-    success_url = reverse_lazy('user_comment')
 
-    def form_valid(self, form):
-        captcha = self.request.POST.get('captcha', None)
-        formdata = form.cleaned_data
-        if self.request.session.get('captcha', None) != captcha:
-            return HttpResponse("验证码错误！<a href='/'>返回</a>")
-        user = User.objects.get(username=self.request.user.username)
-        formdata['author'] = user
-        p = Comment(**formdata)
+#回帖
+@login_required(login_url=reverse_lazy('user_login'))
+def createPostPart(request):
+    if request.method == 'POST':
+        content = request.POST.get("comment", "")
+        post_id = request.POST.get("post_id", "")
+        user = User.objects.get(username=request.user)
+        post_instance = Post.objects.get(pk=post_id)
+        post_instance.concontent_number += 1
+        post_instance.last_response = user
+
+        p = PostPart(post=post_instance, author=user, content=content)
         p.save()
-        return HttpResponse("评价成功！<a href='/'>返回</a>")
-#编辑评论
-class CommentUpdate(UpdateView):
-    model = Post
-    template_name = 'comment_form.html'
-    success_url = reverse_lazy('user_comment')
+        post_instance.save()
 
-#删除评论
-class CommentDelete(DeleteView):
-    model = Post
-    template_name = 'delete_confirm.html'
-    success_url = reverse_lazy('user_comment') 
-
-#回帖(未完工)
-class PostPartCreate(CreateView):
-    model = PostPart
-    template_name = 'form.html'
-    form_class = PostPartForm
-    success_url = reverse_lazy('user_postpart')
-
-    def form_valid(self, form):
-        captcha = self.request.POST.get('captcha', None)
-        formdata = form.cleaned_data
-        if self.request.session.get('captcha', None) != captcha:
-            return HttpResponse("验证码错误！<a href='/'>返回</a>")
-        user = User.objects.get(username=self.request.user.username)
-        formdata['author'] = user
-        
-        p = Post(**formdata)
-        p.save()
-        return HttpResponse("发贴成功！<a href='/'>返回</a>") 
+    return HttpResponse("回复成功") 
   
 #编辑回帖
+@login_required(login_url=reverse_lazy('user_login'))
 class PostPartUpdate(UpdateView):
     model = PostPart
     template_name = 'form.html'
     success_url = reverse_lazy('user_postpart')
     
 #删除回帖
+@login_required(login_url=reverse_lazy('user_login'))
 class PostPartDelete(DeleteView):
+    model = PostPart
+    template_name = 'delete_confirm.html'
+    success_url = reverse_lazy('user_postpart')
+   
+#间帖评论
+@login_required(login_url=reverse_lazy('user_login'))
+def createPostPartComment(request):
+    if request.method == 'POST':
+        content = request.POST.get("comment", "")
+        postpart_id = request.POST.get("postpart_id", "")
+        user = User.objects.get(username=request.user)
+        postpart_instance = PostPart.objects.get(pk=postpart_id)
+        postpart_instance.concontent_number += 1
+        postpart_instance.last_response = user
+        post_instance = postpart_instance.post
+        post_instance.concontent_number += 1
+        post_instance.last_response = user
+
+        c = Comment(postpart=postpart_instance, author=user, content=content)
+        c.save()
+        post_instance.save()
+
+    return HttpResponse("回复成功") 
+
+#编辑间帖评论
+@login_required(login_url=reverse_lazy('user_login'))
+class PostPartCommentUpdate(UpdateView):
+    model = PostPartComment
+    template_name = 'form.html'
+    success_url = reverse_lazy('user_postpart')
+    
+#删除间帖评论
+@login_required(login_url=reverse_lazy('user_login'))
+class PostPartCommentDelete(DeleteView):
     model = PostPart
     template_name = 'delete_confirm.html'
     success_url = reverse_lazy('user_postpart')
     
 #所有版块
-def sectionall(request):
+def sectionAll(request):
     section_list = Section.objects.all()
     return render(
         'section_list.html', {'section_list': section_list},
         context_instance=RequestContext(request))     
 
 #单个板块
-def sectiondetail(request, section_pk):
+def sectionDetail(request, section_pk):
     section_obj = Section.objects.get(pk=section_pk)
     section_posts = section_obj.post_set.all()
 
@@ -387,6 +398,7 @@ def sectiondetail(request, section_pk):
 
     
 #搜索（需要细化）
+@login_required(login_url=reverse_lazy('user_login'))
 class SearchView(ListView):
     template_name = 'search_result.html'
     context_object_name = 'post_list'

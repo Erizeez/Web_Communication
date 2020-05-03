@@ -314,6 +314,15 @@ class PostPart(models.Model):
             on_delete = models.CASCADE
             )
     content = models.TextField()
+    
+    content_number = models.IntegerField(
+            default = 1
+            )
+    last_response = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            on_delete = models.CASCADE,
+            related_name = 'last_responce',
+            )
     created_at = models.DateTimeField(
             auto_now_add = True
             )
