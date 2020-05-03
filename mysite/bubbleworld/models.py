@@ -313,13 +313,6 @@ class PostPart(models.Model):
             related_name = 'postpart_author',
             on_delete = models.CASCADE
             )
-    parent_postpart = models.ForeignKey(
-            'self',
-            blank = True,
-            null = True,
-            related_name = 'child_postpart',
-            on_delete = models.CASCADE
-            )
     content = models.TextField()
     created_at = models.DateTimeField(
             auto_now_add = True
@@ -341,7 +334,39 @@ class PostPart(models.Model):
         return u' %s 回复了帖子（%s）： %s' % (
                 self.author, self.post, 
                 self.content)
+
+class PostCommennt(models.Model):
+    postpart =  models.ForeignKey(
+            PostPart,
+            related_name = 'postpart',
+            on_delete = models.CASCADE
+            )
+    author = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            related_name = 'postpart_author',
+            on_delete = models.CASCADE
+            )
+    content = models.TextField()
+    created_at = models.DateTimeField(
+            auto_now_add = True
+            )
+    updated_at = models.DateTimeField(
+            auto_now = True
+            )
     
+    class Meta:
+        db_table = 'postpart'
+        verbose_name = u'间贴评论'
+        verbose_name_plural = u'间贴评论'
+        ordering = ['-created_at']
+    
+    def __unicode__(self):
+        return self.title
+    
+    def description(self):
+        return u' %s 回复了帖子（%s）： %s' % (
+                self.author, self.postpart.post, 
+                self.content)
 
 class Comment(models.Model):
     section = models.ForeignKey(

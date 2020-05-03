@@ -198,8 +198,8 @@ def commentdetail(request, comment_pk):
 def postdetail(request, post_pk):
     post_pk = int(post_pk)
     post = Post.objects.get(pk=post_pk)
+    #间帖列表
     postpart_list = post.postpart_list.all()
-        
     #统计帖子的访问访问次数
     if 'HTTP_X_FORWARDED_FOR' in request.META:
         ip = request.META['HTTP_X_FORWARDED_FOR']
@@ -273,9 +273,8 @@ class PostCreate(CreateView):
     model = Post
     template_name = 'form.html'
     form_class = PostForm
-    success_url = reverse_lazy('user_post')
 
-    def form_valid(self, form):
+    def form_valid(self, form, request):
         captcha = self.request.POST.get('captcha', None)
         formdata = form.cleaned_data
         if self.request.session.get('captcha', None) != captcha:
@@ -285,7 +284,14 @@ class PostCreate(CreateView):
         formdata['last_response'] = user
         p = Post(**formdata)
         p.save()
-        return HttpResponse("发贴成功！<a href='/'>返回</a>")     
+        PostPartCreate.form_valid(self, form)
+        postpart_list = p.postpart_list.all()
+        return render(
+        'post_detail.html', {
+            'post': p,
+            'postpart_list': postpart_list
+        },
+        context_instance=RequestContext(request))   
     
 #编辑贴
 class PostUpdate(UpdateView):
