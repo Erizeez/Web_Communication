@@ -21,3 +21,5 @@ class CommonMiddleWare(object):
         if ip not in online_ips:
             online_ips.append(ip)
         cache.set("online_ips", online_ips)
+ #   def permission_check(self, ):
+        
