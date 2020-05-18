@@ -3,7 +3,7 @@ from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View, TemplateView, ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
-from bubbleworld.models import Permission, Group, User, Follow, Navigation, Tag, Section, Post, PostPart, PostPartComment, Comment, CommentReport, Notice
+from bubbleworld.models import User, Follow, Navigation, Tag, Section, Post, PostPart, PostPartComment, Comment, CommentReport, Notice
 from bubbleworld.form import UserForm, TagForm, SectionForm, PostForm, PostPartForm, CommentForm, CommentReportForm, MessageForm
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required

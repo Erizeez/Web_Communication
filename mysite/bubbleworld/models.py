@@ -9,63 +9,6 @@ import datetime
 
 # Create your models here.
 
-class Permission(models.Model):
-    name = models.CharField(
-            max_length = 30,
-            unique = True
-            )
-    access_permission = models.BooleanField(
-            default = False
-            )
-    add_permission = models.BooleanField(
-            default = False
-            )
-    modify_permission = models.BooleanField(
-            default = False
-            )
-    delete_permission = models.BooleanField(
-            default = False
-            )
-    created_time = models.DateTimeField(
-            u'创建时间',
-            default = datetime.datetime.now
-            )
-    
-    class Meta:
-        db_table = 'permission'
-        verbose_name = u'权限'
-        verbose_name_plural = u'权限'
-        ordering = ['-created_time']
-    
-    def __unicode__(self):
-        return self.name
-
-
-class Group(models.Model):
-    name = models.CharField(
-            max_length = 20,
-            unique = True
-            )
-    permissions = models.ManyToManyField(
-            'Permission',
-            blank = True,
-          #  null = True,
-            related_name = 'permissions'
-            )
-    created_time = models.DateTimeField(
-            u'创建时间',
-            default = datetime.datetime.now
-            )
-    
-    class Meta:
-        db_table = 'group'
-        verbose_name = u'用户组'
-        verbose_name_plural = u'用户组'
-        ordering = ['-created_time']
-    
-    def __unicode__(self):
-        return self.name
-
 
 class User(AbstractUser):
     avatar = models.CharField(
@@ -73,7 +16,7 @@ class User(AbstractUser):
             default = '/static/avatar/default.jpg',
             verbose_name = u'头像'
             )
-    #权限默认为0，即已注册用户,1为管理员，2为被封禁，-1为游客
+    #权限默认为0，即已注册用户, 1为被封禁，-1为游客
     privilege = models.CharField(
             max_length = 200,
             default = 0,
@@ -85,20 +28,12 @@ class User(AbstractUser):
         #   null = True,
             related_name = 'followto'
             )    
-    
-    groups = models.ManyToManyField(
-            'Group',
-            blank = True,
-         #   null = True,
-            related_name = 'groups'
-            )
     black_list = models.ManyToManyField(
             'self',
             blank = True,
          #   null = True,
             related_name = 'black_list'
             )
-    ip_address = models.GenericIPAddressField()
     
     class Meta:
         db_table = 'user'
@@ -189,7 +124,19 @@ class Tag(models.Model):
     
 class Section(models.Model):
     name = models.CharField(
-            max_length = 20
+            max_length = 50
+            )
+    author = models.CharField(
+            default = "",
+            max_length = 50
+            )
+    actor = models.CharField(
+            default = "",
+            max_length = 100
+            )
+    author_description = models.CharField(
+            max_length = 2000,
+            verbose_name = u'作者描述'
             )
     users = models.ManyToManyField(
             'User',
@@ -205,7 +152,7 @@ class Section(models.Model):
             related_name = 'section_parent_section',
             )
     description = models.CharField(
-            max_length = 200,
+            max_length = 2000,
             verbose_name = u'描述'
             )
     img = models.CharField(
@@ -264,7 +211,7 @@ class Post(models.Model):
     last_response = models.ForeignKey(
             settings.AUTH_USER_MODEL,
             on_delete = models.CASCADE,
-            related_name = 'last_responce',
+            related_name = 'post_last_responce',
             )
     
     upper_placed = models.BooleanField(
@@ -321,7 +268,7 @@ class PostPart(models.Model):
     last_response = models.ForeignKey(
             settings.AUTH_USER_MODEL,
             on_delete = models.CASCADE,
-            related_name = 'last_responce',
+            related_name = 'postpart_last_responce',
             )
     created_at = models.DateTimeField(
             auto_now_add = True
@@ -344,7 +291,7 @@ class PostPart(models.Model):
                 self.author, self.post, 
                 self.content)
 
-class PostCommennt(models.Model):
+class PostPartComment(models.Model):
     postpart =  models.ForeignKey(
             PostPart,
             related_name = 'postpart',
@@ -352,7 +299,7 @@ class PostCommennt(models.Model):
             )
     author = models.ForeignKey(
             settings.AUTH_USER_MODEL,
-            related_name = 'postpart_author',
+            related_name = 'postpartcomment_author',
             on_delete = models.CASCADE
             )
     content = models.TextField()
@@ -364,7 +311,7 @@ class PostCommennt(models.Model):
             )
     
     class Meta:
-        db_table = 'postpart'
+        db_table = 'postpartcomment'
         verbose_name = u'间贴评论'
         verbose_name_plural = u'间贴评论'
         ordering = ['-created_at']
