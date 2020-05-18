@@ -6,6 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import fields
 from django.db.models import signals
 import datetime
+from django.utils import timezone
 
 # Create your models here.
 
@@ -109,7 +110,7 @@ class Tag(models.Model):
             )
     created_time = models.DateTimeField(
             u'创建时间',
-            default = datetime.datetime.now
+            default = timezone.now
             )
     
     class Meta:
@@ -172,10 +173,10 @@ class Section(models.Model):
             )
     
     created_at = models.DateTimeField(
-            auto_now_add = True
+            default = timezone.now
             )
     updated_at = models.DateTimeField(
-            auto_now = True
+            default = timezone.now
             )
 
     class Meta:

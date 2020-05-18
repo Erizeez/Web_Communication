@@ -1,31 +1,30 @@
 [
 	{
-		"model": "User",
+		"model": "bubbleworld.user",
 		"pk": 1,
 		"fields": {
 			"username": "admin",
-			"psaaword": "88888888"
+			"password": "88888888"
 		}
 	},
 	{
-		"model": "Tag",
+		"model": "bubbleworld.tag",
 		"pk": 1,
 		"fields": {
 			"name": "生草"
 		}
 	},
 	{
-		"model": "Section",
+		"model": "bubbleworld.section",
 		"pk": 1,
 		"fields": {
-			"?A": "外键或ManyToManyFields用pk做属性的值 这是注释",
 			"name": "书籍",
 			"description": "这里有很多书籍",
 			"users": "1"
 		}
 	},
 	{
-		"model": "Section",
+		"model": "bubbleworld.section",
 		"pk": 2,
 		"fields": {
 			"name": "影视",
@@ -34,7 +33,7 @@
 		}
 	},
 	{
-		"model": "Section",
+		"model": "bubbleworld.section",
 		"pk": 3,
 		"fields": {
 			"name": "小组",
@@ -43,7 +42,7 @@
 		}
 	},
 	{
-		"model": "Section",
+		"model": "bubbleworld.section",
 		"pk": 4,
 		"fields": {
 			"name": "话题",
@@ -52,7 +51,7 @@
 		}
 	},
 	{
-		"models": "Section",
+		"model": "bubbleworld.section",
 		"pk": 5,
 		"fields": {
 			"name": "平凡的世界",
@@ -64,7 +63,7 @@
 		}
 	},
 	{
-		"models": "Section",
+		"model": "bubbleworld.section",
 		"pk": 6,
 		"fields": {
 			"name": "霸王别姬",
