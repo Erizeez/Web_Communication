@@ -176,7 +176,7 @@ class IndexView(BaseMixin, ListView):
     
     
 #评论详细界面
-def commentdetail(request, comment_pk):
+def comment_detail(request, comment_pk):
     comment_pk = int(comment_pk)
     comment = Comment.objects.get(pk=comment_pk)
     comment_list = Comment.comment_set.all()
@@ -195,7 +195,7 @@ def commentdetail(request, comment_pk):
     
     
 #帖子详细界面
-def postdetail(request, post_pk):
+def post_detail(request, post_pk):
     post_pk = int(post_pk)
     post = Post.objects.get(pk=post_pk)
     #间帖列表
@@ -223,7 +223,7 @@ def postdetail(request, post_pk):
     
 #消息通知
 @login_required(login_url=reverse_lazy('user_login'))
-def shownotice(request):
+def show_notice(request):
     notice_list = Notice.objects.filter(receiver=request.user, status=False)
     followtos = User.objects.get(username=request.user).follow_to.all()
     return render(
@@ -234,7 +234,7 @@ def shownotice(request):
         context_instance=RequestContext(request))      
     
 #具体通知
-def noticedetail(request, pk):
+def notice_detail(request, pk):
     pk = int(pk)
     notice = Notice.objects.get(pk=pk)
     notice.status = True
@@ -314,7 +314,7 @@ class PostDelete(DeleteView):
 
 #回帖
 @login_required(login_url=reverse_lazy('user_login'))
-def createPostPart(request):
+def create_PostPart(request):
     if request.method == 'POST':
         content = request.POST.get("comment", "")
         post_id = request.POST.get("post_id", "")
@@ -328,7 +328,7 @@ def createPostPart(request):
         post_instance.save()
 
     return HttpResponse("回复成功") 
-  
+
 #编辑回帖
 @login_required(login_url=reverse_lazy('user_login'))
 class PostPartUpdate(UpdateView):
@@ -345,7 +345,7 @@ class PostPartDelete(DeleteView):
    
 #间帖评论
 @login_required(login_url=reverse_lazy('user_login'))
-def createPostPartComment(request):
+def create_PostPartComment(request):
     if request.method == 'POST':
         content = request.POST.get("comment", "")
         postpart_id = request.POST.get("postpart_id", "")
@@ -378,14 +378,14 @@ class PostPartCommentDelete(DeleteView):
     success_url = reverse_lazy('user_postpart')
     
 #所有版块
-def sectionAll(request):
+def section_all(request):
     section_list = Section.objects.all()
     return render(
         'section_list.html', {'section_list': section_list},
         context_instance=RequestContext(request))     
 
 #单个板块
-def sectionDetail(request, section_pk):
+def section_detail(request, section_pk):
     section_obj = Section.objects.get(pk=section_pk)
     section_posts = section_obj.post_set.all()
 
