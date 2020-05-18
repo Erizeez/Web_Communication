@@ -1,0 +1,294 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>Films</title>
+</head>
+
+
+<body>
+    <!-- 导航栏 -->
+    <div class="container">
+        <nav class="navbar navbar-expand-sm bg-light navbar-light">
+            <a class="navbar-brand col-lg-2" href="mainpage.html" style="color:black;">Bubble World</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+
+            <div class="input-group col-lg-4">
+                <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">影视</button>
+                    <div class="dropdown-menu" style="text-align: center; min-width:fit-content;">
+                        <a class="dropdown-item" href="#">全部</a>
+                        <a class="dropdown-item" href="#">书籍</a>
+                        <a class="dropdown-item" href="#">小组</a>
+                        <a class="dropdown-item" href="#">话题</a>
+                    </div>
+                </div>
+                <input type="text" class="form-control" aria-label="Text input with dropdown button">
+            </div>
+
+            <div class="col col-lg-1"></div>
+
+            <div class="collapse navbar-collapse col-lg-4" id="collapsibleNavbar">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="./book.html"><mark style="color:white; background-color:darkturquoise;">书籍</mark></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><mark style="color:white; background-color:dodgerblue;">影视</mark></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><mark style="color:white; background-color:orange;">小组</mark></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><mark style="color:white; background-color:orangered;">话题</mark></a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="dropdown col-lg-1">
+                <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 10%;">
+                    <img src="头像.JPG" class="img-thumbnail" alt="Cinque Terre" style="padding: 0%;">
+                </button>
+                <div class="dropdown-menu" style="text-align: center; min-width:fit-content;">
+                    <a class="dropdown-item" href="#">主页</a>
+                    <a class="dropdown-item" href="#">通知</a>
+                    <a class="dropdown-item" href="#">登出</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col col-lg-8">
+                <!-- 影视速递 -->
+                <div class="container">
+                    <h5 type="button" style="text-align: center;">影视速递</h5>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                    </div>
+                </div>
+                <br>
+
+                <div class="border"></div>
+
+                <br>
+                <!-- 热门影评 -->
+                <div class="container">
+                    <h5 type="button" style="text-align: center;">热门影评</h5>
+                    <br>
+                    <div class="row" style="align-items:center;">
+                        <div class="col col-lg-3">
+                            <img src="book.jpg" alt="..." class="img-thumbnail" style="width:auto ;height:auto;">
+                        </div>
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="card-title font-weight-bold">Title</p>
+                                    <div class="row" style="align-items:center;">
+                                        <div class="col col-lg-3">
+                                            <p>Author:XXX</p>
+                                        </div>
+                                        <div class="col col-lg-3">
+                                            <p type="button">#TAG</p>
+                                        </div>
+                                        <div class="col col-lg-3">
+                                            <div class="row">
+                                                <img src="./open-iconic-master/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                                <p style="font-size:xx-small;">666</p>
+                                            </div>
+                                        </div>
+                                        <div class="col col-lg-3">
+                                            <p type="button">举报</p>
+                                        </div>
+                                    </div>
+                                    <p class="card-text">《猫和老鼠》以闹剧为特色，描绘了一对水火不容的冤家：汤姆和杰瑞猫鼠之间的战争，片中的汤姆经常使用狡诈的诡计来对付杰瑞，而杰瑞则时常利用汤姆诡计中的漏洞逃脱他的迫害并给予报复。
+                                        <a href="#" class="card-link" style="text-align:right;">查看全文</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row" style="align-items:center;">
+                        <div class="col col-lg-3">
+                            <img src="book.jpg" alt="..." class="img-thumbnail" style="width:auto ;height:auto;">
+                        </div>
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="card-title font-weight-bold">Title</p>
+                                    <div class="row" style="align-items:center;">
+                                        <div class="col col-lg-3">
+                                            <p>Author:XXX</p>
+                                        </div>
+                                        <div class="col col-lg-3">
+                                            <p type="button">#TAG</p>
+                                        </div>
+                                        <div class="col col-lg-3">
+                                            <div class="row">
+                                                <img src="./open-iconic-master/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                                <p style="font-size:xx-small;">666</p>
+                                            </div>
+                                        </div>
+                                        <div class="col col-lg-3">
+                                            <p type="button">举报</p>
+                                        </div>
+                                    </div>
+                                    <p class="card-text">《猫和老鼠》以闹剧为特色，描绘了一对水火不容的冤家：汤姆和杰瑞猫鼠之间的战争，片中的汤姆经常使用狡诈的诡计来对付杰瑞，而杰瑞则时常利用汤姆诡计中的漏洞逃脱他的迫害并给予报复。
+                                        <a href="#" class="card-link" style="text-align:right;">查看全文</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row" style="align-items:center;">
+                        <div class="col col-lg-3">
+                            <img src="book.jpg" alt="..." class="img-thumbnail" style="width:auto ;height:auto;">
+                        </div>
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="card-title font-weight-bold">Title</p>
+                                    <div class="row" style="align-items:center;">
+                                        <div class="col col-lg-3">
+                                            <p>Author:XXX</p>
+                                        </div>
+                                        <div class="col col-lg-3">
+                                            <p type="button">#TAG</p>
+                                        </div>
+                                        <div class="col col-lg-3">
+                                            <div class="row">
+                                                <img src="./open-iconic-master/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                                <p style="font-size:xx-small;">666</p>
+                                            </div>
+                                        </div>
+                                        <div class="col col-lg-3">
+                                            <p type="button">举报</p>
+                                        </div>
+                                    </div>
+                                    <p class="card-text">《猫和老鼠》以闹剧为特色，描绘了一对水火不容的冤家：汤姆和杰瑞猫鼠之间的战争，片中的汤姆经常使用狡诈的诡计来对付杰瑞，而杰瑞则时常利用汤姆诡计中的漏洞逃脱他的迫害并给予报复。
+                                        <a href="#" class="card-link" style="text-align:right;">查看全文</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+            </div>
+
+            <div class="border"></div>
+
+            <!-- 当下最热 -->
+            <div class="col">
+                <div class="container">
+                    <h5 type="button" style="text-align: center;">当下最热</h5>
+                    <br>
+                    <div class="row">
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                        <div class="col">
+                            <img src="book.jpg" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">XXX</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+
+</html>
