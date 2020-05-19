@@ -102,14 +102,13 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = (
                 'title',
-                'section'
+                'content'
                 )
         
 class PostPartForm(forms.ModelForm):
     class Meta:
         model = PostPart
         fields = (
-                'post',
                 'content'
                 )
 
@@ -117,7 +116,6 @@ class PostPartCommentForm(forms.ModelForm):
     class Meta:
         model = PostPartComment
         fields = (
-                'postpart',
                 'content'
                 )
 
@@ -134,7 +132,7 @@ class CommentReportForm(forms.ModelForm):
         model = CommentReport
         fields = (
                 'title',
-                'reason',
+                'content',
                 )
 
 
