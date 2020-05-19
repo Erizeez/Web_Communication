@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import fields
 from django.db.models import signals
+from django.urls import reverse
 import datetime
 from django.utils import timezone
 
@@ -248,6 +249,9 @@ class Post(models.Model):
     
     def description(self):
         return u' %s 发表了主题帖 %s' % (self.author, self.title)
+    
+    def get_absolute_url(self):
+        return reverse("post:pk",  args = [str(self.pk)])
     
     
 class PostPart(models.Model):

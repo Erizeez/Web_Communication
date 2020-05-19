@@ -30,6 +30,13 @@ def get_online_ips_count():
     return 0
 
 
+def admin_check(user, section):
+        while section.parent_section != "self":
+            if user in section.users.all():
+                return True
+            section = section.parent_section
+        return False
+
 def get_forum_info():
     one_day = timedelta(days=1)
     today = now().date()
@@ -275,12 +282,15 @@ class PostCreate(CreateView):
     template_name = 'form.html'
     form_class = PostForm
 
-    def form_valid(self, form, request):
+    def form_valid(self, form):
         captcha = self.request.POST.get('captcha', None)
         formdata = form.cleaned_data
         if self.request.session.get('captcha', None) != captcha:
             return HttpResponse("验证码错误！<a href='/'>返回</a>")
-        user = User.objects.get(username=self.request.user.username)
+        user = User.objects.get(username = self.request.user.username)
+        section_instance = Section.objects.get(name = formdata['section'])
+        if user.privilege == 1 and admin_check(user, section_instance):
+            return HttpResponse("您已被封禁！<a href='/'>返回</a>")
         formdata['author'] = user
         formdata['last_response'] = user
         post_instance = Post(**formdata)
@@ -289,28 +299,20 @@ class PostCreate(CreateView):
         formdata['post'] = post_instance
         postpart_instance = PostPart(**formdata)
         postpart_instance.save()
-        postpart_list = post_instance.postpart_list.all()
-        return render(
-        'post_detail.html', {
-            'post': post_instance,
-            'postpart_list': postpart_list
-        },
-        context_instance=RequestContext(request))   
+ 
     
 #编辑贴
 @login_required(login_url=reverse_lazy('user_login'))
 class PostUpdate(UpdateView):
     model = Post
     template_name = 'form.html'
-    success_url = reverse_lazy('user_post')
-
+    
     
 #删帖
 @login_required(login_url=reverse_lazy('user_login'))
 class PostDelete(DeleteView):
     model = Post
-    template_name = 'delete_confirm.html'
-    success_url = reverse_lazy('user_post')      
+    template_name = 'delete_confirm.html'   
 
 #回帖
 @login_required(login_url=reverse_lazy('user_login'))
@@ -401,19 +403,28 @@ def section_detail(request, section_pk):
 @login_required(login_url=reverse_lazy('user_login'))
 class SearchView(ListView):
     template_name = 'search_result.html'
-    context_object_name = 'post_list'
+    context_object_name = 'target_list'
     paginate_by = PAGE_NUM
 
     def get_context_data(self, **kwargs):
         kwargs['q'] = self.request.GET.get('srchtxt', '')
+        kwargs['section'] = self.request.GET.get('section', '')
         return super(SearchView, self).get_context_data(**kwargs)
 
     def get_queryset(self):
         q = self.request.GET.get('srchtxt', '')
+        section = self.request.GET.get('section', '')
+        section_list = []
+        #
         post_list = Post.objects.only(
             'title',
-            'content').filter(Q(title__icontains=q) | Q(content__icontains=q))
-        return post_list        
+            'section',
+            'content').filter(Q(section in section_list) | Q(title__icontains=q) | Q(content__icontains=q))
+        comment_list = Comment.objects.only(
+            'title',
+            'content').filter(Q(section__icontains=q) | Q(title__icontains=q) | Q(content__icontains=q))
+        target_list = post_list + comment_list
+        return target_list
     
 #验证码
 def captcha(request):
