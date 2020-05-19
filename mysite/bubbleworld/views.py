@@ -414,15 +414,24 @@ class SearchView(ListView):
     def get_queryset(self):
         q = self.request.GET.get('srchtxt', '')
         section = self.request.GET.get('section', '')
-        section_list = []
-        #
-        post_list = Post.objects.only(
-            'title',
-            'section',
-            'content').filter(Q(section in section_list) | Q(title__icontains=q) | Q(content__icontains=q))
-        comment_list = Comment.objects.only(
-            'title',
-            'content').filter(Q(section__icontains=q) | Q(title__icontains=q) | Q(content__icontains=q))
+        
+        if section == "all":
+            post_list = Post.objects.only(
+                'title',
+                'content').filter(Q(title__icontains=q) | Q(content__icontains=q))
+            comment_list = Comment.objects.only(
+                'content').filter(Q(content__icontains=q))
+        else:
+            section_instance = Section.objects.get(name = section)
+            section_list = section_instance.section_parent_section.all()
+            post_list = Post.objects.only(
+                'title',
+                'section',
+                'content').filter(Q(section in section_list) | Q(title__icontains=q) | Q(content__icontains=q))
+            comment_list = Comment.objects.only(
+                'section',
+                'content').filter(Q(section in section_list) | Q(title__icontains=q) | Q(content__icontains=q))
+            
         target_list = post_list + comment_list
         return target_list
     
