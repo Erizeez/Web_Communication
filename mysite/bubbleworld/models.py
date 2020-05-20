@@ -15,7 +15,7 @@ from django.utils import timezone
 class User(AbstractUser):
     avatar = models.CharField(
             max_length = 200,
-            default = '/static/avatar/default.jpg',
+            default = '/static/open-iconic/png/person-3x.png',
             verbose_name = u'头像'
             )
     #权限默认为0，即已注册用户, 1为被封禁，-1为游客
@@ -159,7 +159,7 @@ class Section(models.Model):
             )
     img = models.CharField(
             max_length = 200,
-            default = '/static/avatar/default.jpg',
+            default = '/static/open-iconic/png/person-3x.png',
             verbose_name = u'图标'
             )
     content_number = models.IntegerField(

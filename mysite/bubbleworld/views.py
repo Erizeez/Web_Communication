@@ -133,15 +133,16 @@ class BaseMixin(object):
         context = super(BaseMixin, self).get_context_data(**kwargs)
         try:
             context['navigation_list'] = Navigation.objects.all()
-            context['section_list'] = Section.objects.all()[0:5]
+            context['section_list'] = Section.objects.all()
             context['last_comments'] = Comment.objects.all().order_by(
                 '-created_at')[0:10]
             context['last_posts'] = Post.objects.all().order_by(
                 'created_at')[0:10]
-            if self.request.user.is_authenticated():
+            if self.request.user.is_authenticated:
                 k = Notice.objects.filter(
                     receiver=self.request.user, status=False).count()
                 context['message_number'] = k
+                
         except Exception:
             logger.error(u'[BaseMixin]加载基本信息出错')
         return context
