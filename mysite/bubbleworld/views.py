@@ -72,21 +72,25 @@ def user_login(request, template_name = 'login.html'):
         username = request.POST['username']
         password = request.POST['password']
         next = request.POST['next']
-        
         user = authenticate(
                 username = username,
                 password = password
                 )
         if user is not None:
             login(request, user)
+        else:
+            return HttpResponse(
+                        u'登陆失败'
+                        )
         return HttpResponseRedirect(next)
     else:
         next = request.GET.get('next', None)
         if next is None:
             next = reverse_lazy('index')
         return render(
+                request,
                 template_name, 
-                {'next':next}
+                {'next': next}
                 )
 
 #用户注销
@@ -97,38 +101,15 @@ def user_logout(request):
 #用户注册
 def user_register(request):
     if request.method == 'POST':
-        username = request.POST.get('username', '')
-        password = request.POST.get('password', '')
-        confirm_password = request.POST.get('confirm_password', '')
-        email = request.POST.get('email', '')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        email = request.POST.get('email')
         
         form = UserForm(request.POST)
         errors = []
         if form.is_valid():
             current_site = request.build_absolute_uri
-            site_name = current_site.name
-            domain = current_site.domain
-            title = u'欢迎来到%s' % site_name
-            message = u'你好！%s！\n\n' % username + \
-                u'请记录以下信息：\n' + \
-                u'    用户名：%s\n' % username + \
-                u'    密码：%s\n' % password
-            from_email = None
-            try:
-                send_mail(
-                        title,
-                        message,
-                        from_email,
-                        [email]
-                        )
-            except Exception:
-                logger.error(
-                        u'[USER]用户注册邮件发送失败：[%s] [%s]' % (username, email)
-                        )
-                return HttpResponse(
-                        u'邮件发送失败\n注册失败',
-                        status = 500
-                        )
+           
             new_user = form.save()
             user = authenticate(
                     username = username,
@@ -139,11 +120,12 @@ def user_register(request):
             for k, v in form.errors.items():
                 errors.append(v.as_text())
         return render(
+                request,
                 'user_ok.html', 
                 {'errors':errors}
                 )
     else:
-        return render('register.html')
+        return render(request, 'register.html')
   
 #基本信息
 class BaseMixin(object):

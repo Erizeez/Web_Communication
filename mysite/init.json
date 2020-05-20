@@ -27,7 +27,7 @@
 		"model": "bubbleworld.section",
 		"pk": 2,
 		"fields": {
-			"name": "影视",
+			"name": "电影",
 			"description": "这里有很多影视",
 			"users": "1"
 		}
@@ -73,6 +73,38 @@
 			"description": "1984年执导电影处女作《黄土地》，该片获得第38届洛迦诺国际电影节银豹奖。1987年凭借剧情片《孩子王》获得第8届中国电影金鸡奖导演特别奖。1993年执导的文艺片《霸王别姬》成为首部获得戛纳国际电影节金棕榈奖的中国电影。 1998年执导历史片《荆轲刺秦王》。2002年凭借剧情片《和你在一起》获得第22届中国电影金鸡奖最佳导演。 2005年执导的史诗片《无极》提名美国电视电影金球奖最佳外语片奖。2008年获得第21届东京国际电影节黑泽明奖。",
 			"parent_section": "2",
 			"tags": "1"
+		}
+	},
+	{
+		"model": "bubbleworld.navigation",
+		"pk": 1,
+		"fields": {
+			"name": "书籍",
+			"url": "/bubbleworld/section/1"
+		}
+	},
+	{
+		"model": "bubbleworld.navigation",
+		"pk": 2,
+		"fields": {
+			"name": "影视",
+			"url": "/bubbleworld/section/2"
+		}
+	},
+	{
+		"model": "bubbleworld.navigation",
+		"pk": 3,
+		"fields": {
+			"name": "小组",
+			"url": "/bubbleworld/section/3"
+		}
+	},
+	{
+		"model": "bubbleworld.navigation",
+		"pk": 4,
+		"fields": {
+			"name": "话题",
+			"url": "/bubbleworld/section/4"
 		}
 	}
 ]

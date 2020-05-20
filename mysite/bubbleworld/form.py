@@ -55,7 +55,7 @@ class UserForm(forms.ModelForm):
             User._default_manager.get(username = username)
         except User.DoesNotExist:
             return username
-        raise forms.ValidationError(self.error_messages['duplicat_username'])
+        raise forms.ValidationError(self.error_messages['duplicate_username'])
         
     def clean_confirm_password(self):
         password = self.cleaned_data.get('password')
@@ -74,12 +74,11 @@ class UserForm(forms.ModelForm):
         raise forms.ValidationError(self.error_messages['duplicate_email'])
     
     def save(self, commit = True): 
-        user = super(UserForm).save(commit = False)
-        user.set_password(self.cleaned_data['password'])
+        user = super(UserForm, self).save(commit=False)
+        user.set_password(self.cleaned_data["password"])
         if commit:
             user.save()
-        else:
-            return user
+        return user
         
 class TagForm(forms.ModelForm):
     class Meta:
