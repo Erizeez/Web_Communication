@@ -8,7 +8,6 @@ from bubbleworld.form import UserForm, TagForm, SectionForm, PostForm, PostPartF
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.sites.models import get_current_site
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.utils.timezone import now, timedelta
@@ -106,7 +105,7 @@ def user_register(request):
         form = UserForm(request.POST)
         errors = []
         if form.is_valid():
-            current_site = get_current_site(request)
+            current_site = request.build_absolute_uri
             site_name = current_site.name
             domain = current_site.domain
             title = u'欢迎来到%s' % site_name
@@ -276,7 +275,7 @@ class UserPostView(ListView):
 
     
 #发帖
-@login_required(login_url=reverse_lazy('user_login'))
+
 class PostCreate(CreateView):
     model = Post
     template_name = 'form.html'
@@ -400,7 +399,7 @@ def section_detail(request, section_pk):
 
     
 #搜索（需要细化）
-@login_required(login_url=reverse_lazy('user_login'))
+
 class SearchView(ListView):
     template_name = 'search_result.html'
     context_object_name = 'target_list'
