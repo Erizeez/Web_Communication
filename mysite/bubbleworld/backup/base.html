@@ -6,10 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    {% block css %} 
-    {% endblock %}
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> {% block css %} {% endblock %}
+
     <title>Bubble World</title>
 </head>
 
@@ -29,11 +27,11 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-        
-        <div class="input-group col-lg-4">
+
+            <div class="input-group col-lg-4">
                 <div class="input-group-prepend">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">全部</button>
-                    <div class="dropdown-menu" style="text-align: center; min-width:fit-content;">
+                    <button class="btn btn-outline-secondary dropdown-toggle" id="dLable" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&searchScope</button>
+                    <div class="dropdown-menu" style="text-align: center; min-width:fit-content;" aria-labelledby="dLabel">
                         <a class="dropdown-item" href="#">书籍</a>
                         <a class="dropdown-item" href="#">影视</a>
                         <a class="dropdown-item" href="#">小组</a>
@@ -360,7 +358,7 @@
         <br>
     </div>
 
-    
+
     <br>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

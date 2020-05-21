@@ -6,9 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    {% block css %} 
-    {% endblock %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> {% block css %} {% endblock %}
 
     <title>Bubble World</title>
 </head>
@@ -29,8 +27,8 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-        
-        <div class="input-group col-lg-4">
+
+            <div class="input-group col-lg-4">
                 <div class="input-group-prepend">
                     <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">全部</button>
                     <div class="dropdown-menu" style="text-align: center; min-width:fit-content;">
@@ -48,22 +46,20 @@
             <div class="collapse navbar-collapse col-lg-4" id="collapsibleNavbar">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/bubbleworld"><mark style="color:white; background-color:darkturquoise;">首页</mark></a></li>
+                        <li><a class="nav-link" href="/bubbleworld"><mark style="color:white; background-color:darkturquoise;">首页</mark></a></li>
                         {% for navigation in navigation_list %}
-                        <li><a href={{navigation.url}}><mark style="color:white; background-color:darkturquoise;">{{ navigation.name }}</mark></a></li>
+                        <li><a class="nav-link" href={{navigation.url}}><mark style="color:white; background-color:darkturquoise;">{{ navigation.name }}</mark></a></li>
                         {% endfor %}
                     </li>
                 </ul>
             </div>
 
-            {% block user %} 
-            {% endblock %}
+            {% block user %} {% endblock %}
         </nav>
     </div>
 
-    {% block content %} 
-    {% endblock %}
-    
+    {% block content %} {% endblock %}
+
 
     <br>
     <!-- Optional JavaScript -->

@@ -1,330 +1,349 @@
-{% extends "./base.html" %}
-
-{%block user %} 
+{% extends "./base.html" %} {%block user %}
 
 <ul class="user floatr">
-{% if not user.is_authenticated %}
+    {% if not user.is_authenticated %}
 
-<div class="dropdown col-lg-1">
-    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 10%;">
+    <div class="dropdown col-lg-1">
+        <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 10%;">
         <embed src="/static/open-iconic/svg/menu.svg" alt="Avatar" style="padding: 0%;" width = 28>
     </button>
-    <div class="dropdown-menu" style="text-align: center; min-width:fit-content;">
-        <a class="dropdown-item" href="{% url 'user_login' %}">登陆</a>
-        <a class="dropdown-item" href="{% url 'user_register' %}">注册</a>
+        <div class="dropdown-menu" style="text-align: center; min-width:fit-content;">
+            <a class="dropdown-item" href="{% url 'user_login' %}">登陆</a>
+            <a class="dropdown-item" href="{% url 'user_register' %}">注册</a>
+        </div>
     </div>
-</div>
 
-{% else %}
+    {% else %}
 
-<div class="dropdown col-lg-1">
-    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 10%;">
+    <div class="dropdown col-lg-1">
+        <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 10%;">
         <embed src="/static/open-iconic/svg/person.svg" alt="Avatar" style="padding: 0%;" width = 28>
     </button>
-    <div class="dropdown-menu" style="text-align: center; min-width:fit-content;">
-        <a class="dropdown-item" href="/login">主页</a>
-        <a class="dropdown-item" href="/notice">通知</a>
-        <a class="dropdown-item" href="{% url 'user_logout'%}">登出</a>
+        <div class="dropdown-menu" style="text-align: center; min-width:fit-content;">
+            <a class="dropdown-item" href="/login">主页</a>
+            <a class="dropdown-item" href="/notice">通知</a>
+            <a class="dropdown-item" href="{% url 'user_logout'%}">登出</a>
+        </div>
+    </div>
+
+    {% endif %}
+
+</ul>
+{% endblock %} {% block content %}
+
+<br>
+<div class="container" style="display: flex; flex-direction: column;justify-content: center;text-align: center;">
+    <div id="demo" class="carousel slide" data-ride="carousel">
+
+        <!-- 指示符 -->
+        <ul class="carousel-indicators">
+            <li data-target="#demo" data-slide-to="0" class="active"></li>
+            <li data-target="#demo" data-slide-to="1"></li>
+            <li data-target="#demo" data-slide-to="2"></li>
+        </ul>
+
+        <!-- 轮播图片 -->
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="../../static/img/国实1.jpg" style="height: 480px">
+                <div class="carousel-caption">
+                    <h3>第一张图片描述标题</h3>
+                    <p>描述文字!</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="../../static/img/国实2.jpg" style="height: 480px;">
+                <div class="carousel-caption">
+                    <h3>第二张图片描述标题</h3>
+                    <p>描述文字!</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="../../static/img/国实3.jpg" style="height: 480px;">
+                <div class="carousel-caption">
+                    <h3>第三张图片描述标题</h3>
+                    <p>描述文字!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 左右切换按钮 -->
+        <a class="carousel-control-prev" href="#demo" data-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </a>
+        <a class="carousel-control-next" href="#demo" data-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </a>
+
     </div>
 </div>
 
-{% endif %}
+<br>
 
-</ul>
-
-{% endblock %}
-        
-
-
-{% block content %} 
-
+<!-- 内容板块区 -->
 <div class="container">
-        <div id="demo" class="carousel slide" data-ride="carousel">
+    <div class="row">
 
-            <!-- 指示符 -->
-            <ul class="carousel-indicators">
-                <li data-target="#demo" data-slide-to="0" class="active"></li>
-                <li data-target="#demo" data-slide-to="1"></li>
-                <li data-target="#demo" data-slide-to="2"></li>
-            </ul>
-
-            <!-- 轮播图片 -->
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="国实1.jpg" style="height: 625px;">
-                    <div class="carousel-caption">
-                        <h3>第一张图片描述标题</h3>
-                        <p>描述文字!</p>
-                    </div>
+        <!-- 书籍 -->
+        <div class="col">
+            <h5 style="text-align: center;">流行书籍</h5>
+            <br>
+            <div class="row align-items-center">
+                <div class="col">
+                    <img src="../../static/img/book/1984.jpg" alt="..." class="img-thumbnail">
+                    <p type="button" style="text-align: center;">1984</p>
                 </div>
-                <div class="carousel-item">
-                    <img src="国实2.jpg" style="height: 625px;">
-                    <div class="carousel-caption">
-                        <h3>第二张图片描述标题</h3>
-                        <p>描述文字!</p>
-                    </div>
+                <div class="col">
+                    <img src="../../static/img/book/三体全集.jpg" alt="..." class="img-thumbnail">
+                    <p type="button" style="text-align: center;">三体全集</p>
                 </div>
-                <div class="carousel-item">
-                    <img src="国实3.jpg" style="height: 625px;">
-                    <div class="carousel-caption">
-                        <h3>第三张图片描述标题</h3>
-                        <p>描述文字!</p>
-                    </div>
+                <div class="col">
+                    <img src="../../static/img/book/三国演义（全二册）.jpg" alt="..." class="img-thumbnail">
+                    <p type="button" style="text-align: center;">三国演义</p>
                 </div>
             </div>
+            <div class="row align-items-center">
+                <div class="col">
+                    <img src="../../static/img/book/活着.jpg" alt="..." class="img-thumbnail">
+                    <p type="button" style="text-align: center;">活着</p>
+                </div>
+                <div class="col">
+                    <img src="../../static/img/book/白夜行.jpg" alt="..." class="img-thumbnail">
+                    <p type="button" style="text-align: center;">白夜行</p>
+                </div>
+                <div class="col">
+                    <img src="../../static/img/book/百年孤独.jpg" alt="..." class="img-thumbnail">
+                    <p type="button" style="text-align: center;">百年孤独</p>
+                </div>
+            </div>
+        </div>
 
-            <!-- 左右切换按钮 -->
-            <a class="carousel-control-prev" href="#demo" data-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-            </a>
-            <a class="carousel-control-next" href="#demo" data-slide="next">
-                <span class="carousel-control-next-icon"></span>
-            </a>
+        <div class="border"></div>
 
+        <!-- 影视 -->
+        <div class="col">
+            <h5 style="text-align: center;">流行影视</h5>
+            <br>
+            <div class="row align-items-center">
+                <div class="col">
+                    <img src="../../static/img/films/千与千寻.jpg" alt="..." class="img-thumbnail">
+                    <p type="button" style="text-align: center;">千与千寻</p>
+                </div>
+                <div class="col">
+                    <img src="../../static/img/films/忠犬八公的故事.jpg" alt="..." class="img-thumbnail">
+                    <p type="button" style="text-align: center;">忠犬八公的故事</p>
+                </div>
+                <div class="col">
+                    <img src="../../static/img/films/泰坦尼克号.jpg" alt="..." class="img-thumbnail">
+                    <p type="button" style="text-align: center;">泰坦尼克号</p>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col">
+                    <img src="../../static/img/films/盗梦空间.jpg" alt="..." class="img-thumbnail">
+                    <p type="button" style="text-align: center;">盗梦空间</p>
+                </div>
+                <div class="col">
+                    <img src="../../static/img/films/美丽人生.jpg" alt="..." class="img-thumbnail">
+                    <p type="button" style="text-align: center;">美丽人生</p>
+                </div>
+                <div class="col">
+                    <img src="../../static/img/films/肖申克的救赎.jpg" alt="..." class="img-thumbnail">
+                    <p type="button" style="text-align: center;">肖申克的救赎</p>
+                </div>
+            </div>
         </div>
     </div>
-
     <br>
+    <div class="row">
 
-    <!-- 内容板块区 -->
-    <div class="container">
-        <div class="row">
-
-            <!-- 书籍 -->
-            <div class="col">
-                <h5 style="text-align: center;">流行书籍</h5>
+        <!-- 热评 -->
+        <div class="col">
+            <h5 style="text-align: center;">热门评论</h5>
+            <br>
+            <div class="container">
+                <div class="row">
+                    <div class="card col col-lg-6">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col col-lg-5">
+                                    <p>XX用户</p>
+                                </div>
+                                <div class="col col-lg-4">
+                                    <p>#TAG</p>
+                                </div>
+                                <div class="col col-lg-3">
+                                    <div class="row">
+                                        <img src="../../static/open-iconic/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                        <p style="font-size:xx-small;">666</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text">Some example text. Some example text.</p>
+                        </div>
+                    </div>
+                    <div class="card col col-lg-6">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col col-lg-5">
+                                    <p>XX用户</p>
+                                </div>
+                                <div class="col col-lg-4">
+                                    <p>#TAG</p>
+                                </div>
+                                <div class="col col-lg-3">
+                                    <div class="row">
+                                        <img src="../../static/open-iconic/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                        <p style="font-size:xx-small;">666</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text">Some example text. Some example text.</p>
+                        </div>
+                    </div>
+                </div>
                 <br>
                 <div class="row">
-                    <div class="col">
-                        <img src="book.jpg" alt="..." class="img-thumbnail">
-                        <p type="button" style="text-align: center;">XXX</p>
+                    <div class="card col col-lg-6">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col col-lg-5">
+                                    <p>XX用户</p>
+                                </div>
+                                <div class="col col-lg-4">
+                                    <p>#TAG</p>
+                                </div>
+                                <div class="col col-lg-3">
+                                    <div class="row">
+                                        <img src="../../static/open-iconic/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                        <p style="font-size:xx-small;">666</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text">Some example text. Some example text.</p>
+                        </div>
                     </div>
-                    <div class="col">
-                        <img src="book.jpg" alt="..." class="img-thumbnail">
-                        <p type="button" style="text-align: center;">XXX</p>
-                    </div>
-                    <div class="col">
-                        <img src="book.jpg" alt="..." class="img-thumbnail">
-                        <p type="button" style="text-align: center;">XXX</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <img src="book.jpg" alt="..." class="img-thumbnail">
-                        <p type="button" style="text-align: center;">XXX</p>
-                    </div>
-                    <div class="col">
-                        <img src="book.jpg" alt="..." class="img-thumbnail">
-                        <p type="button" style="text-align: center;">XXX</p>
-                    </div>
-                    <div class="col">
-                        <img src="book.jpg" alt="..." class="img-thumbnail">
-                        <p type="button" style="text-align: center;">XXX</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="border"></div>
-
-            <!-- 影视 -->
-            <div class="col">
-                <h5 style="text-align: center;">流行影视</h5>
-                <br>
-                <div class="row">
-                    <div class="col">
-                        <img src="book.jpg" alt="..." class="img-thumbnail">
-                        <p type="button" style="text-align: center;">XXX</p>
-                    </div>
-                    <div class="col">
-                        <img src="book.jpg" alt="..." class="img-thumbnail">
-                        <p type="button" style="text-align: center;">XXX</p>
-                    </div>
-                    <div class="col">
-                        <img src="book.jpg" alt="..." class="img-thumbnail">
-                        <p type="button" style="text-align: center;">XXX</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <img src="book.jpg" alt="..." class="img-thumbnail">
-                        <p type="button" style="text-align: center;">XXX</p>
-                    </div>
-                    <div class="col">
-                        <img src="book.jpg" alt="..." class="img-thumbnail">
-                        <p type="button" style="text-align: center;">XXX</p>
-                    </div>
-                    <div class="col">
-                        <img src="book.jpg" alt="..." class="img-thumbnail">
-                        <p type="button" style="text-align: center;">XXX</p>
+                    <div class="card col col-lg-6">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col col-lg-5">
+                                    <p>XX用户</p>
+                                </div>
+                                <div class="col col-lg-4">
+                                    <p>#TAG</p>
+                                </div>
+                                <div class="col col-lg-3">
+                                    <div class="row">
+                                        <img src="../../static/open-iconic/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                        <p style="font-size:xx-small;">666</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text">Some example text. Some example text.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <br>
-        <div class="row">
 
-            <!-- 热评 -->
-            <div class="col">
-                <h5 style="text-align: center;">热门评论</h5>
-                <br>
-                <div class="container">
-                    <div class="row">
-                        <div class="card col col-lg-6">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col col-lg-5">
-                                        <p>XX用户</p>
-                                    </div>
-                                    <div class="col col-lg-4">
-                                        <p>#TAG</p>
-                                    </div>
-                                    <div class="col col-lg-3">
-                                        <div class="row">
-                                            <img src="./open-iconic-master/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
-                                            <p style="font-size:xx-small;">666</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="card-text">Some example text. Some example text.</p>
-                            </div>
-                        </div>
-                        <div class="card col col-lg-6">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col col-lg-5">
-                                        <p>XX用户</p>
-                                    </div>
-                                    <div class="col col-lg-4">
-                                        <p>#TAG</p>
-                                    </div>
-                                    <div class="col col-lg-3">
-                                        <div class="row">
-                                            <img src="./open-iconic-master/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
-                                            <p style="font-size:xx-small;">666</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="card-text">Some example text. Some example text.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="card col col-lg-6">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col col-lg-5">
-                                        <p>XX用户</p>
-                                    </div>
-                                    <div class="col col-lg-4">
-                                        <p>#TAG</p>
-                                    </div>
-                                    <div class="col col-lg-3">
-                                        <div class="row">
-                                            <img src="./open-iconic-master/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
-                                            <p style="font-size:xx-small;">666</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="card-text">Some example text. Some example text.</p>
-                            </div>
-                        </div>
-                        <div class="card col col-lg-6">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col col-lg-5">
-                                        <p>XX用户</p>
-                                    </div>
-                                    <div class="col col-lg-4">
-                                        <p>#TAG</p>
-                                    </div>
-                                    <div class="col col-lg-3">
-                                        <div class="row">
-                                            <img src="./open-iconic-master/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
-                                            <p style="font-size:xx-small;">666</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="card-text">Some example text. Some example text.</p>
-                            </div>
-                        </div>
-                    </div>
+        <div class="border"></div>
+
+        <!-- 话题 -->
+        <div class="col col-lg-4">
+            <h5 style="text-align: center;">热门话题</h5>
+            <br>
+            <div class="row">
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
                 </div>
             </div>
-
-            <div class="border"></div>
-
-            <!-- 话题 -->
-            <div class="col col-lg-4">
-                <h5 style="text-align: center;">热门话题</h5>
-                <br>
-                <div class="row">
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
+            <br>
+            <div class="row">
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
                 </div>
-                <br>
-                <div class="row">
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
                 </div>
-                <br>
-                <div class="row">
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
                 </div>
-                <br>
-                <div class="row">
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
-                    <div class="col" style="text-align: center;">
-                        <button type="button" class="btn btn-light">TAG</button>
-                    </div>
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
+                </div>
+                <div class="col" style="text-align: center;">
+                    <button type="button" class="btn btn-light">TAG</button>
                 </div>
             </div>
         </div>
-        <br>
     </div>
+    <br>
+</div>
 
+<br>
+<div class="container">
 
+    <div class="table-responsive-lg" style="text-align: center;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">在线人数</th>
+                    <th scope="col">注册人数</th>
+                    <th scope="col">帖子数</th>
+                    <th scope="col">今日</th>
+                    <th scope="col">昨日</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">{{ online_ips_count }}</th>
+                    <td>{{ foruminfo.account_number }}</td>
+                    <td>{{ foruminfo.post_number }}</td>
+                    <td>{{ foruminfo.today_post_number }}</td>
+                    <td>{{ foruminfo.lastday_post_number }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
-<div class="box sidewidget">
+<!-- <div class="box sidewidget">
     <h5 class="clearfix">论坛统计</h5>
     <div class="list sidebox">
         <ul>
@@ -333,16 +352,16 @@
             <li>帖子数：{{ foruminfo.post_number }}</li>
             <li>今日: {{ foruminfo.today_post_number }}</li>
             <li>昨日: {{ foruminfo.lastday_post_number }}</li>
-            
-                    </ul>
+        </ul>
     </div>
-</div>
+</div> -->
 <!-- BBS状态 End -->
 
 
 
-</div>            </div>
-        <!-- End -->
-    </div>
+</div>
+</div>
+<!-- End -->
+</div>
 
 {% endblock %}
