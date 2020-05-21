@@ -9,6 +9,7 @@ from django.urls import reverse
 import datetime
 from django.utils import timezone
 
+
 # Create your models here.
 
 
@@ -132,6 +133,10 @@ class Section(models.Model):
             default = "",
             max_length = 50
             )
+    # 1-书籍影视主页，2-话题小组主页，3-书籍影视， 4-话题小组
+    section_type = models.IntegerField(
+            default = 0
+            )
     actor = models.CharField(
             default = "",
             max_length = 100
@@ -188,6 +193,9 @@ class Section(models.Model):
     
     def __unicode__(self):
         return self.name
+    
+    def get_absolute_url(self):
+        return reverse('section_detail',  args = [str(self.pk)])
     
     
 class Post(models.Model):

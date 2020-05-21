@@ -362,23 +362,34 @@ class PostPartCommentDelete(DeleteView):
     success_url = reverse_lazy('user_postpart')
     
 #所有版块
-def section_all(request):
+def section_index_all(request):
     section_list = Section.objects.all()
     return render(
         'section_list.html', {'section_list': section_list},
         context_instance=RequestContext(request))     
 
 #单个板块
-def section_detail(request, section_pk):
+def section_index_detail(request, section_pk):
     section_obj = Section.objects.get(pk=section_pk)
-    section_posts = section_obj.post_set.all()
+    sections = section_obj.section_parent_section.all()
 
     return render(
-        'section_detail.html', {
+        request,
+        'section_index_detail.html', {
             'section_obj': section_obj,
-            'section_posts': section_posts
-        },
-        context_instance=RequestContext(request))    
+            'sections': sections
+        }) 
+
+def section_detail(request, section_pk, args):
+    section_obj = Section.objects.get(pk=section_pk)
+    sections = section_obj.section_parent_section.all()
+
+    return render(
+        request,
+        'section_index_detail.html', {
+            'section_obj': section_obj,
+            'sections': sections
+        }) 
 
     
 #搜索（需要细化）
