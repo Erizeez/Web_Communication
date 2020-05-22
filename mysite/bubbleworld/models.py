@@ -123,7 +123,7 @@ class Tag(models.Model):
     
     def __unicode__(self):
         return self.name
-    
+
     
 class Section(models.Model):
     name = models.CharField(
@@ -206,6 +206,10 @@ class Post(models.Model):
             settings.AUTH_USER_MODEL,
             on_delete = models.CASCADE,
             related_name = 'post_author',
+            )
+    #3-话题， 4-小组
+    type_post = models.IntegerField(
+            default = 0
             )
     section = models.ForeignKey(
             Section,
@@ -343,6 +347,10 @@ class Comment(models.Model):
             related_name = 'comment_section',
             on_delete = models.CASCADE
             )
+    #1-书籍， 2-影视
+    type_comment = models.IntegerField(
+            default = 0
+            )
     star = models.IntegerField(
             default = 3
             )
@@ -380,7 +388,8 @@ class Comment(models.Model):
         return u' %s 添加了评论（%s）： %s' % (
                 self.author, self.section, 
                 self.content)
-    
+    def get_absolute_url(self):
+        return reverse('comment_detail',  args = [str(self.pk)])
     
 class CommentReport(models.Model):
     comment = models.ForeignKey(
