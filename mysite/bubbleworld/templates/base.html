@@ -71,13 +71,13 @@ filter: blur(60px);">
     </div>
 
     {% else %}
-
+    <embed src="/static/open-iconic/svg/person.svg" alt="Avatar" style="padding: 0%;" width = 28>
     <div class="dropdown col-lg-1">
-        <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 10%;">
-        <embed src="/static/open-iconic/svg/person.svg" alt="Avatar" style="padding: 0%;" width = 28>
+        <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 10%;">菜单
+        
         </button>
         <div class="dropdown-menu" style="text-align: center; min-width:fit-content;">
-            <a class="dropdown-item" href="/login">主页</a>
+            <a class="dropdown-item" href="/login">个人中心</a>
             <a class="dropdown-item" href="/notice">通知</a>
             <a class="dropdown-item" href="{% url 'user_logout'%}">登出</a>
         </div>

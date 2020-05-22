@@ -79,11 +79,7 @@ def user_login(request, template_name = 'login.html'):
                 )
         if user is not None:
             login(request, user)
-            return render(
-                request,
-                template_name, 
-                {'next': next}
-                )
+            return HttpResponseRedirect(next)
         else:
             messages.success(request, "登录失败")
             return render(
@@ -107,12 +103,11 @@ def user_logout(request):
     return HttpResponseRedirect(reverse_lazy('index'))
 
 #用户注册
-def user_register(request):
+def user_register(request, template_name = 'register.html'):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         email = request.POST.get('email')
-        
         form = UserForm(request.POST)
         errors = []
         if form.is_valid():
@@ -124,14 +119,14 @@ def user_register(request):
                     password = password
                     )
             login(request, user)
+            return HttpResponseRedirect(reverse_lazy('index'))
         else:
             for k, v in form.errors.items():
-                errors.append(v.as_text())
-        return render(
-                request,
-                'user_ok.html', 
-                {'errors':errors}
-                )
+                messages.success(request, v.as_text())
+                return render(
+                    request,
+                    'register.html'
+                    )
     else:
         return render(request, 'register.html')
   
