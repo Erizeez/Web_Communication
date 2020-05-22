@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
+from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View, TemplateView, ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
@@ -78,11 +79,18 @@ def user_login(request, template_name = 'login.html'):
                 )
         if user is not None:
             login(request, user)
+            return render(
+                request,
+                template_name, 
+                {'next': next}
+                )
         else:
-            return HttpResponse(
-                        u'登陆失败'
-                        )
-        return HttpResponseRedirect(next)
+            messages.success(request, "登录失败")
+            return render(
+                request,
+                'login.html'
+                )
+        
     else:
         next = request.GET.get('next', None)
         if next is None:
@@ -190,9 +198,35 @@ def section_index_detail(request, section_pk):
             'uni_obj': uni_obj
         }) 
 
+class SectionView(ListView):
+    template_name = 'section_detail.html'
+    context_object_name = 'target_list'
+    paginate_by = PAGE_NUM
+
+    def get_context_data(self, **kwargs):
+        kwargs['section'] = self.request.GET.get('section', '')
+        return super(SectionView, self).get_context_data(**kwargs)
+
+    def get_queryset(self):
+        section = self.request.GET.get('section', '')
+        
+        section_instance = Section.objects.get(name = section)
+        section_list = section_instance.section_parent_section.all()
+        if section_instance.section_type == 1 and section_instance.section_type == 2:
+            post_list = Post.objects.only(
+                'title',
+                'section',
+                'content').filter(Q(section in section_list))
+            comment_list = Comment.objects.only(
+                'section',
+                'content').filter(Q(section in section_list))
+            
+        target_list = post_list + comment_list
+        return target_list
+
 def section_detail(request, section_pk, args):
     section_obj = Section.objects.get(pk=section_pk)
-    sections = section_obj.section_parent_section.all()
+    sections = section_obj.section_parent_section.all().order_by('created_at')
 
     return render(
         request,

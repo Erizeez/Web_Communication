@@ -1,9 +1,14 @@
 {% extends "./base.html" %}
 
 {% block content %} 
+{% if section_obj.section_type == 1 or section_obj.section_type == 2 %}
 <body>
   <br>
-
+    <div class="border"></div>
+        <a href="">
+            <div style="text-align: center;">全部内容</div>
+        </a>
+    <div class="border"></div>
     <div class="container">
         <div class="row">
             <div class="col col-lg-8">
@@ -101,8 +106,13 @@
             </div>
         </div>
     </div>
-	<div>
-板块:{{ section_obj.name}}; 管理员:{{ section_obj.users }}; 数量:{{section_obj.content_number}}<br>
+{% else %}
+
+
+
+{% endif %}
+<div>
+板块:{{ section_obj.name}}<br/>管理员:{{ section_obj.users }}<br/>数量:{{section_obj.content_number}}<br>
 </div>
 </body>
 {% endblock %}

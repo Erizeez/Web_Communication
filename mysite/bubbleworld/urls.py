@@ -18,7 +18,7 @@ urlpatterns = [
         views.section_index_detail,
         name='section_index_detail'),
     url(r'^section_detail/(?P<section_pk>\d+)/$',
-        views.section_detail,
+        views.SearchView.as_view,
         name='section_detail'),
    # url(r'^postdetail/(?P<post_pk>\d+)/$',
     #    'forum.views.postdetail',

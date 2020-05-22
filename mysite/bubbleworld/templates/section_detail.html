@@ -1,0 +1,44 @@
+{% extends "./base.html" %}
+
+{% block content %} 
+
+<nav aria-label="Page navigation">
+    <ul>
+        {% for article in articles %}
+        <li>
+            {{article.title}}
+        </li>
+        {% endfor %}
+    </ul>
+    <ul class="pagination">
+        <!--#上一页-->
+        <!--当有上一页时-->
+        {% if page_obj.has_previous %}
+        <li><a href="{% url 'book:article_list' %}?page={{ page_obj.previous_page_number }}">上一页</a></li>
+        {% else %}
+        <li class="disabled"><a href="#">上一页</a></li>
+        {% endif %}
+
+        <!--中间的页码，如果是当前页，添加active属性-->
+
+        {% for page in paginator.page_range %}
+        {% if page == page_obj.number %}
+        <li class="active">
+            <a href="{% url 'book:article_list' %}?page={{ page }}">{{ page }}</a>
+        </li>
+        {% else %}
+        <li><a href="{% url 'book:article_list' %}?page={{ page }}">{{ page }}</a></li>
+        {% endif %}
+        {% endfor %}
+
+
+        <!--#下一页-->
+        {% if page_obj.has_next %}
+        <li><a href="{% url 'book:article_list' %}?page={{ page_obj.next_page_number }}">下一页</a></li>
+        {% else %}
+        <li class="disabled"><a href="x">下一页</a></li>
+        {% endif %}
+    </ul>
+</nav>
+
+{% endblock %}
