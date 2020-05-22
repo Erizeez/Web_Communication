@@ -162,7 +162,38 @@ class IndexView(BaseMixin, ListView):
         kwargs['hot_posts'] = self.queryset.order_by("-last_response")[0:10]
         kwargs['hot_comments'] = self.queryset.order_by("-updated_at")[0:10]
         return super(IndexView, self).get_context_data(**kwargs)
-    
+
+#所有版块
+
+def section_index_all(request):
+    section_list = Section.objects.all()
+    return render(
+        'section_list.html', {'section_list': section_list},
+        context_instance=RequestContext(request))     
+
+#单个板块
+def section_index_detail(request, section_pk):
+    section_obj = Section.objects.get(pk=section_pk)
+    sections = section_obj.section_parent_section.all()
+
+    return render(
+        request,
+        'section_index_detail.html', {
+            'navigation_list': Navigation.objects.all(),
+            'section_obj': section_obj,
+            'sections': sections
+        }) 
+
+def section_detail(request, section_pk, args):
+    section_obj = Section.objects.get(pk=section_pk)
+    sections = section_obj.section_parent_section.all()
+
+    return render(
+        request,
+        'section_index_detail.html', {
+            'section_obj': section_obj,
+            'sections': sections
+        }) 
     
 #评论详细界面
 def comment_detail(request, comment_pk):
@@ -361,35 +392,7 @@ class PostPartCommentDelete(DeleteView):
     template_name = 'delete_confirm.html'
     success_url = reverse_lazy('user_postpart')
     
-#所有版块
-def section_index_all(request):
-    section_list = Section.objects.all()
-    return render(
-        'section_list.html', {'section_list': section_list},
-        context_instance=RequestContext(request))     
 
-#单个板块
-def section_index_detail(request, section_pk):
-    section_obj = Section.objects.get(pk=section_pk)
-    sections = section_obj.section_parent_section.all()
-
-    return render(
-        request,
-        'section_index_detail.html', {
-            'section_obj': section_obj,
-            'sections': sections
-        }) 
-
-def section_detail(request, section_pk, args):
-    section_obj = Section.objects.get(pk=section_pk)
-    sections = section_obj.section_parent_section.all()
-
-    return render(
-        request,
-        'section_index_detail.html', {
-            'section_obj': section_obj,
-            'sections': sections
-        }) 
 
     
 #搜索（需要细化）

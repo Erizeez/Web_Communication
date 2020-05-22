@@ -133,7 +133,7 @@ class Section(models.Model):
             default = "",
             max_length = 50
             )
-    # 1-书籍影视主页，2-话题小组主页，3-书籍影视， 4-话题小组
+    # 1-书籍主页，2-影视主页， 3-话题主页， 4-小组主页，5-书籍, 6-影视， 7-话题, 8-小组
     section_type = models.IntegerField(
             default = 0
             )
@@ -164,7 +164,7 @@ class Section(models.Model):
             )
     img = models.CharField(
             max_length = 200,
-            default = '/static/open-iconic/png/person-3x.png',
+            default = '/static/img/book/白夜行.jpg',
             verbose_name = u'图标'
             )
     content_number = models.IntegerField(

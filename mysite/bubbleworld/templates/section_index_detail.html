@@ -1,28 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "./base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    {% block css %} 
-    {% endblock %}
-    
-    <title>Bubble World</title>
-</head>
+{% block content %} 
 <body>
-	<div>
-板块:{{ section_obj.name}}; 管理员:{{ section_obj.users }}; 帖子:{{section_obj.content_number}}<br>
+  <br>
 
-{% for section in sections %}
-<a href="{{ section.get_absolute_url }}" >{{ section.name }}</a>
-      
-      发表于:{{ section.created_at|date:"Y-m-d H:i:s" }};
-      作者:{{ section.author }}；
-   
-	<br>
-{% endfor %}
+    <div class="container">
+        <div class="row">
+            <div class="col col-lg-8">
+                <!-- 新书速递 -->
+                <div class="container">
+                    <h5 type="button" style="text-align: center;">新书速递</h5>
+                    <br>
+                    <div class="row">
+                      {% for section in sections %}
+                        <div class="col">
+                            <img src="{{section.img}}" alt="..." class="img-thumbnail">
+                            <p type="button" style="text-align: center;">{{section.name}}  {{section.author}}</p>
+                        </div>
+                      {% endfor %}
+                    </div>
+                    
+                </div>
+                <br>
+
+                <div class="border"></div>
+	<div>
+板块:{{ section_obj.name}}; 管理员:{{ section_obj.users }}; 数量:{{section_obj.content_number}}<br>
 </div>
 </body>
+{% endblock %}
