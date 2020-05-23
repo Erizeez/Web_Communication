@@ -1,23 +1,18 @@
 {% extends "./base.html" %}
 
 {% block content %} 
-{% if section_obj.section_type == 1 or section_obj.section_type == 2 %}
 <body>
+{% if section_obj.section_type == 1 or section_obj.section_type == 2 %}
   <br>
-    <div class="border"></div>
-        <a href="">
-            <div style="text-align: center;">全部内容</div>
-        </a>
-    <div class="border"></div>
     <div class="container">
         <div class="row">
             <div class="col col-lg-8">
                 <!-- 新书速递 -->
                 <div class="container">
                     {% if section_obj.section_type == 1 %}
-                      <h5 type="button" style="text-align: center;">新书速递</h5>
+                      <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">新书速递</h5>
                     {% else %}
-                      <h5 type="button" style="text-align: center;">影视速递</h5>
+                      <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">影视速递</h5>
                     {% endif %}
                     <br>
                     <div class="row">
@@ -40,9 +35,9 @@
                 <!-- 热门书评 -->
                 <div class="container">
                     {% if section_obj.section_type == 1 %}
-                      <h5 type="button" style="text-align: center;">热门书评</h5>
+                      <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">热门书评</h5>
                     {% else %}
-                      <h5 type="button" style="text-align: center;">热门影评</h5>
+                      <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">热门影评</h5>
                     {% endif %}
                     
                     <br>
@@ -90,7 +85,7 @@
             <!-- 当下最热 -->
             <div class="col">
                 <div class="container">
-                    <h5 type="button" style="text-align: center;">当下最热</h5>
+                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">当下最热</h5>
                     <br>
                     <div class="row">
                         {% for section in sections_hot %}
@@ -105,15 +100,12 @@
                 </div>
             </div>
         </div>
-    </div>
-{% else %}
-<body>
-  <br>
 
-    <div class="border"></div>
+{% else %}
+    <br>
     <div class="container">
-        <div class="row">
-            <div class="col" align="center">
+        <div class="col">
+            <div class="row" align="center">
                 <div class="container">
                     <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">热度最高</h5>              
                     <br>
@@ -158,12 +150,11 @@
                     
                 </div>
                 <br>
-
-                <div class="border"></div>
-
+            </div>
+            <br>
             <div class="border"></div>
-
-            <div class="col">
+            <br>
+            <div class="row">
                 <div class="container">
                     {% if section_obj.section_type == 3 %}
                       <h5 type="button"  style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">最新发布</h5>
@@ -202,14 +193,16 @@
                             </div>
                             
                         </div>
+                        </div>
                     </div>
+           
                         {% endfor %}
                     {% else %}
                       <h5 type="button"  style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">最新建立</h5>
                     
                     <br>
                     <div class="col">
-                        {% for section in sections_hot %}
+                        {% for section in sections_new %}
                         <div class="card col col-lg-6">
                         <div class="card-body">
                             <div class="row">
@@ -236,26 +229,34 @@
                                     {% for tag in section.tags.all %}
                                     <p>#{{tag.name}}</p>
                                     {% endfor %}
-                                </div>
-
-                                
+                                </div>                          
                             </div>
-                            
+                        </div>
                         </div>
                     </div>
-                      {% endfor %}
-                    </div>
+
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
         </div>
-        {% endif %}
-    </div>
-
 
 {% endif %}
-<div>
-板块:{{ section_obj.name}}<br/>管理员:{{ section_obj.users }}<br/>数量:{{section_obj.content_number}}<br>
-</div>
+        <div class="row">
+            <div class="col" align="center">
+                <br>
+                <div class="border"></div>
+                <div style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">
+                    板块:{{ section_obj.name}}<br/>管理员:
+                    {% for user in section_obj.users.all %}
+                        {{user}}&nbsp
+                    {% endfor %}
+                    <br>
+                    数量:{{section_obj.content_number}}<br>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 {% endblock %}
