@@ -1,44 +1,54 @@
 {% extends "./base.html" %}
 
 {% block content %} 
+<body>
 
-<nav aria-label="Page navigation">
-    <ul>
-        {% for article in articles %}
-        <li>
-            {{article.title}}
-        </li>
-        {% endfor %}
-    </ul>
-    <ul class="pagination">
-        <!--#上一页-->
-        <!--当有上一页时-->
-        {% if page_obj.has_previous %}
-        <li><a href="{% url 'book:article_list' %}?page={{ page_obj.previous_page_number }}">上一页</a></li>
-        {% else %}
-        <li class="disabled"><a href="#">上一页</a></li>
-        {% endif %}
+<div id="all_uni">
+	<br>
+    	<div class="container">
+    		<div class="col">
+    			<div class="card">
+                  	<div class="card-body">
+                  		<div class="col">
+                                <div class="row">
+                                	<div class="col" align="center">
+            							<a href="/bubbleworld/post_create/" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a><br>
+            						</div>
+								</div>
+						</div>
+    			</div>
+    		</div>
+    		<br>
 
-        <!--中间的页码，如果是当前页，添加active属性-->
-
-        {% for page in paginator.page_range %}
-        {% if page == page_obj.number %}
-        <li class="active">
-            <a href="{% url 'book:article_list' %}?page={{ page }}">{{ page }}</a>
-        </li>
-        {% else %}
-        <li><a href="{% url 'book:article_list' %}?page={{ page }}">{{ page }}</a></li>
-        {% endif %}
-        {% endfor %}
-
-
-        <!--#下一页-->
-        {% if page_obj.has_next %}
-        <li><a href="{% url 'book:article_list' %}?page={{ page_obj.next_page_number }}">下一页</a></li>
-        {% else %}
-        <li class="disabled"><a href="x">下一页</a></li>
-        {% endif %}
-    </ul>
-</nav>
-
+    {% for uni in uni_list %}
+    			<div class="card">
+                  	<div class="card-body">
+                  		<div class="col">
+                                <div class="row">
+                                	<div class="col">
+            							<a href="{{ uni.get_absolute_url }} " style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">{{ uni.title }}</a><br>
+            						</div>
+            						<div class="col">
+            							<a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:15px;">作者：{{ uni.author }}</a><br>
+            						</div>
+								</div>
+								<div class="row">
+									<div class="col">
+            							<a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:12px;">{{ uni.post.all.0.content }}</a><br>
+            						</div>
+            						<div class="col">
+            							<a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:12px;">发布时间：{{ uni.created_at }}</a><br>
+            						</div>
+								</div>
+						</div>
+    			</div>
+    		</div>
+    		<br>
+    {% endfor %}
+    							
+    				
+		</div>
+	</div>
+</div>
+</body>
 {% endblock %}

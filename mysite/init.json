@@ -123,18 +123,18 @@
 	},
 	{
 		"model": "bubbleworld.navigation",
-		"pk": 3,
+		"pk": 4,
 		"fields": {
 			"name": "小组",
-			"url": "/bubbleworld/section/3"
+			"url": "/bubbleworld/section/4"
 		}
 	},
 	{
 		"model": "bubbleworld.navigation",
-		"pk": 4,
+		"pk": 3,
 		"fields": {
 			"name": "话题",
-			"url": "/bubbleworld/section/4"
+			"url": "/bubbleworld/section/3"
 		}
 	},
 	{
@@ -218,6 +218,38 @@
 		"fields": {
 			"postpart": "1",
 			"content": "一楼评论",
+			"author": "1"
+		}
+	},
+	{
+		"model": "bubbleworld.post",
+		"pk": 2,
+		"fields": {
+			"title": "真就白给呗",
+			"section": "7",
+			"type_post": "3",
+			"author": "1",
+			"content_number": "1",
+			"last_response": "1"
+		}
+	},
+	{
+		"model": "bubbleworld.postpart",
+		"pk": 2,
+		"fields": {
+			"post": "2",
+			"content": "一楼，沙发",
+			"author": "1",
+			"content_number": "1",
+			"last_response": "1"
+		}
+	},
+	{
+		"model": "bubbleworld.postpartcomment",
+		"pk": 2,
+		"fields": {
+			"postpart": "2",
+			"content": "一楼，楼主666",
 			"author": "1"
 		}
 	}

@@ -195,31 +195,24 @@ def section_index_detail(request, section_pk):
             'section_users': section_users
         }) 
 
-class SectionView(ListView):
+class SectionView(BaseMixin, ListView):
     template_name = 'section_detail.html'
-    context_object_name = 'target_list'
+    context_object_name = 'uni_list'
     paginate_by = PAGE_NUM
 
     def get_context_data(self, **kwargs):
-        kwargs['section'] = self.request.GET.get('section', '')
+        kwargs['section'] = self.request.GET.get('section_pk', '')
         return super(SectionView, self).get_context_data(**kwargs)
 
     def get_queryset(self):
-        section = self.request.GET.get('section', '')
-        
-        section_instance = Section.objects.get(name = section)
-        section_list = section_instance.section_parent_section.all()
-        if section_instance.section_type == 1 and section_instance.section_type == 2:
-            post_list = Post.objects.only(
-                'title',
-                'section',
-                'content').filter(Q(section in section_list))
-            comment_list = Comment.objects.only(
-                'section',
-                'content').filter(Q(section in section_list))
+        section = self.request.GET.get('section_pk', '')
+        section_instance = Section.objects.all().filter(pk = section)[0]
+        if section_instance.section_type == 5 and section_instance.section_type == 6:
+            uni_list = section_instance.comment_section.all()
+        else:
+            uni_list = section_instance.post_section.all()
             
-        target_list = post_list + comment_list
-        return target_list
+        return uni_list
 
 def section_detail(request, section_pk, args):
     section_obj = Section.objects.get(pk=section_pk)

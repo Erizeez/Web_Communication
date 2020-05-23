@@ -194,8 +194,7 @@ class Section(models.Model):
     def __unicode__(self):
         return self.name
     
-    def get_absolute_url(self):
-        return reverse('section_detail',  args = [str(self.pk)])
+
     
     
 class Post(models.Model):
@@ -263,7 +262,7 @@ class Post(models.Model):
         return u' %s 发表了主题帖 %s' % (self.author, self.title)
     
     def get_absolute_url(self):
-        return reverse("post:pk",  args = [str(self.pk)])
+        return reverse("post_detail",  args = [str(self.pk)])
     
     
 class PostPart(models.Model):
