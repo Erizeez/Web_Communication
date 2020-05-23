@@ -28,16 +28,16 @@
                                 	<div class="col">
             							<a href="{{ uni.get_absolute_url }} " style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">{{ uni.title }}</a><br>
             						</div>
-            						<div class="col">
-            							<a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:15px;">作者：{{ uni.author }}</a><br>
+            						<div class="col" align="right">
+            							<a style="text-align: right;font-family:雅黑;font-weight:bold;font-size:15px;">作者：{{ uni.author }}</a><br>
             						</div>
 								</div>
 								<div class="row">
 									<div class="col">
-            							<a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:12px;">{{ uni.post.all.0.content }}</a><br>
+            							<a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:12px;">最新回复：{{ uni.post.all.0.content }}</a><br>
             						</div>
-            						<div class="col">
-            							<a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:12px;">发布时间：{{ uni.created_at }}</a><br>
+            						<div class="col" align="right">
+            							<a style="text-align: right;font-family:雅黑;font-weight:bold;font-size:12px;">发布时间：{{ uni.created_at }}</a><br>
             						</div>
 								</div>
 						</div>

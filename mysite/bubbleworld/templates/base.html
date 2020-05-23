@@ -54,7 +54,7 @@ filter: blur(60px);position:fixed;">
             <div class="collapse navbar-collapse col-lg-4" id="collapsibleNavbar">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <li><a class="nav-link" href="/bubbleworld"><mark style="color:darkturquoise; background-color:transparent;">首页</mark></a></li>
+                        
                         {% for navigation in navigation_list %}
                         <li><a class="nav-link" href={{navigation.url}}><mark style="color:darkturquoise; background-color:transparent;">{{ navigation.name }}</mark></a></li>
                         {% endfor %}

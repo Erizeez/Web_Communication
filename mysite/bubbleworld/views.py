@@ -248,8 +248,9 @@ def comment_detail(request, comment_pk):
 def post_detail(request, post_pk):
     post_pk = int(post_pk)
     post = Post.objects.get(pk=post_pk)
+    navigation_list = Navigation.objects.all()
     #间帖列表
-    postpart_list = post.postpart_list.all()
+    postpart_list = post.post.all().order_by("created_at")
     #统计帖子的访问访问次数
     if 'HTTP_X_FORWARDED_FOR' in request.META:
         ip = request.META['HTTP_X_FORWARDED_FOR']
@@ -264,11 +265,12 @@ def post_detail(request, post_pk):
         visited_ips.append(ip)
     cache.set(title, visited_ips, 15 * 60)
     return render(
+        request,
         'post_detail.html', {
             'post': post,
-            'postpart_list': postpart_list
-        },
-        context_instance=RequestContext(request))
+            'postpart_list': postpart_list,
+            'navigation_list': navigation_list
+        })
     
     
 #消息通知

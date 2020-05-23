@@ -245,11 +245,51 @@
 		}
 	},
 	{
+		"model": "bubbleworld.postpart",
+		"pk": 3,
+		"fields": {
+			"post": "2",
+			"content": "二楼，一楼傻逼，鉴定完毕",
+			"author": "1",
+			"content_number": "1",
+			"last_response": "1"
+		}
+	},
+	{
+		"model": "bubbleworld.postpart",
+		"pk": 4,
+		"fields": {
+			"post": "2",
+			"content": "你也网上冲浪啊jhaisdhbfibsdhfbbjhkdsafbkjhbaskjfdbkjlasbdfkj",
+			"author": "1",
+			"content_number": "1",
+			"last_response": "1"
+		}
+	},
+	{
 		"model": "bubbleworld.postpartcomment",
 		"pk": 2,
 		"fields": {
 			"postpart": "2",
 			"content": "一楼，楼主666",
+			"author": "1"
+		}
+	},
+	{
+		"model": "bubbleworld.postpartcomment",
+		"pk": 3,
+		"fields": {
+			"postpart": "2",
+			"content": "起飞",
+			"author": "1"
+		}
+	},
+	{
+		"model": "bubbleworld.postpartcomment",
+		"pk": 4,
+		"fields": {
+			"postpart": "2",
+			"content": "文 艺 复 兴",
 			"author": "1"
 		}
 	}
