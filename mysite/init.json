@@ -1,0 +1,225 @@
+[
+	{
+		"model": "bubbleworld.user",
+		"pk": 1,
+		"fields": {
+			"username": "admin",
+			"password": "88888888"
+		}
+	},
+	{
+		"model": "bubbleworld.tag",
+		"pk": 1,
+		"fields": {
+			"name": "生草"
+		}
+	},
+	{
+		"model": "bubbleworld.section",
+		"pk": 1,
+		"fields": {
+			"name": "书籍",
+			"section_type": "1",
+			"description": "这里有很多书籍",
+			"users": ["1"]
+		}
+	},
+	{
+		"model": "bubbleworld.section",
+		"pk": 2,
+		"fields": {
+			"name": "电影",
+			"section_type": "2",
+			"description": "这里有很多影视",
+			"users": ["1"]
+		}
+	},
+	{
+		"model": "bubbleworld.section",
+		"pk": 3,
+		"fields": {
+			"name": "小组",
+			"section_type": "4",
+			"description": "来参与一个小组",
+			"users": ["1"]
+		}
+	},
+	{
+		"model": "bubbleworld.section",
+		"pk": 4,
+		"fields": {
+			"name": "话题",
+			"section_type": "3",
+			"description": "分享并参与一个话题",
+			"users": ["1"]
+		}
+	},
+	{
+		"model": "bubbleworld.section",
+		"pk": 5,
+		"fields": {
+			"name": "平凡的世界",
+			"author": "路遥",
+			"section_type": "5",
+			"author_description": "路遥（1949年12月2日 [1] —1992年11月17日），本名王卫国，出生于陕北榆林清涧县，中国当代作家，代表作有长篇小说《平凡的世界》《人生》等。 [2] 曾任中国作家协会陕西分会党组成员、副主席。 路遥1949年12月2日出生于陕西陕北山区清涧县一个贫困的农民家庭，7岁时因为家里困难被过继给延川县农村的伯父。曾在延川县立中学学习，1969年回乡务农。这段时间里他做过许多临时性的工作，并在农村一小学中教过一年书。1973年进入延安大学中文系学习，其间开始文学创作。大学毕业后，任《陕西文艺》（今为《延河》）编辑。1980年发表《惊人动魄的一幕》，获得第一届全国优秀中篇小说奖。",
+			"description": "1975年初农民子弟孙少平到原西县高中读书，他贫困，自卑；后对处境相同的地主家庭出身的郝红梅产生情愫，在被同班同学侯玉英发现并当众说破后，与郝红梅关系渐变恶劣，后来郝红梅却与家境优越的顾养民恋爱。少平高中毕业，回到家乡做了一名教师。但他并没有消沉，他与县革委副主任田福军女儿田晓霞建立了友情，在晓霞帮助下关注着外面的世界。少平的哥哥少安一直在家劳动，与村支书田福堂的女儿——县城教师田润叶青梅竹马。少安和润叶互有爱慕之心，却遭到田福堂反对。经过痛苦的煎熬，少安到山西与勤劳善良的秀莲相亲并结了婚，润叶也只得含泪与父亲介绍的一直对她有爱慕之情的李向前结婚。这时农村生活混乱，又遇上了旱灾，田福堂为了加强自己的威信，组织偷挖河坝与上游抢水，不料竟出了人命。为了“农业学大寨”，他好大喜功炸山修田叫人搬家又弄得天怒人怨。生活的航道已改变地步。",
+			"parent_section": "1",
+			"tags": ["1"]
+		}
+	},
+	{
+		"model": "bubbleworld.section",
+		"pk": 6,
+		"fields": {
+			"name": "霸王别姬",
+			"author": "陈凯歌",
+			"section_type": "6",
+			"actor": "张国荣，巩俐，张丰毅",
+			"author_description": "1924年冬天，9岁的小豆子被作妓女的母亲切掉右手上那根畸形的指头后进入关家戏班学戏。戏班里只有师兄小石头同情关照小豆子。 十年过去了，在关师父严厉和残酷的训导下，师兄二人演技很快提高，小豆子取艺名程蝶衣（张国荣饰），演旦角； 小石头取艺名段小楼（张丰毅饰），演生角。俩人合演的《霸王别姬》誉满京城，师兄二人也红极一时。二人约定合演一辈子《霸王别姬》。",
+			"description": "1984年执导电影处女作《黄土地》，该片获得第38届洛迦诺国际电影节银豹奖。1987年凭借剧情片《孩子王》获得第8届中国电影金鸡奖导演特别奖。1993年执导的文艺片《霸王别姬》成为首部获得戛纳国际电影节金棕榈奖的中国电影。 1998年执导历史片《荆轲刺秦王》。2002年凭借剧情片《和你在一起》获得第22届中国电影金鸡奖最佳导演。 2005年执导的史诗片《无极》提名美国电视电影金球奖最佳外语片奖。2008年获得第21届东京国际电影节黑泽明奖。",
+			"parent_section": "2",
+			"tags": ["1"]
+		}
+	},
+	{
+		"model": "bubbleworld.section",
+		"pk": 7,
+		"fields": {
+			"name": "什么爬姿最好看",
+			"users": ["1"],
+			"section_type": "7",
+			"description": "来一起爬",
+			"parent_section": "3",
+			"tags": ["1"]
+		}
+	},
+	{
+		"model": "bubbleworld.section",
+		"pk": 8,
+		"fields": {
+			"name": "神奇的小组",
+			"users": ["1"],
+			"section_type": "8",
+			"description": "很神奇就vans了",
+			"parent_section": "4",
+			"tags": "1"
+		}
+	},
+	{
+		"model": "bubbleworld.navigation",
+		"pk": 1,
+		"fields": {
+			"name": "书籍",
+			"url": "/bubbleworld/section/1"
+		}
+	},
+	{
+		"model": "bubbleworld.navigation",
+		"pk": 2,
+		"fields": {
+			"name": "影视",
+			"url": "/bubbleworld/section/2"
+		}
+	},
+	{
+		"model": "bubbleworld.navigation",
+		"pk": 3,
+		"fields": {
+			"name": "小组",
+			"url": "/bubbleworld/section/3"
+		}
+	},
+	{
+		"model": "bubbleworld.navigation",
+		"pk": 4,
+		"fields": {
+			"name": "话题",
+			"url": "/bubbleworld/section/4"
+		}
+	},
+	{
+		"model": "bubbleworld.comment",
+		"pk": 1,
+		"fields": {
+			"section": "5",
+			"type_comment": "1",
+			"star": "5",
+			"author": "1",
+			"content": "这本书很不错，快来和小编一起讨论吧",
+			"like_number": "6",
+			"dislike_number": "3"
+		}
+	},
+	{
+		"model": "bubbleworld.comment",
+		"pk": 2,
+		"fields": {
+			"section": "5",
+			"type_comment": "1",
+			"star": "5",
+			"author": "1",
+			"content": "这本书很不错，快来和小编一起讨论吧",
+			"like_number": "6",
+			"dislike_number": "3"
+		}
+	},
+	{
+		"model": "bubbleworld.comment",
+		"pk": 3,
+		"fields": {
+			"section": "6",
+			"type_comment": "2",
+			"star": "5",
+			"author": "1",
+			"content": "这电影很不错，快来和小编一起讨论吧",
+			"like_number": "6",
+			"dislike_number": "3"
+		}
+	},
+	{
+		"model": "bubbleworld.comment",
+		"pk": 4,
+		"fields": {
+			"section": "6",
+			"type_comment": "2",
+			"star": "5",
+			"author": "1",
+			"content": "这电影很不错，快来和小编一起讨论吧",
+			"like_number": "6",
+			"dislike_number": "3"
+		}
+	},
+	{
+		"model": "bubbleworld.post",
+		"pk": 1,
+		"fields": {
+			"title": "test",
+			"section": "7",
+			"type_post": "3",
+			"author": "1",
+			"content_number": "1",
+			"last_response": "1"
+		}
+	},
+	{
+		"model": "bubbleworld.postpart",
+		"pk": 1,
+		"fields": {
+			"post": "1",
+			"content": "一楼",
+			"author": "1",
+			"content_number": "1",
+			"last_response": "1"
+		}
+	},
+	{
+		"model": "bubbleworld.postpartcomment",
+		"pk": 1,
+		"fields": {
+			"postpart": "1",
+			"content": "一楼评论",
+			"author": "1"
+		}
+	}
+
+]

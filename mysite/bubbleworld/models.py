@@ -5,75 +5,21 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import fields
 from django.db.models import signals
+from django.urls import reverse
 import datetime
+from django.utils import timezone
+
 
 # Create your models here.
-
-class Permission(models.Model):
-    name = models.CharField(
-            max_length = 30,
-            unique = True
-            )
-    access_permission = models.BooleanField(
-            default = False
-            )
-    add_permission = models.BooleanField(
-            default = False
-            )
-    modify_permission = models.BooleanField(
-            default = False
-            )
-    delete_permission = models.BooleanField(
-            default = False
-            )
-    created_time = models.DateTimeField(
-            u'创建时间',
-            default = datetime.datetime.now
-            )
-    
-    class Meta:
-        db_table = 'permission'
-        verbose_name = u'权限'
-        verbose_name_plural = u'权限'
-        ordering = ['-created_time']
-    
-    def __unicode__(self):
-        return self.name
-
-
-class Group(models.Model):
-    name = models.CharField(
-            max_length = 20,
-            unique = True
-            )
-    permissions = models.ManyToManyField(
-            'Permission',
-            blank = True,
-          #  null = True,
-            related_name = 'permissions'
-            )
-    created_time = models.DateTimeField(
-            u'创建时间',
-            default = datetime.datetime.now
-            )
-    
-    class Meta:
-        db_table = 'group'
-        verbose_name = u'用户组'
-        verbose_name_plural = u'用户组'
-        ordering = ['-created_time']
-    
-    def __unicode__(self):
-        return self.name
 
 
 class User(AbstractUser):
     avatar = models.CharField(
             max_length = 200,
-            default = '/static/avatar/default.jpg',
+            default = '/static/open-iconic/png/person-3x.png',
             verbose_name = u'头像'
             )
-    #权限默认为0，即已注册用户,1为管理员，2为被封禁，-1为游客
+    #权限默认为0，即已注册用户, 1为被封禁，-1为游客
     privilege = models.CharField(
             max_length = 200,
             default = 0,
@@ -85,20 +31,12 @@ class User(AbstractUser):
         #   null = True,
             related_name = 'followto'
             )    
-    
-    groups = models.ManyToManyField(
-            'Group',
-            blank = True,
-         #   null = True,
-            related_name = 'groups'
-            )
     black_list = models.ManyToManyField(
             'self',
             blank = True,
          #   null = True,
             related_name = 'black_list'
             )
-    ip_address = models.GenericIPAddressField()
     
     class Meta:
         db_table = 'user'
@@ -174,7 +112,7 @@ class Tag(models.Model):
             )
     created_time = models.DateTimeField(
             u'创建时间',
-            default = datetime.datetime.now
+            default = timezone.now
             )
     
     class Meta:
@@ -185,11 +123,27 @@ class Tag(models.Model):
     
     def __unicode__(self):
         return self.name
-    
+
     
 class Section(models.Model):
     name = models.CharField(
-            max_length = 20
+            max_length = 50
+            )
+    author = models.CharField(
+            default = "",
+            max_length = 50
+            )
+    # 1-书籍主页，2-影视主页， 3-话题主页， 4-小组主页，5-书籍, 6-影视， 7-话题, 8-小组
+    section_type = models.IntegerField(
+            default = 0
+            )
+    actor = models.CharField(
+            default = "",
+            max_length = 100
+            )
+    author_description = models.CharField(
+            max_length = 2000,
+            verbose_name = u'作者描述'
             )
     users = models.ManyToManyField(
             'User',
@@ -205,12 +159,12 @@ class Section(models.Model):
             related_name = 'section_parent_section',
             )
     description = models.CharField(
-            max_length = 200,
+            max_length = 2000,
             verbose_name = u'描述'
             )
     img = models.CharField(
             max_length = 200,
-            default = '/static/avatar/default.jpg',
+            default = '/static/img/book/白夜行.jpg',
             verbose_name = u'图标'
             )
     content_number = models.IntegerField(
@@ -225,10 +179,10 @@ class Section(models.Model):
             )
     
     created_at = models.DateTimeField(
-            auto_now_add = True
+            default = timezone.now
             )
     updated_at = models.DateTimeField(
-            auto_now = True
+            default = timezone.now
             )
 
     class Meta:
@@ -240,6 +194,9 @@ class Section(models.Model):
     def __unicode__(self):
         return self.name
     
+    def get_absolute_url(self):
+        return reverse('section_detail',  args = [str(self.pk)])
+    
     
 class Post(models.Model):
     title = models.CharField(
@@ -249,6 +206,10 @@ class Post(models.Model):
             settings.AUTH_USER_MODEL,
             on_delete = models.CASCADE,
             related_name = 'post_author',
+            )
+    #3-话题， 4-小组
+    type_post = models.IntegerField(
+            default = 0
             )
     section = models.ForeignKey(
             Section,
@@ -264,7 +225,7 @@ class Post(models.Model):
     last_response = models.ForeignKey(
             settings.AUTH_USER_MODEL,
             on_delete = models.CASCADE,
-            related_name = 'last_responce',
+            related_name = 'post_last_responce',
             )
     
     upper_placed = models.BooleanField(
@@ -283,10 +244,10 @@ class Post(models.Model):
             )
     
     created_at = models.DateTimeField(
-            auto_now_add = True
+            default = timezone.now
             )
     updated_at = models.DateTimeField(
-            auto_now = True
+            default = timezone.now
             )
     
     class Meta:
@@ -301,6 +262,9 @@ class Post(models.Model):
     def description(self):
         return u' %s 发表了主题帖 %s' % (self.author, self.title)
     
+    def get_absolute_url(self):
+        return reverse("post:pk",  args = [str(self.pk)])
+    
     
 class PostPart(models.Model):
     post = models.ForeignKey(
@@ -313,19 +277,21 @@ class PostPart(models.Model):
             related_name = 'postpart_author',
             on_delete = models.CASCADE
             )
-    parent_postpart = models.ForeignKey(
-            'self',
-            blank = True,
-            null = True,
-            related_name = 'child_postpart',
-            on_delete = models.CASCADE
-            )
     content = models.TextField()
+    
+    content_number = models.IntegerField(
+            default = 1
+            )
+    last_response = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            on_delete = models.CASCADE,
+            related_name = 'postpart_last_responce',
+            )
     created_at = models.DateTimeField(
-            auto_now_add = True
+            default = timezone.now
             )
     updated_at = models.DateTimeField(
-            auto_now = True
+            default = timezone.now
             )
     
     class Meta:
@@ -341,13 +307,49 @@ class PostPart(models.Model):
         return u' %s 回复了帖子（%s）： %s' % (
                 self.author, self.post, 
                 self.content)
+
+class PostPartComment(models.Model):
+    postpart =  models.ForeignKey(
+            PostPart,
+            related_name = 'postpart',
+            on_delete = models.CASCADE
+            )
+    author = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            related_name = 'postpartcomment_author',
+            on_delete = models.CASCADE
+            )
+    content = models.TextField()
+    created_at = models.DateTimeField(
+            default = timezone.now
+            )
+    updated_at = models.DateTimeField(
+            default = timezone.now
+            )
     
+    class Meta:
+        db_table = 'postpartcomment'
+        verbose_name = u'间贴评论'
+        verbose_name_plural = u'间贴评论'
+        ordering = ['-created_at']
+    
+    def __unicode__(self):
+        return self.title
+    
+    def description(self):
+        return u' %s 回复了帖子（%s）： %s' % (
+                self.author, self.postpart.post, 
+                self.content)
 
 class Comment(models.Model):
     section = models.ForeignKey(
             Section,
             related_name = 'comment_section',
             on_delete = models.CASCADE
+            )
+    #1-书籍， 2-影视
+    type_comment = models.IntegerField(
+            default = 0
             )
     star = models.IntegerField(
             default = 3
@@ -367,10 +369,10 @@ class Comment(models.Model):
             )
     
     created_at = models.DateTimeField(
-            auto_now_add = True
+            default = timezone.now
             )
     updated_at = models.DateTimeField(
-            auto_now = True
+            default = timezone.now
             )
     
     class Meta:
@@ -386,7 +388,8 @@ class Comment(models.Model):
         return u' %s 添加了评论（%s）： %s' % (
                 self.author, self.section, 
                 self.content)
-    
+    def get_absolute_url(self):
+        return reverse('comment_detail',  args = [str(self.pk)])
     
 class CommentReport(models.Model):
     comment = models.ForeignKey(
@@ -408,10 +411,10 @@ class CommentReport(models.Model):
     reason = models.TextField()
     
     created_at = models.DateTimeField(
-            auto_now_add = True
+            default = timezone.now
             )
     updated_at = models.DateTimeField(
-            auto_now = True
+            default = timezone.now
             )
     
     class Meta:

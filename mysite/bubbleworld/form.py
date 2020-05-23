@@ -1,6 +1,6 @@
 #coding:utf-8
 from django import forms
-from bubbleworld.models import User, Tag, Section, Post, PostPart, Comment, CommentReport, Message
+from bubbleworld.models import User, Tag, Section, Post, PostPart, PostPartComment, Comment, CommentReport, Message
 
 
 class UserForm(forms.ModelForm):
@@ -55,7 +55,7 @@ class UserForm(forms.ModelForm):
             User._default_manager.get(username = username)
         except User.DoesNotExist:
             return username
-        raise forms.ValidationError(self.error_messages['duplicat_username'])
+        raise forms.ValidationError(self.error_messages['duplicate_username'])
         
     def clean_confirm_password(self):
         password = self.cleaned_data.get('password')
@@ -74,12 +74,11 @@ class UserForm(forms.ModelForm):
         raise forms.ValidationError(self.error_messages['duplicate_email'])
     
     def save(self, commit = True): 
-        user = super(UserForm).save(commit = False)
-        user.set_password(self.cleaned_data['password'])
+        user = super(UserForm, self).save(commit=False)
+        user.set_password(self.cleaned_data["password"])
         if commit:
             user.save()
-        else:
-            return user
+        return user
         
 class TagForm(forms.ModelForm):
     class Meta:
@@ -102,7 +101,7 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = (
                 'title',
-                'section',
+                'section'
                 )
         
 class PostPartForm(forms.ModelForm):
@@ -110,7 +109,14 @@ class PostPartForm(forms.ModelForm):
         model = PostPart
         fields = (
                 'post',
-                'parent_postpart',
+                'content'
+                )
+
+class PostPartCommentForm(forms.ModelForm):
+    class Meta:
+        model = PostPartComment
+        fields = (
+                'postpart',
                 'content'
                 )
 
@@ -119,6 +125,7 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = (
                 'star',
+                'section',
                 'content'
                 )
         
@@ -127,6 +134,7 @@ class CommentReportForm(forms.ModelForm):
         model = CommentReport
         fields = (
                 'title',
+                'comment',
                 'reason',
                 )
 
