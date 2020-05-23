@@ -179,6 +179,7 @@ def section_index_detail(request, section_pk):
     section_obj = Section.objects.get(pk=section_pk)
     sections_new= section_obj.section_parent_section.all().order_by('created_at')
     sections_hot= section_obj.section_parent_section.all().order_by('content_number')
+    section_users = section_obj.users.all()
     if section_obj.section_type == 1 or section_obj.section_type == 2:
         uni_obj = Comment.objects.all().filter(type_comment=section_obj.section_type).order_by('like_number')
     else:
@@ -190,7 +191,8 @@ def section_index_detail(request, section_pk):
             'section_obj': section_obj,
             'sections_new': sections_new,
             'sections_hot': sections_hot,
-            'uni_obj': uni_obj
+            'uni_obj': uni_obj,
+            'section_users': section_users
         }) 
 
 class SectionView(ListView):

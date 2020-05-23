@@ -65,7 +65,7 @@
                                         </div>
                                         <div class="col col-lg-3">
                                             <div class="row">
-                                                <img src="./open-iconic-master/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                                <img src="/static/open-iconic/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
                                                 <p style="font-size:xx-small;">666</p>
                                             </div>
                                         </div>
@@ -119,27 +119,40 @@
                     <br>
                     <div class="col">
                       {% for section in sections_hot %}
-                      <a  href="{{section.get_absolute_url}}">
                         <div class="card col col-lg-6">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col col-lg-5">
-                                    <p>{{section.user}}</p>
+                                <div class="col">
+                                    {{section.name}}
                                 </div>
                                 <div class="col col-lg-4">
-                                    <p>#TAG</p>
-                                </div>
-                                <div class="col col-lg-3">
                                     <div class="row">
-                                        <img src="../../static/open-iconic/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
-                                        <p style="font-size:xx-small;">666</p>
+                                        <img src="/static/open-iconic/svg/box.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                        <p style="font-size:xx-small;">&nbsp&nbsp{{section.content_number}}</p>
                                     </div>
                                 </div>
                             </div>
-                            <p class="card-text">Some example text. Some example text.</p>
+                            
+                            <div class="row">
+
+                                <div class="col">
+                                    管理员：
+                                    {% for user in section.users.all %}
+                                    {{user}}&nbsp
+                                    {% endfor %}
+                                </div>
+                                <div class="col">
+                                    {% for tag in section.tags.all %}
+                                    <p>#{{tag.name}}</p>
+                                    {% endfor %}
+                                </div>
+
+                                
+                            </div>
+                            
                         </div>
                     </div>
-                      </a>
+                      
                       {% endfor %}
                     </div>
                     
@@ -153,21 +166,89 @@
             <div class="col">
                 <div class="container">
                     {% if section_obj.section_type == 3 %}
-                      <h5 type="button" style="text-align: center;">最新发布</h5>
+                      <h5 type="button"  style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">最新发布</h5>
+                      <br>
+                    <div class="col">
+                      {% for section in sections_new %}
+                        <div class="card col col-lg-6">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    {{section.name}}
+                                </div>
+                                <div class="col col-lg-4">
+                                    <div class="row">
+                                        <img src="/static/open-iconic/svg/box.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                        <p style="font-size:xx-small;">&nbsp&nbsp{{section.content_number}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+
+                                <div class="col">
+                                    管理员：
+                                    {% for user in section.users.all %}
+                                    {{user}}&nbsp
+                                    {% endfor %}
+                                </div>
+                                <div class="col">
+                                    {% for tag in section.tags.all %}
+                                    <p>#{{tag.name}}</p>
+                                    {% endfor %}
+                                </div>
+
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                        {% endfor %}
                     {% else %}
-                      <h5 type="button" style="text-align: center;">最新建立</h5>
-                    {% endif %}
+                      <h5 type="button"  style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">最新建立</h5>
+                    
                     <br>
-                    <div class="row">
+                    <div class="col">
                         {% for section in sections_hot %}
-                        <a  href="{{section.get_absolute_url}}">
-                          
-                        </a>
+                        <div class="card col col-lg-6">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    {{section.name}}
+                                </div>
+                                <div class="col col-lg-4">
+                                    <div class="row">
+                                        <img src="/static/open-iconic/svg/box.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                        <p style="font-size:xx-small;">&nbsp&nbsp{{section.content_number}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+
+                                <div class="col">
+                                    管理员：
+                                    {% for user in section.users.all %}
+                                    {{user}}&nbsp
+                                    {% endfor %}
+                                </div>
+                                <div class="col">
+                                    {% for tag in section.tags.all %}
+                                    <p>#{{tag.name}}</p>
+                                    {% endfor %}
+                                </div>
+
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
                       {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 
 
@@ -176,4 +257,5 @@
 板块:{{ section_obj.name}}<br/>管理员:{{ section_obj.users }}<br/>数量:{{section_obj.content_number}}<br>
 </div>
 </body>
+
 {% endblock %}
