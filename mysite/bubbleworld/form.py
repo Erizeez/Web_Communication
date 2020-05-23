@@ -101,23 +101,20 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = (
                 'title',
-                'section'
                 )
         
 class PostPartForm(forms.ModelForm):
     class Meta:
         model = PostPart
         fields = (
-                'post',
-                'content'
+                'content',
                 )
 
 class PostPartCommentForm(forms.ModelForm):
     class Meta:
         model = PostPartComment
         fields = (
-                'postpart',
-                'content'
+                'content',
                 )
 
 class CommentForm(forms.ModelForm):

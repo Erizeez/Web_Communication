@@ -12,7 +12,10 @@
                   		<div class="col">
                                 <div class="row">
                                 	<div class="col" align="center">
-            							<a href="/bubbleworld/post_create/" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a><br>
+                                		<form id="myform" method="get" action="{% url 'post_create' %}">
+                        					<input name="section_pk" type="text" value="{{section_obj.pk}}" hidden>
+                            				<a onclick="document.getElementById('myform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a>
+                        				</form>
             						</div>
 								</div>
 						</div>

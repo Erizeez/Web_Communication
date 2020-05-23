@@ -14,7 +14,10 @@
                                     <a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">{{ post.title }}</a><br>
                                 </div>
                                 <div class="col" align="right">
-                                    <a href="/bubbleworld/postpart_create/" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">回复</a><br>
+                                    <form id="myform" method="get" action="{% url 'postpart_create' %}">
+                                            <input name="post_pk" type="text" value="{{post.pk}}" hidden>
+                                            <a onclick="document.getElementById('myform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">回复</a>
+                                        </form>
                                 </div>
                         </div>
                      </div>

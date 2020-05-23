@@ -15,7 +15,7 @@ from django.utils.timezone import now, timedelta
 from datetime import datetime
 from django.core.cache import cache
 from bubbleworld.captcha import create_captcha
-from io import StringIO
+from io import BytesIO
 import logging
 # Create your views here.
 
@@ -322,9 +322,9 @@ class UserPostView(ListView):
     
 #发帖
 
-class PostCreate(CreateView):
+class PostCreate(BaseMixin, CreateView):
     model = Post
-    template_name = 'form.html'
+    template_name = 'post_create.html'
     form_class = PostForm
 
     def form_valid(self, form):
@@ -340,10 +340,7 @@ class PostCreate(CreateView):
         formdata['last_response'] = user
         post_instance = Post(**formdata)
         post_instance.save()
-        
-        formdata['post'] = post_instance
-        postpart_instance = PostPart(**formdata)
-        postpart_instance.save()
+    
  
     
 #编辑贴
@@ -360,8 +357,25 @@ class PostDelete(DeleteView):
     template_name = 'delete_confirm.html'   
 
 #回帖
-@login_required(login_url=reverse_lazy('user_login'))
-def create_PostPart(request):
+class PostPartCreate(BaseMixin, CreateView):
+    model = PostPart
+    template_name = 'postpart_create.html'
+    form_class = PostPartForm
+
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        if self.request.session.get('captcha', None) != captcha:
+            return HttpResponse("验证码错误！<a href='/'>返回</a>")
+        user = User.objects.get(username = self.request.user.username)
+        section_instance = Section.objects.get(name = formdata['section'])
+        if user.privilege == 1 and admin_check(user, section_instance):
+            return HttpResponse("您已被封禁！<a href='/'>返回</a>")
+        formdata['author'] = user
+        formdata['last_response'] = user
+        postpart_instance = PostPart(**formdata)
+        postpart_instance.save()
+'''
     if request.method == 'POST':
         content = request.POST.get("comment", "")
         post_id = request.POST.get("post_id", "")
@@ -375,7 +389,7 @@ def create_PostPart(request):
         post_instance.save()
 
     return HttpResponse("回复成功") 
-
+'''
 #编辑回帖
 @login_required(login_url=reverse_lazy('user_login'))
 class PostPartUpdate(UpdateView):
@@ -465,10 +479,10 @@ class SearchView(ListView):
     
 #验证码
 def captcha(request):
-    mstream = StringIO.StringIO()
+    mstream = BytesIO()
     captcha = create_captcha()
     img = captcha[0]
-    img.save(mstream, "GIF")
+    img.save(mstream, "PNG")
     request.session['captcha'] = captcha[1]
     return HttpResponse(mstream.getvalue(), "image/gif")
     

@@ -6,6 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import fields
 from django.db.models import signals
 from django.urls import reverse
+from ckeditor.fields import RichTextField
 import datetime
 from django.utils import timezone
 
@@ -276,7 +277,7 @@ class PostPart(models.Model):
             related_name = 'postpart_author',
             on_delete = models.CASCADE
             )
-    content = models.TextField()
+    content = RichTextField()
     
     content_number = models.IntegerField(
             default = 1
@@ -358,7 +359,7 @@ class Comment(models.Model):
             related_name = 'comment_author',
             on_delete = models.CASCADE
             )
-    content = models.TextField()
+    content = RichTextField()
     
     like_number = models.IntegerField(
             default = 0
