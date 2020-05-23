@@ -244,10 +244,10 @@ class Post(models.Model):
             )
     
     created_at = models.DateTimeField(
-            auto_now_add = True
+            default = timezone.now
             )
     updated_at = models.DateTimeField(
-            auto_now = True
+            default = timezone.now
             )
     
     class Meta:
@@ -288,10 +288,10 @@ class PostPart(models.Model):
             related_name = 'postpart_last_responce',
             )
     created_at = models.DateTimeField(
-            auto_now_add = True
+            default = timezone.now
             )
     updated_at = models.DateTimeField(
-            auto_now = True
+            default = timezone.now
             )
     
     class Meta:
@@ -321,10 +321,10 @@ class PostPartComment(models.Model):
             )
     content = models.TextField()
     created_at = models.DateTimeField(
-            auto_now_add = True
+            default = timezone.now
             )
     updated_at = models.DateTimeField(
-            auto_now = True
+            default = timezone.now
             )
     
     class Meta:
@@ -369,10 +369,10 @@ class Comment(models.Model):
             )
     
     created_at = models.DateTimeField(
-            auto_now_add = True
+            default = timezone.now
             )
     updated_at = models.DateTimeField(
-            auto_now = True
+            default = timezone.now
             )
     
     class Meta:
@@ -411,10 +411,10 @@ class CommentReport(models.Model):
     reason = models.TextField()
     
     created_at = models.DateTimeField(
-            auto_now_add = True
+            default = timezone.now
             )
     updated_at = models.DateTimeField(
-            auto_now = True
+            default = timezone.now
             )
     
     class Meta:

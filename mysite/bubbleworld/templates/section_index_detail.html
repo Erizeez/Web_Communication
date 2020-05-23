@@ -107,7 +107,68 @@
         </div>
     </div>
 {% else %}
+<body>
+  <br>
 
+    <div class="border"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col" align="center">
+                <div class="container">
+                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">热度最高</h5>              
+                    <br>
+                    <div class="col">
+                      {% for section in sections_hot %}
+                      <a  href="{{section.get_absolute_url}}">
+                        <div class="card col col-lg-6">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col col-lg-5">
+                                    <p>{{section.user}}</p>
+                                </div>
+                                <div class="col col-lg-4">
+                                    <p>#TAG</p>
+                                </div>
+                                <div class="col col-lg-3">
+                                    <div class="row">
+                                        <img src="../../static/open-iconic/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                        <p style="font-size:xx-small;">666</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text">Some example text. Some example text.</p>
+                        </div>
+                    </div>
+                      </a>
+                      {% endfor %}
+                    </div>
+                    
+                </div>
+                <br>
+
+                <div class="border"></div>
+
+            <div class="border"></div>
+
+            <div class="col">
+                <div class="container">
+                    {% if section_obj.section_type == 3 %}
+                      <h5 type="button" style="text-align: center;">最新发布</h5>
+                    {% else %}
+                      <h5 type="button" style="text-align: center;">最新建立</h5>
+                    {% endif %}
+                    <br>
+                    <div class="row">
+                        {% for section in sections_hot %}
+                        <a  href="{{section.get_absolute_url}}">
+                          
+                        </a>
+                      {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 {% endif %}

@@ -82,6 +82,30 @@
 		}
 	},
 	{
+		"model": "bubbleworld.section",
+		"pk": 7,
+		"fields": {
+			"name": "什么爬姿最好看",
+			"users": "1",
+			"section_type": "7",
+			"description": "来一起爬",
+			"parent_section": "3",
+			"tags": "1"
+		}
+	},
+	{
+		"model": "bubbleworld.section",
+		"pk": 8,
+		"fields": {
+			"name": "神奇的小组",
+			"users": "1",
+			"section_type": "8",
+			"description": "很神奇就vans了",
+			"parent_section": "4",
+			"tags": "1"
+		}
+	},
+	{
 		"model": "bubbleworld.navigation",
 		"pk": 1,
 		"fields": {
@@ -112,5 +136,90 @@
 			"name": "话题",
 			"url": "/bubbleworld/section/4"
 		}
+	},
+	{
+		"model": "bubbleworld.comment",
+		"pk": 1,
+		"fields": {
+			"section": "5",
+			"type_comment": "1",
+			"star": "5",
+			"author": "1",
+			"content": "这本书很不错，快来和小编一起讨论吧",
+			"like_number": "6",
+			"dislike_number": "3"
+		}
+	},
+	{
+		"model": "bubbleworld.comment",
+		"pk": 2,
+		"fields": {
+			"section": "5",
+			"type_comment": "1",
+			"star": "5",
+			"author": "1",
+			"content": "这本书很不错，快来和小编一起讨论吧",
+			"like_number": "6",
+			"dislike_number": "3"
+		}
+	},
+	{
+		"model": "bubbleworld.comment",
+		"pk": 3,
+		"fields": {
+			"section": "6",
+			"type_comment": "2",
+			"star": "5",
+			"author": "1",
+			"content": "这电影很不错，快来和小编一起讨论吧",
+			"like_number": "6",
+			"dislike_number": "3"
+		}
+	},
+	{
+		"model": "bubbleworld.comment",
+		"pk": 4,
+		"fields": {
+			"section": "6",
+			"type_comment": "2",
+			"star": "5",
+			"author": "1",
+			"content": "这电影很不错，快来和小编一起讨论吧",
+			"like_number": "6",
+			"dislike_number": "3"
+		}
+	},
+	{
+		"model": "bubbleworld.post",
+		"pk": 1,
+		"fields": {
+			"title": "test",
+			"section": "7",
+			"type_post": "3",
+			"author": "1",
+			"content_number": "1",
+			"last_response": "1"
+		}
+	},
+	{
+		"model": "bubbleworld.postpart",
+		"pk": 1,
+		"fields": {
+			"post": "1",
+			"content": "一楼",
+			"author": "1",
+			"content_number": "1",
+			"last_response": "1"
+		}
+	},
+	{
+		"model": "bubbleworld.postpartcomment",
+		"pk": 1,
+		"fields": {
+			"postpart": "1",
+			"content": "一楼评论",
+			"author": "1"
+		}
 	}
+
 ]
