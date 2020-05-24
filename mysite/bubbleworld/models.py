@@ -200,7 +200,8 @@ class Section(models.Model):
     
 class Post(models.Model):
     title = models.CharField(
-            max_length = 20
+            max_length = 20,
+            verbose_name = u'标题'
             )
     author = models.ForeignKey(
             settings.AUTH_USER_MODEL,
@@ -277,7 +278,9 @@ class PostPart(models.Model):
             related_name = 'postpart_author',
             on_delete = models.CASCADE
             )
-    content = RichTextField()
+    content = RichTextField(
+            verbose_name = u'内容'
+            )
     
     content_number = models.IntegerField(
             default = 1
@@ -319,7 +322,9 @@ class PostPartComment(models.Model):
             related_name = 'postpartcomment_author',
             on_delete = models.CASCADE
             )
-    content = models.TextField()
+    content = models.TextField(
+            verbose_name = u'内容'    
+            )
     created_at = models.DateTimeField(
             default = timezone.now
             )

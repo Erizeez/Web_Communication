@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View, TemplateView, ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from bubbleworld.models import User, Follow, Navigation, Tag, Section, Post, PostPart, PostPartComment, Comment, CommentReport, Notice
-from bubbleworld.form import UserForm, TagForm, SectionForm, PostForm, PostPartForm, CommentForm, CommentReportForm, MessageForm
+from bubbleworld.form import *
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
@@ -326,23 +326,25 @@ class PostCreate(BaseMixin, CreateView):
     model = Post
     template_name = 'post_create.html'
     form_class = PostForm
-
     def form_valid(self, form):
         captcha = self.request.POST.get('captcha', None)
         formdata = form.cleaned_data
-        if self.request.session.get('captcha', None) != captcha:
-            return HttpResponse("验证码错误！<a href='/'>返回</a>")
-        user = User.objects.get(username = self.request.user.username)
-        section_instance = Section.objects.get(name = formdata['section'])
-        if user.privilege == 1 and admin_check(user, section_instance):
-            return HttpResponse("您已被封禁！<a href='/'>返回</a>")
-        formdata['author'] = user
-        formdata['last_response'] = user
+        section_instance = Section.objects.get(pk = self.request.GET.get('section_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect("/bubbleworld/post_create/?section_pk=" + str(section_instance.pk))
+        author = User.objects.get(username = self.request.user.username)
+        
+        if author.privilege == 1 and admin_check(author, section_instance):
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect("/bubbleworld/post_create/?section_pk=" + str(section_instance.pk))
+        formdata['section'] = section_instance
+        formdata['author'] = author
+        formdata['last_response'] = author
         post_instance = Post(**formdata)
         post_instance.save()
-    
- 
-    
+        return HttpResponseRedirect(
+            reverse_lazy('post_detail', kwargs={"post_pk": post_instance.pk}))   
 #编辑贴
 @login_required(login_url=reverse_lazy('user_login'))
 class PostUpdate(UpdateView):
@@ -351,10 +353,10 @@ class PostUpdate(UpdateView):
     
     
 #删帖
-@login_required(login_url=reverse_lazy('user_login'))
 class PostDelete(DeleteView):
     model = Post
-    template_name = 'delete_confirm.html'   
+    template_name = 'delete_confirm.html'
+    
 
 #回帖
 class PostPartCreate(BaseMixin, CreateView):
@@ -365,16 +367,22 @@ class PostPartCreate(BaseMixin, CreateView):
     def form_valid(self, form):
         captcha = self.request.POST.get('captcha', None)
         formdata = form.cleaned_data
-        if self.request.session.get('captcha', None) != captcha:
-            return HttpResponse("验证码错误！<a href='/'>返回</a>")
-        user = User.objects.get(username = self.request.user.username)
-        section_instance = Section.objects.get(name = formdata['section'])
-        if user.privilege == 1 and admin_check(user, section_instance):
-            return HttpResponse("您已被封禁！<a href='/'>返回</a>")
-        formdata['author'] = user
-        formdata['last_response'] = user
+        post_instance = Post.objects.get(pk = self.request.GET.get('post_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect("/bubbleworld/postpart_create/?post_pk=" + str(post_instance.pk))
+        author = User.objects.get(username = self.request.user.username)
+        
+        if author.privilege == 1 and admin_check(author, post_instance):
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect("/bubbleworld/postpart_create/?post_pk=" + str(post_instance.pk))
+        formdata['post'] = post_instance
+        formdata['author'] = author
+        formdata['last_response'] = author
         postpart_instance = PostPart(**formdata)
         postpart_instance.save()
+        return HttpResponseRedirect(
+            reverse_lazy('post_detail', kwargs={"post_pk": post_instance.pk}))   
 '''
     if request.method == 'POST':
         content = request.POST.get("comment", "")
@@ -405,24 +413,29 @@ class PostPartDelete(DeleteView):
     success_url = reverse_lazy('user_postpart')
    
 #间帖评论
-@login_required(login_url=reverse_lazy('user_login'))
-def create_PostPartComment(request):
-    if request.method == 'POST':
-        content = request.POST.get("comment", "")
-        postpart_id = request.POST.get("postpart_id", "")
-        user = User.objects.get(username=request.user)
-        postpart_instance = PostPart.objects.get(pk=postpart_id)
-        postpart_instance.concontent_number += 1
-        postpart_instance.last_response = user
-        post_instance = postpart_instance.post
-        post_instance.concontent_number += 1
-        post_instance.last_response = user
+class PostPartCommentCreate(BaseMixin, CreateView):
+    model = PostPartComment
+    template_name = 'postpartcomment_create.html'
+    form_class = PostPartCommentForm
 
-        c = Comment(postpart=postpart_instance, author=user, content=content)
-        c.save()
-        post_instance.save()
-
-    return HttpResponse("回复成功") 
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        postpart_instance = PostPart.objects.get(pk = self.request.GET.get('postpart_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect("/bubbleworld/postpartcomment_create/?postpart_pk=" + str(postpart_instance.pk))
+        author = User.objects.get(username = self.request.user.username)
+        
+        if author.privilege == 1 and admin_check(author, postpart_instance):
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect("/bubbleworld/postpartcomment_create/?postpart_pk=" + str(postpart_instance.pk))
+        formdata['postpart'] = postpart_instance
+        formdata['author'] = author
+        postpartcomment_instance = PostPartComment(**formdata)
+        postpartcomment_instance.save()
+        return HttpResponseRedirect(
+            reverse_lazy('post_detail', kwargs={"post_pk": postpart_instance.post.pk}))   
 
 #编辑间帖评论
 @login_required(login_url=reverse_lazy('user_login'))

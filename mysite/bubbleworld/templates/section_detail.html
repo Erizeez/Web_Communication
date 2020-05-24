@@ -13,7 +13,7 @@
                                 <div class="row">
                                 	<div class="col" align="center">
                                 		<form id="myform" method="get" action="{% url 'post_create' %}">
-                        					<input name="section_pk" type="text" value="{{section_obj.pk}}" hidden>
+                        					<input name="section_pk" type="text" value="{{section}}" hidden>
                             				<a onclick="document.getElementById('myform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a>
                         				</form>
             						</div>
@@ -32,7 +32,18 @@
             							<a href="{{ uni.get_absolute_url }} " style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">{{ uni.title }}</a><br>
             						</div>
             						<div class="col" align="right">
-            							<a style="text-align: right;font-family:雅黑;font-weight:bold;font-size:15px;">作者：{{ uni.author }}</a><br>
+            							<a style="text-align: right;font-family:雅黑;font-weight:bold;font-size:15px;">作者：{{ uni.author }}</a>
+
+
+                                        {% if uni.author == user %}
+                                        <form id="deleteform" method="get" action="{% url 'post_delete' %}">
+                                            <input name="post_pk" type="text" value="{{uni.pk}}" hidden>
+                                            <a onclick="document.getElementById('deleteform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:15px;">删除</a>
+                                        </form>
+                                        {% else %}
+                                            <br>
+                                        {% endif %}
+                                        
             						</div>
 								</div>
 								<div class="row">

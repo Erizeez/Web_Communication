@@ -126,6 +126,8 @@ USE_TZ = True
 
 AUTH_USER_MODEL = "bubbleworld.User"
 
+LOGIN_URL = '/bubbleworld/accounts/login/'
+
 #登录超时设置
 
 SESSION_SAVE_EVERY_REQUEST = True
