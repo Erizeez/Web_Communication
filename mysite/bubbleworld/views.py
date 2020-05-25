@@ -16,6 +16,7 @@ from datetime import datetime
 from django.core.cache import cache
 from bubbleworld.captcha import create_captcha
 from io import BytesIO
+
 import logging
 # Create your views here.
 
@@ -376,6 +377,8 @@ class SectionCreate(BaseMixin, CreateView):
         section_obj = Section(**formdata)
         section_obj.save()
         section_obj.users.add(user)
+        section_instance.content_number += 1
+        section_instance.save()
         messages.success(self.request, "发布成功")
         return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_obj.pk))
 
@@ -459,6 +462,8 @@ class BookCreate(BaseMixin, CreateView):
         section_obj = Section(**formdata)
         section_obj.save()
         section_obj.users.add(user)
+        section_instance.content_number += 1
+        section_instance.save()
         messages.success(self.request, "发布成功")
         return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_obj.pk))
 
@@ -484,6 +489,8 @@ class FilmCreate(BaseMixin, CreateView):
         section_obj = Section(**formdata)
         section_obj.save()
         section_obj.users.add(user)
+        section_instance.content_number += 1
+        section_instance.save()
         messages.success(self.request, "发布成功")
         return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_obj.pk))
     
@@ -508,8 +515,11 @@ class PostCreate(BaseMixin, CreateView):
         formdata['section'] = section_instance
         formdata['author'] = author
         formdata['last_response'] = author
+        formdata['type_post'] = section_instance.section_type
         post_instance = Post(**formdata)
         post_instance.save()
+        section_instance.content_number += 1
+        section_instance.save()
         messages.success(self.request, "发布成功")
         return HttpResponseRedirect(
             reverse_lazy('post_detail', kwargs={"post_pk": post_instance.pk}))   
@@ -555,8 +565,11 @@ class PostPartCreate(BaseMixin, CreateView):
         formdata['post'] = post_instance
         formdata['author'] = author
         formdata['last_response'] = author
+        formdata['type_postpart'] = post_instance.type_post
         postpart_instance = PostPart(**formdata)
         postpart_instance.save()
+        post_instance.content_number += 1
+        post_instance.save()
         messages.success(self.request, "发布成功")
         return HttpResponseRedirect(
             reverse_lazy('post_detail', kwargs={"post_pk": post_instance.pk}))   
@@ -609,6 +622,7 @@ class PostPartCommentCreate(BaseMixin, CreateView):
             return HttpResponseRedirect("/bubbleworld/postpartcomment_create/?postpart_pk=" + str(postpart_instance.pk))
         formdata['postpart'] = postpart_instance
         formdata['author'] = author
+        formdata['type_postpartcomment'] = postpart_instance.type_postpartcomment
         postpartcomment_instance = PostPartComment(**formdata)
         postpartcomment_instance.save()
         messages.success(self.request, "发布成功")
@@ -645,28 +659,65 @@ class SearchView(ListView):
         return super(SearchView, self).get_context_data(**kwargs)
 
     def get_queryset(self):
-        q = self.request.GET.get('srchtxt', '')
-        section = self.request.GET.get('section', '')
+        q = self.request.GET.get('q', '')
+        scope = self.request.GET.get('scope', '')
         
-        if section == "all":
-            post_list = Post.objects.only(
-                'title',
-                'content').filter(Q(title__icontains=q) | Q(content__icontains=q))
-            comment_list = Comment.objects.only(
-                'content').filter(Q(content__icontains=q))
+        if scope == 0:
+            section_list = Section.objects.all(
+                ).filter(Q(name__icontains=q) 
+                         | Q(author__icontains=q)
+                         | Q(director__icontains=q)
+                         | Q(actor__icontains=q)
+                         | Q(author_description__icontains=q)
+                         | Q(description__icontains=q)
+                         ).order_by("-content_number")
+            comment_list = Comment.objects.all(
+                ).filter(Q(title__icontains=q)
+                         | Q(content__icontains=q)
+                         )
+            post_list = Post.objects.all(
+                ).filter(Q(title__icontains=q)
+                         ).order_by("-content_number")
+            postpart_list = PostPart.objects.all(
+                ).filter(Q(content__icontains=q)
+                         ).order_by("-content_number")
+            postpartcomment_list = PostPart.objects.all(
+                ).filter(Q(content__icontains=q)
+                         ).order_by("-updated_at")
+            return section_list , comment_list , post_list, postpart_list , postpartcomment_list
+        elif scope == 1 or scope == 2:
+            section_list = Section.objects.all(
+                ).filter(Q(name__icontains=q) 
+                         | Q(author__icontains=q)
+                         | Q(director__icontains=q)
+                         | Q(actor__icontains=q)
+                         | Q(author_description__icontains=q)
+                         | Q(description__icontains=q)
+                         & (
+                         Q(section_type__exact=scope)
+                         | Q(section_type__exact=(scope+4))
+                         )
+                         ).order_by("-content_number")
+            comment_list = Comment.objects.all(
+                ).filter(Q(title__icontains=q)
+                         | Q(content__icontains=q)
+                         & Q(type_comment__exact=scope)
+                         )
+            return section_list, comment_list
         else:
-            section_instance = Section.objects.get(name = section)
-            section_list = section_instance.section_parent_section.all()
-            post_list = Post.objects.only(
-                'title',
-                'section',
-                'content').filter(Q(section in section_list) | Q(title__icontains=q) | Q(content__icontains=q))
-            comment_list = Comment.objects.only(
-                'section',
-                'content').filter(Q(section in section_list) | Q(title__icontains=q) | Q(content__icontains=q))
-            
-        target_list = post_list + comment_list
-        return target_list
+            post_list = Post.objects.all(
+                ).filter(Q(title__icontains=q)
+                         & Q(type_post__exact=scope)
+                         ).order_by("-content_number")
+            postpart_list = PostPart.objects.all(
+                ).filter(Q(content__icontains=q)
+                         & Q(type_postpart__exact=scope)
+                         ).order_by("-content_number")
+            postpartcomment_list = PostPartComment.objects.all(
+                ).filter(Q(content__icontains=q)
+                         & Q(type_postpartcomment__exact=scope)
+                         ).order_by("-updated_at")
+            return post_list,postpart_list, postpartcomment_list
     
 #验证码
 def captcha(request):

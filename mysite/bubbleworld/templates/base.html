@@ -51,32 +51,49 @@ filter: blur(60px);position:fixed;">
                         <span class="caret"></span>
                     </button>
                     <div class="dropdown-menu" role="menu" style="text-align: center; min-width:fit-content;" aria-labelledby="dLabel">
+                        <a class="dropdown-item" href="#" onclick="shows($(this).text())">全部</a>
                         <a class="dropdown-item" href="#" onclick="shows($(this).text())">书籍</a>
                         <a class="dropdown-item" href="#" onclick="shows($(this).text())">影视</a>
                         <a class="dropdown-item" href="#" onclick="shows($(this).text())">小组</a>
                         <a class="dropdown-item" href="#" onclick="shows($(this).text())">话题</a>
                     </div>
                     <script>
-                        var searchscope = '全部'
+                        var searchscope = 0
 
                         function shows(a) {
-                            searchscope = a;
                             $('.buttonText').text(a)
+                            if(a=="全部"){
+                                a=0;
+                            }else if(a=="书籍"){
+                                a=1;
+                            }else if(a=="影视"){
+                                a=2;
+                            }else if(a=="话题"){
+                                a=3;
+                            }else if(a=="小组"){
+                                a=4;
+                            }
+                            searchscope = a;
                         }
                     </script>
                 </div>
-                <input type="text" class="form-control" aria-label="Text input with dropdown button">
+                <form id="searchform" method="get" action="{% url 'search' %}">
+                <input name="q" type="text" class="form-control" aria-label="Text input with dropdown button">
+                <input name="scope" class="scopec" type="text" value="" hidden>
                 <div class="input-group-append">
                     <!-- searchscope为为搜范围字符串 -->
                     <button class="btn btn-outline-secondary" type="button" onclick="search(searchscope)">
                         <img src="/static/open-iconic/svg/magnifying-glass.svg">
                     </button>
-                    <!-- <script>
+                    <script>
                         function search(a) {
-                            alert(a);
+                            var tmpform = document.getElementById('searchform');
+                            $('.scopec').val(a);
+                            tmpform.submit();
                         }
-                    </script> -->
+                    </script> 
                 </div>
+            </form>
             </div>
 
             <div class="collapse navbar-collapse col-lg-4" id="collapsibleNavbar">

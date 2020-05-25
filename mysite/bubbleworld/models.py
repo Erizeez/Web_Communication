@@ -302,7 +302,10 @@ class PostPart(models.Model):
     content = RichTextField(
             verbose_name = u'内容'
             )
-    
+    #3-话题， 4-小组
+    type_postpart = models.IntegerField(
+            default = 0
+            )
     content_number = models.IntegerField(
             default = 1
             )
@@ -342,6 +345,10 @@ class PostPartComment(models.Model):
             settings.AUTH_USER_MODEL,
             related_name = 'postpartcomment_author',
             on_delete = models.CASCADE
+            )
+    #3-话题， 4-小组
+    type_postpartcomment = models.IntegerField(
+            default = 0
             )
     content = models.TextField(
             verbose_name = u'内容'    

@@ -1,0 +1,29 @@
+{% extends "./base.html" %}
+
+{% block content %} 
+<body>
+
+<div id="all_uni">
+	<br>
+    <div class="container">
+    	<div class="col">
+
+    		<div class="card">
+                <div class="card-body">
+                    <div class="col">
+                        <div id="all_post">
+    {% for section in section_list %}
+    ll
+            <a href="{{ section.get_absolute_url }}">{{ forloop.counter }}:{{ section.name }}</a><br>
+    {% endfor %}
+</div>
+
+
+                    </div>
+                </div>  
+            </div>  
+		</div>
+	</div>
+</div>
+</body>
+{% endblock %}
