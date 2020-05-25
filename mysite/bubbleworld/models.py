@@ -128,29 +128,45 @@ class Tag(models.Model):
     
 class Section(models.Model):
     name = models.CharField(
-            max_length = 50
+            max_length = 50,
+            verbose_name = u'名称'
             )
     author = models.CharField(
             default = "",
-            max_length = 50
+            max_length = 50,
+            verbose_name = u'作者'
             )
     # 1-书籍主页，2-影视主页， 3-话题主页， 4-小组主页，5-书籍, 6-影视， 7-话题, 8-小组
     section_type = models.IntegerField(
             default = 0
             )
+    director = models.CharField(
+            default = "",
+            max_length = 50,
+            verbose_name = u'导演'
+            )
     actor = models.CharField(
             default = "",
-            max_length = 100
+            max_length = 100,
+            verbose_name = u'演员'
             )
     author_description = models.CharField(
             max_length = 2000,
             verbose_name = u'作者描述'
             )
+    admins = models.ManyToManyField(
+            'User',
+            blank = True,
+     #       null = True,
+            related_name = 'admins',
+            verbose_name = u'管理员'
+            )
     users = models.ManyToManyField(
             'User',
             blank = True,
      #       null = True,
-            related_name = 'users'
+            related_name = 'users',
+            verbose_name = u'用户'
             )
     parent_section = models.ForeignKey(
             'self',
@@ -170,6 +186,11 @@ class Section(models.Model):
             )
     content_number = models.IntegerField(
             default = 0
+            )
+    star = models.DecimalField(
+            default = 0,
+            max_digits = 2,
+            decimal_places = 1
             )
     
     tags = models.ManyToManyField(
@@ -346,7 +367,20 @@ class PostPartComment(models.Model):
                 self.author, self.postpart.post, 
                 self.content)
 
+class IntegerRangeField(models.IntegerField):
+    def __init__(self, verbose_name=None, name=None, min_value=None, max_value=None, **kwargs):
+        self.min_value, self.max_value = min_value, max_value
+        models.IntegerField.__init__(self, verbose_name, name, **kwargs)
+    def formfield(self, **kwargs):
+        defaults = {'min_value': self.min_value, 'max_value':self.max_value}
+        defaults.update(kwargs)
+        return super(IntegerRangeField, self).formfield(**defaults)
+
 class Comment(models.Model):
+    title = models.CharField(
+            max_length = 20,
+            verbose_name = u'标题'
+            )
     section = models.ForeignKey(
             Section,
             related_name = 'comment_section',
@@ -356,21 +390,32 @@ class Comment(models.Model):
     type_comment = models.IntegerField(
             default = 0
             )
-    star = models.IntegerField(
-            default = 3
-            )
+    star = IntegerRangeField(default=3,min_value=0, max_value=5,verbose_name = u'评分')
     author = models.ForeignKey(
             settings.AUTH_USER_MODEL,
             related_name = 'comment_author',
             on_delete = models.CASCADE
             )
-    content = RichTextField()
-    
+    content = RichTextField(
+        verbose_name = u'内容'
+        )
     like_number = models.IntegerField(
             default = 0
             )
     dislike_number = models.IntegerField(
             default = 0
+            )
+    like_user = models.ManyToManyField(
+            'User',
+            blank = True,
+     #       null = True,
+            related_name = 'like_user'
+            )
+    dislike_user = models.ManyToManyField(
+            'User',
+            blank = True,
+     #       null = True,
+            related_name = 'dislike_user'
             )
     
     created_at = models.DateTimeField(
@@ -395,6 +440,10 @@ class Comment(models.Model):
                 self.content)
     def get_absolute_url(self):
         return reverse('comment_detail',  args = [str(self.pk)])
+    def get_like_url(self):
+        return reverse('like_comment',  args = [str(self.pk)])
+    def get_dislike_url(self):
+        return reverse('dislike_comment',  args = [str(self.pk)])
     
 class CommentReport(models.Model):
     comment = models.ForeignKey(
@@ -413,7 +462,7 @@ class CommentReport(models.Model):
     title = models.CharField(
             max_length = 40
             )
-    reason = models.TextField()
+    content = models.TextField()
     
     created_at = models.DateTimeField(
             default = timezone.now

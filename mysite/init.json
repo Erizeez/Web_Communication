@@ -21,7 +21,7 @@
 			"name": "书籍",
 			"section_type": "1",
 			"description": "这里有很多书籍",
-			"users": ["1"]
+			"admins": ["1"]
 		}
 	},
 	{
@@ -31,27 +31,27 @@
 			"name": "电影",
 			"section_type": "2",
 			"description": "这里有很多影视",
-			"users": ["1"]
+			"admins": ["1"]
 		}
 	},
 	{
 		"model": "bubbleworld.section",
 		"pk": 3,
 		"fields": {
-			"name": "小组",
-			"section_type": "4",
-			"description": "来参与一个小组",
-			"users": ["1"]
+			"name": "话题",
+			"section_type": "3",
+			"description": "分享并参与一个话题",
+			"admins": ["1"]
 		}
 	},
 	{
 		"model": "bubbleworld.section",
 		"pk": 4,
 		"fields": {
-			"name": "话题",
-			"section_type": "3",
-			"description": "分享并参与一个话题",
-			"users": ["1"]
+			"name": "小组",
+			"section_type": "4",
+			"description": "来参与一个小组",
+			"admins": ["1"]
 		}
 	},
 	{
@@ -146,8 +146,8 @@
 			"star": "5",
 			"author": "1",
 			"content": "这本书很不错，快来和小编一起讨论吧",
-			"like_number": "6",
-			"dislike_number": "3"
+			"like_number": "0",
+			"dislike_number": "0"
 		}
 	},
 	{
@@ -159,8 +159,8 @@
 			"star": "5",
 			"author": "1",
 			"content": "这本书很不错，快来和小编一起讨论吧",
-			"like_number": "6",
-			"dislike_number": "3"
+			"like_number": "0",
+			"dislike_number": "0"
 		}
 	},
 	{
@@ -172,8 +172,8 @@
 			"star": "5",
 			"author": "1",
 			"content": "这电影很不错，快来和小编一起讨论吧",
-			"like_number": "6",
-			"dislike_number": "3"
+			"like_number": "0",
+			"dislike_number": "0"
 		}
 	},
 	{
@@ -185,8 +185,8 @@
 			"star": "5",
 			"author": "1",
 			"content": "这电影很不错，快来和小编一起讨论吧",
-			"like_number": "6",
-			"dislike_number": "3"
+			"like_number": "0",
+			"dislike_number": "0"
 		}
 	},
 	{

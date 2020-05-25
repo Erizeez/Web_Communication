@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, reverse
 from django.template import RequestContext
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
@@ -177,13 +177,13 @@ def section_index_all(request):
 #单个板块
 def section_index_detail(request, section_pk):
     section_obj = Section.objects.get(pk=section_pk)
-    sections_new= section_obj.section_parent_section.all().order_by('created_at')
-    sections_hot= section_obj.section_parent_section.all().order_by('content_number')
+    sections_new= section_obj.section_parent_section.all().order_by('-created_at')[0:10]
+    sections_hot= section_obj.section_parent_section.all().order_by('-content_number')[0:10]
     section_users = section_obj.users.all()
     if section_obj.section_type == 1 or section_obj.section_type == 2:
-        uni_obj = Comment.objects.all().filter(type_comment=section_obj.section_type).order_by('like_number')
+        uni_obj = Comment.objects.all().filter(type_comment=section_obj.section_type).order_by('like_user')[0:10]
     else:
-        uni_obj = Post.objects.all().filter(type_post=section_obj.section_type).order_by('content_number')
+        uni_obj = Post.objects.all().filter(type_post=section_obj.section_type).order_by('content_number')[0:10]
     return render(
         request,
         'section_index_detail.html', {
@@ -207,25 +207,18 @@ class SectionView(BaseMixin, ListView):
     def get_queryset(self):
         section = self.request.GET.get('section_pk', '')
         section_instance = Section.objects.all().filter(pk = section)[0]
-        if section_instance.section_type == 5 and section_instance.section_type == 6:
+        if section_instance.section_type == 5 or section_instance.section_type == 6:
             uni_list = section_instance.comment_section.all()
         else:
             uni_list = section_instance.post_section.all()
-            
-        return uni_list
+        if not uni_list.exists():
+            return [section_instance,]
+        else:
+            return uni_list
 
-def section_detail(request, section_pk, args):
-    section_obj = Section.objects.get(pk=section_pk)
-    sections = section_obj.section_parent_section.all().order_by('created_at')
-
-    return render(
-        request,
-        'section_index_detail.html', {
-            'section_obj': section_obj,
-            'sections': sections
-        }) 
     
 #评论详细界面
+'''
 def comment_detail(request, comment_pk):
     comment_pk = int(comment_pk)
     comment = Comment.objects.get(pk=comment_pk)
@@ -241,9 +234,50 @@ def comment_detail(request, comment_pk):
             'message_number': k
         },
         context_instance=RequestContext(request))
-    
-    
-    
+'''  
+def comment_detail(request, comment_pk):
+    comment_pk = int(comment_pk)
+    comment = Comment.objects.get(pk=comment_pk)
+    navigation_list = Navigation.objects.all()
+    return render(
+        request,
+        'comment_detail.html', {
+            'comment': comment,
+            'navigation_list': navigation_list,
+            'like_number': comment.like_number,
+            'dislike_number': comment.dislike_number,
+        }) 
+def like_comment(request, comment_pk):
+    comment_pk = int(comment_pk)
+    comment = Comment.objects.get(pk=comment_pk)
+    user = User.objects.get(username = request.user.username)
+    if not comment.like_user.all().filter(pk=user.pk):
+        if comment.dislike_user.all().filter(pk=user.pk):
+            comment.dislike_user.remove(user)
+        comment.like_user.add(user)
+        comment.like_number = comment.like_user.all().count()
+        comment.dislike_number = comment.dislike_user.all().count()
+        comment.save()
+    return HttpResponseRedirect(
+        reverse('comment_detail', args=(str(comment_pk)))
+        )
+
+def dislike_comment(request, comment_pk):
+    comment_pk = int(comment_pk)
+    comment = Comment.objects.get(pk=comment_pk)
+    user = User.objects.get(username = request.user.username)
+    if not comment.dislike_user.all().filter(pk=user.pk):
+        if comment.like_user.all().filter(pk=user.pk):
+            comment.like_user.remove(user)
+        comment.dislike_user.add(user)
+        comment.like_number = comment.like_user.all().count()
+        comment.dislike_number = comment.dislike_user.all().count()
+        comment.save()
+    return HttpResponseRedirect(
+        reverse('comment_detail', args=(str(comment_pk)))
+        )
+
+
 #帖子详细界面
 def post_detail(request, post_pk):
     post_pk = int(post_pk)
@@ -318,7 +352,141 @@ class UserPostView(ListView):
         user_posts = Post.objects.filter(author=self.request.user)
         return user_posts        
     
+class SectionCreate(BaseMixin, CreateView):
+    model = Section
+    template_name = 'section_create.html'
+    form_class = SectionForm
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        section_instance = Section.objects.get(pk = self.request.GET.get('section_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
+        user = User.objects.get(username = self.request.user.username)
+        
+        if user.privilege == 1 and admin_check(user, section_instance):
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
+        formdata['parent_section'] = section_instance
+        if section_instance.section_type == 3:
+            formdata['section_type'] = 7
+        else:
+            formdata['section_type'] = 8
+        section_obj = Section(**formdata)
+        section_obj.save()
+        section_obj.users.add(user)
+        messages.success(self.request, "发布成功")
+        return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_obj.pk))
 
+class CommentCreate(BaseMixin, CreateView):
+    model = Comment
+    template_name = 'post_create.html'
+    form_class = CommentForm
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        section_instance = Section.objects.get(pk = self.request.GET.get('section_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect("/bubbleworld/comment_create/?section_pk=" + str(section_instance.pk))
+        user = User.objects.get(username = self.request.user.username)
+        
+        if user.privilege == 1 and admin_check(user, section_instance):
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect("/bubbleworld/comment_create/?section_pk=" + str(section_instance.pk))
+        if len(formdata['content']) < 25:
+            messages.success(self.request, "内容长度不得小于25")
+            return HttpResponseRedirect("/bubbleworld/comment_create/?section_pk=" + str(section_instance.pk))
+        formdata['section'] = section_instance
+        formdata['author'] = user
+        comment_obj = Comment(**formdata)
+        comment_obj.save()
+        section_instance.content_number+=1
+        section_instance.star = (section_instance.star*section_instance.content_number + formdata['star']) / section_instance.content_number
+        section_instance.save()
+        messages.success(self.request, "发布成功")
+        return HttpResponseRedirect(
+            reverse_lazy('comment_detail', kwargs={"comment_pk": comment_obj.pk}))
+class CommentReportCreate(BaseMixin, CreateView):
+    model = Comment
+    template_name = 'post_create.html'
+    form_class = CommentForm
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        section_instance = Section.objects.get(pk = self.request.GET.get('section_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect("/bubbleworld/comment_create/?section_pk=" + str(section_instance.pk))
+        user = User.objects.get(username = self.request.user.username)
+        
+        if user.privilege == 1 and admin_check(user, section_instance):
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect("/bubbleworld/comment_create/?section_pk=" + str(section_instance.pk))
+        if len(formdata['content']) < 25:
+            messages.success(self.request, "内容长度不得小于25")
+            return HttpResponseRedirect("/bubbleworld/comment_create/?section_pk=" + str(section_instance.pk))
+        formdata['section'] = section_instance
+        formdata['author'] = user
+        comment_obj = Comment(**formdata)
+        comment_obj.save()
+        section_instance.content_number+=1
+        section_instance.star = (section_instance.star*section_instance.content_number + formdata['star']) / section_instance.content_number
+        section_instance.save()
+        messages.success(self.request, "发布成功")
+        return HttpResponseRedirect(
+            reverse_lazy('comment_detail', kwargs={"comment_pk": comment_obj.pk}))
+
+
+class BookCreate(BaseMixin, CreateView):
+    model = Section
+    template_name = 'section_create.html'
+    form_class = BookForm
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        section_instance = Section.objects.get(pk = self.request.GET.get('section_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
+        user = User.objects.get(username = self.request.user.username)
+        
+        if user.privilege == 1 and admin_check(user, section_instance):
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
+        formdata['parent_section'] = section_instance
+        formdata['section_type'] = 5
+        section_obj = Section(**formdata)
+        section_obj.save()
+        section_obj.users.add(user)
+        messages.success(self.request, "发布成功")
+        return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_obj.pk))
+
+
+class FilmCreate(BaseMixin, CreateView):
+    model = Section
+    template_name = 'section_create.html'
+    form_class = FilmForm
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        section_instance = Section.objects.get(pk = self.request.GET.get('section_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
+        user = User.objects.get(username = self.request.user.username)
+        
+        if user.privilege == 1 and admin_check(user, section_instance):
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
+        formdata['parent_section'] = section_instance
+        formdata['section_type'] = 6
+        section_obj = Section(**formdata)
+        section_obj.save()
+        section_obj.users.add(user)
+        messages.success(self.request, "发布成功")
+        return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_obj.pk))
     
 #发帖
 
@@ -343,6 +511,7 @@ class PostCreate(BaseMixin, CreateView):
         formdata['last_response'] = author
         post_instance = Post(**formdata)
         post_instance.save()
+        messages.success(self.request, "发布成功")
         return HttpResponseRedirect(
             reverse_lazy('post_detail', kwargs={"post_pk": post_instance.pk}))   
 #编辑贴
@@ -353,9 +522,14 @@ class PostUpdate(UpdateView):
     
     
 #删帖
-class PostDelete(DeleteView):
-    model = Post
-    template_name = 'delete_confirm.html'
+def delete_post(request, post_pk):
+    post_obj = Post.objects.all().filter(pk=post_pk)[0]
+    section_pk = post_obj.section.pk
+    post_obj.delete()
+    section_obj = Section.objects.all().filter(pk=section_pk)[0]
+    section_obj.content_number -= 1
+    return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_pk))
+        
     
 
 #回帖
@@ -376,11 +550,15 @@ class PostPartCreate(BaseMixin, CreateView):
         if author.privilege == 1 and admin_check(author, post_instance):
             messages.success(self.request, "您已被封禁")
             return HttpResponseRedirect("/bubbleworld/postpart_create/?post_pk=" + str(post_instance.pk))
+        if len(formdata['content']) < 25:
+            messages.success(self.request, "内容长度不得小于25")
+            return HttpResponseRedirect("/bubbleworld/postpart_create/?post_pk=" + str(post_instance.pk))
         formdata['post'] = post_instance
         formdata['author'] = author
         formdata['last_response'] = author
         postpart_instance = PostPart(**formdata)
         postpart_instance.save()
+        messages.success(self.request, "发布成功")
         return HttpResponseRedirect(
             reverse_lazy('post_detail', kwargs={"post_pk": post_instance.pk}))   
 '''
@@ -434,6 +612,7 @@ class PostPartCommentCreate(BaseMixin, CreateView):
         formdata['author'] = author
         postpartcomment_instance = PostPartComment(**formdata)
         postpartcomment_instance.save()
+        messages.success(self.request, "发布成功")
         return HttpResponseRedirect(
             reverse_lazy('post_detail', kwargs={"post_pk": postpart_instance.post.pk}))   
 

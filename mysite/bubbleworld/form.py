@@ -95,6 +95,25 @@ class SectionForm(forms.ModelForm):
                 'description',
                 'img',
                 )
+class BookForm(forms.ModelForm):
+    class Meta:
+        model = Section
+        fields = (
+                'name',
+                'author',
+                'description',
+                'img',
+                )
+class FilmForm(forms.ModelForm):
+    class Meta:
+        model = Section
+        fields = (
+                'name',
+                'director',
+                'actor',
+                'description',
+                'img',
+                )
 
 class PostForm(forms.ModelForm):
     class Meta:
@@ -121,8 +140,8 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = (
+                'title',
                 'star',
-                'section',
                 'content'
                 )
         
@@ -131,8 +150,7 @@ class CommentReportForm(forms.ModelForm):
         model = CommentReport
         fields = (
                 'title',
-                'comment',
-                'reason',
+                'content',
                 )
 
 

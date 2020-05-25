@@ -7,101 +7,132 @@
 {% if section_obj.section_type == 1 or section_obj.section_type == 2 %}
   <br>
     <div class="container">
-        <div class="row">
-            <div class="col col-lg-8">
-                <!-- 新书速递 -->
-                <div class="container">
-                    {% if section_obj.section_type == 1 %}
-                      <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">新书速递</h5>
-                    {% else %}
-                      <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">影视速递</h5>
-                    {% endif %}
-                    <br>
-                    <div class="row">
-                      {% for section in sections_new %}
-                      <a  href="{{section.get_absolute_url}}">
-                        <div class="col">
-                            <img src="{{section.img}}" alt="..." class="img-thumbnail">
-                            <p type="button" style="text-align: center;">{{section.name}}  {{section.author}}</p>
-                        </div>
-                      </a>
-                      {% endfor %}
-                    </div>
-                    
-                </div>
-                <br>
+                <!-- -->
+                    <div class="col">
+                        <div class="row">
+                            <div class="card col">
+                                <div  class="card-body" align="center">
+                                    {% if section_obj.section_type == 1 %}
+                                     <form id="createform" method="get" action="{% url 'book_create' %}">
+                                            <input name="section_pk" type="text" value="{{section_obj.pk}}" hidden>
+                                            <a onclick="document.getElementById('createform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布新书</a>
+                                        </form>
+                                    {% else%}
+                                        <form id="createform" method="get" action="{% url 'film_create' %}">
+                                            <input name="section_pk" type="text" value="{{section_obj.pk}}" hidden>
+                                            <a onclick="document.getElementById('createform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布电影</a>
+                                        </form>
 
-                <div class="border"></div>
-
-                <br>
-                <!-- 热门书评 -->
-                <div class="container">
-                    {% if section_obj.section_type == 1 %}
-                      <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">热门书评</h5>
-                    {% else %}
-                      <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">热门影评</h5>
-                    {% endif %}
-                    
-                    <br>
-                    {% for uni in uni_obj %}
-                    <a href="uni.get_absolute_url">
-                    <div class="row" style="align-items:center;">
-                        <div class="col col-lg-3">
-                            <img src="book.jpg" alt="..." class="img-thumbnail" style="width:auto ;height:auto;">
+                                    {% endif%}
+                                 </div>
+                            </div>
                         </div>
-                        <div class="col">
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-title font-weight-bold">Title</p>
+                        <br>
+                        <div class="row">
+                            <div class="col">
+                                <div class="row">
+                                    {% if section_obj.section_type == 1 %}
+                                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">新书速递</h5>
+                                    {% else %}
+                                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">影视速递</h5>
+                                    {% endif %}
+                                    <br>
+                                    <div class="row">
+                                        {% for section in sections_new %}
+                                        <form id="hotform1{{ forloop.counter }}" method="get" action="{% url 'section_detail' %}">
+                                        <input name="section_pk" type="text" value="{{section.pk}}" hidden>
+                                        </form>
+                                        <a onclick="document.getElementById('hotform1{{ forloop.counter }}').submit()">
+                                            <div class="col">
+                                                <img src="{{section.img}}" alt="..." class="img-thumbnail">
+                                                <p type="button" style="text-align: center;">{{section.name}}  {{section.author}}</p>
+                                            </div>
+                                        </a>
+                                        {% endfor %}
+                                    </div>           
+                                </div>
+                            
+                                <div class="row">
+                                    
+                                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">当下最热</h5>
+                                    <br>
+                                    <div class="row">
+                                        {% for section in sections_hot %}
+                                        <form id="hotform1{{ forloop.counter }}" method="get" action="{% url 'section_detail' %}">
+                                        <input name="section_pk" type="text" value="{{section.pk}}" hidden>
+                                        </form>
+                                        <a onclick="document.getElementById('hotform1{{ forloop.counter }}').submit()">
+                                        <div class="col">
+                                            <img src="{{section.img}}" alt="..." class="img-thumbnail">
+                                            <p type="button" style="text-align: center;">{{section.name}}  {{section.author}}</p>
+                                        </div>
+                                        </a>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- -->
+                            <div class="col-lg-1">
+                            </div>
+                            <div class="border"></div>
+                            <div class="col">
+                                <div class="container">
+                                    {% if section_obj.section_type == 1 %}
+                                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">热门书评</h5>
+                                    {% else %}
+                                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">热门影评</h5>
+                                    {% endif %}
+                                    <br>
+                                    {% for uni in uni_obj %}
+                                    
                                     <div class="row" style="align-items:center;">
                                         <div class="col col-lg-3">
-                                            <p>Author:{{uni.author}}</p>
+                                            <img src="{{uni.section.img}}" alt="..." class="img-thumbnail" style="width:auto ;height:auto;">
                                         </div>
-                                        <div class="col col-lg-3">
-                                            <p type="button">#TAG</p>
+                        <div class="col">
+                            <a href="{{uni.get_absolute_url}}">
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="card-title font-weight-bold">标题:{{uni.title}}</p>
+                                    <div class="row" style="align-items:center;">
+                                        <div class="col-lg-7">
+                                            <p>作者:{{uni.author}}</p>
                                         </div>
-                                        <div class="col col-lg-3">
-                                            <div class="row">
+                                        <div class="col">
                                                 <img src="/static/open-iconic/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
-                                                <p style="font-size:xx-small;">666</p>
-                                            </div>
+                                                <p style="font-size:xx-small;">{{uni.like_number}}</p>
                                         </div>
-                                        <div class="col col-lg-3">
-                                            <p type="button">举报</p>
+                                        <div class="col">
+                                                <img src="/static/open-iconic/svg/thumb-down.svg" alt="thumb-down" style="width: 16px;height: 16px;" type="button">
+                                                <p style="font-size:xx-small;">{{uni.dislike_number}}</p>
                                         </div>
                                     </div>
                                     <p class="card-text">{{uni.content}}
                                     </p>
                                 </div>
                             </div>
+                        </a>
                         </div>
                     </div>
                     <br>
-                    </a>
+                    
                     {% endfor %}
                 </div>
+                            </div>
+
+
+                        </div>
+<!-- -->
+
+                
+
+                
             </div>
 
-            <div class="border"></div>
+    
 
             <!-- 当下最热 -->
-            <div class="col">
-                <div class="container">
-                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">当下最热</h5>
-                    <br>
-                    <div class="row">
-                        {% for section in sections_hot %}
-                        <a  href="{{section.get_absolute_url}}">
-                          <div class="col">
-                              <img src="{{section.img}}" alt="..." class="img-thumbnail">
-                              <p type="button" style="text-align: center;">{{section.name}}  {{section.author}}</p>
-                          </div>
-                        </a>
-                      {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
+            
 
 {% else %}
     <br>
@@ -109,7 +140,13 @@
         <div class="col">
             <div class="row" align="center">
                 <div class="container">
-                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">热度最高</h5>              
+                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">
+                    {%if section_obj.section_type == 4%}
+                    小组 
+                    {%else%}
+                    话题 
+                    {%endif%}
+                    热度最高</h5>              
                     <br>
                     <div class="col">
                       {% for section in sections_hot %}
@@ -119,11 +156,11 @@
                                 <div class="col">
                                     
                       
-                        <form id="myform" method="get" action="{% url 'section_detail' %}">
+                        <form id="hotform1{{ forloop.counter }}" method="get" action="{% url 'section_detail' %}">
                         <input name="section_pk" type="text" value="{{section.pk}}" hidden>
       
                         
-                            <a onclick="document.getElementById('myform').submit()">
+                            <a onclick="document.getElementById('hotform1{{ forloop.counter }}').submit()">
                         {{section.name}}</a>
         
                         </form>
@@ -157,8 +194,17 @@
                             
                         </div>
                     </div>
-                      
+                      <br>
                       {% endfor %}
+                      
+                      <div class="card col col-lg-6">
+                        <div  class="card-body">
+                            <form id="createform" method="get" action="{% url 'section_create' %}">
+                                            <input name="section_pk" type="text" value="{{section_obj.pk}}" hidden>
+                                            <a onclick="document.getElementById('createform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a>
+                                        </form>
+                        </div>
+                    </div>
                     </div>
                     
                 </div>
@@ -169,8 +215,8 @@
             <br>
             <div class="row" align="center">
                 <div class="container">
-                    {% if section_obj.section_type == 3 %}
-                      <h5 type="button"  style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">最新发布</h5>
+                    {% if section_obj.section_type == 4 %}
+                      <h5 type="button"  style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">小组 最新建立</h5>
                       <br>
                     <div class="col">
                       {% for section in sections_new %}
@@ -178,11 +224,11 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
-                                    <form id="myform" method="get" action="{% url 'section_detail' %}">
+                                    <form id="newform2{{ forloop.counter }}" method="get" action="{% url 'section_detail' %}">
                         <input name="section_pk" type="text" value="{{section.pk}}" hidden>
       
                         
-                            <a onclick="document.getElementById('myform').submit()">
+                            <a onclick="document.getElementById('newform2{{ forloop.counter }}').submit()">
                         {{section.name}}</a>
         
                         </form>
@@ -214,11 +260,11 @@
                             
                         </div>
                         </div>
-                    </div>
+                    <br>
            
                         {% endfor %}
                     {% else %}
-                      <h5 type="button"  style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">最新建立</h5>
+                      <h5 type="button"  style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">话题 最新发布</h5>
                     
                     <br>
                     <div class="col">
@@ -227,11 +273,11 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
-                                    <form id="myform" method="get" action="{% url 'section_detail' %}">
+                                    <form id="newform2{{ forloop.counter }}" method="get" action="{% url 'section_detail' %}">
                         <input name="section_pk" type="text" value="{{section.pk}}" hidden>
       
                         
-                            <a onclick="document.getElementById('myform').submit()">
+                            <a onclick="document.getElementById('newform2{{ forloop.counter }}').submit()">
                         {{section.name}}</a>
         
                         </form>
@@ -260,10 +306,19 @@
                             </div>
                         </div>
                         </div>
-                    </div>
+                  <br>
 
                         {% endfor %}
                     {% endif %}
+                   
+                      <div class="card col col-lg-6">
+                        <div  class="card-body">
+                            <form id="createform" method="get" action="{% url 'section_create' %}">
+                                            <input name="section_pk" type="text" value="{{section_obj.pk}}" hidden>
+                                            <a onclick="document.getElementById('createform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a>
+                                        </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

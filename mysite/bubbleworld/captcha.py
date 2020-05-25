@@ -13,7 +13,7 @@ init_chars = ''.join((
         ))
 
 def create_captcha(
-        size = (100, 40),
+        size = (120, 40),
         chars = init_chars,
         img_type = 'GIF',
         mode = 'RGB',
