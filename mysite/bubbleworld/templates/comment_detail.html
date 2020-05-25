@@ -64,7 +64,10 @@
                         <a href="#">
                             <div class="card">
                                 <div class="card-body" style="text-align:center;font-family:雅黑;font-weight:bold;font-size:21px;">
-                                    举报
+                                    <form id="reportform" method="get" action="{% url 'commentreport_create' %}">
+                                            <input name="comment_pk" type="text" value="{{comment.pk}}" hidden>
+                                            <a onclick="document.getElementById('reportform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">举报</a>
+                                        </form>
                                 </div>
                             </div>
                         </a>

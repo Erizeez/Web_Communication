@@ -411,32 +411,31 @@ class CommentCreate(BaseMixin, CreateView):
 class CommentReportCreate(BaseMixin, CreateView):
     model = Comment
     template_name = 'post_create.html'
-    form_class = CommentForm
+    form_class = CommentReportForm
     def form_valid(self, form):
         captcha = self.request.POST.get('captcha', None)
         formdata = form.cleaned_data
-        section_instance = Section.objects.get(pk = self.request.GET.get('section_pk', ''))
+        comment_instance = Comment.objects.get(pk = self.request.GET.get('comment_pk', ''))
         if self.request.session.get('captcha', None).upper() != captcha.upper():
             messages.success(self.request, "验证码错误")
-            return HttpResponseRedirect("/bubbleworld/comment_create/?section_pk=" + str(section_instance.pk))
-        user = User.objects.get(username = self.request.user.username)
-        
-        if user.privilege == 1 and admin_check(user, section_instance):
+            return HttpResponseRedirect(
+            reverse_lazy('comment_detail', kwargs={"comment_pk": comment_instance.pk}))
+        user = User.objects.get(username = self.request.user.username)  
+        if user.privilege == 1:
             messages.success(self.request, "您已被封禁")
-            return HttpResponseRedirect("/bubbleworld/comment_create/?section_pk=" + str(section_instance.pk))
+            return HttpResponseRedirect(
+            reverse_lazy('comment_detail', kwargs={"comment_pk": comment_instance.pk}))
         if len(formdata['content']) < 25:
             messages.success(self.request, "内容长度不得小于25")
-            return HttpResponseRedirect("/bubbleworld/comment_create/?section_pk=" + str(section_instance.pk))
-        formdata['section'] = section_instance
+            return HttpResponseRedirect(
+            reverse_lazy('comment_detail', kwargs={"comment_pk": comment_instance.pk}))
+        formdata['comment'] = comment_instance
         formdata['author'] = user
-        comment_obj = Comment(**formdata)
-        comment_obj.save()
-        section_instance.content_number+=1
-        section_instance.star = (section_instance.star*section_instance.content_number + formdata['star']) / section_instance.content_number
-        section_instance.save()
-        messages.success(self.request, "发布成功")
+        commentreport_obj = CommentReport(**formdata)
+        commentreport_obj.save()
+        messages.success(self.request, "举报成功")
         return HttpResponseRedirect(
-            reverse_lazy('comment_detail', kwargs={"comment_pk": comment_obj.pk}))
+            reverse_lazy('comment_detail', kwargs={"comment_pk": comment_instance.pk}))
 
 
 class BookCreate(BaseMixin, CreateView):

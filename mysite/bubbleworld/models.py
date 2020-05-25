@@ -460,9 +460,12 @@ class CommentReport(models.Model):
             on_delete = models.CASCADE
             )
     title = models.CharField(
-            max_length = 40
+            max_length = 40,
+            verbose_name = u'标题'
             )
-    content = models.TextField()
+    content = models.TextField(
+            verbose_name = u'内容'
+            )
     
     created_at = models.DateTimeField(
             default = timezone.now
