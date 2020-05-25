@@ -12,9 +12,14 @@
                 <div class="card-body">
                     <div class="col">
                         <div id="all_post">
-    {% for section in section_list %}
-    ll
-            <a href="{{ section.get_absolute_url }}">{{ forloop.counter }}:{{ section.name }}</a><br>
+                            {% load bubbleworld_extras %}
+    {% for section in target_list %}
+    
+    {%modeltype section%}
+
+djfosd
+
+            <a href="{{ section.get_absolute_url }}">{{ forloop.counter }}:{{ section.name }}</a><br>{{ section.content }}
     {% endfor %}
 </div>
 

@@ -34,6 +34,7 @@ SITE_ID=1
 
 INSTALLED_APPS = [
     'bubbleworld.apps.BubbleworldConfig',
+    'bubbleworld.templatetags',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

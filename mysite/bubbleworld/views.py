@@ -648,20 +648,20 @@ class PostPartCommentDelete(DeleteView):
     
 #搜索（需要细化）
 
-class SearchView(ListView):
+class SearchView(BaseMixin, ListView):
     template_name = 'search_result.html'
     context_object_name = 'target_list'
-    paginate_by = PAGE_NUM
+    paginate_by = 2
 
     def get_context_data(self, **kwargs):
-        kwargs['q'] = self.request.GET.get('srchtxt', '')
-        kwargs['section'] = self.request.GET.get('section', '')
+        kwargs['q'] = self.request.GET.get('q', '')
+        kwargs['scope'] = int(self.request.GET.get('scope', ''))
         return super(SearchView, self).get_context_data(**kwargs)
 
     def get_queryset(self):
         q = self.request.GET.get('q', '')
-        scope = self.request.GET.get('scope', '')
-        
+        scope = int(self.request.GET.get('scope', ''))
+        a=[]
         if scope == 0:
             section_list = Section.objects.all(
                 ).filter(Q(name__icontains=q) 
@@ -683,19 +683,21 @@ class SearchView(ListView):
                          ).order_by("-content_number")
             postpartcomment_list = PostPart.objects.all(
                 ).filter(Q(content__icontains=q)
-                         ).order_by("-updated_at")
-            return section_list , comment_list , post_list, postpart_list , postpartcomment_list
+            ).order_by("-updated_at")
+            a.extend(section_list)
+            a.extend(comment_list)
+            a.extend(post_list)
+            a.extend(postpart_list)
+            a.extend(postpartcomment_list)
         elif scope == 1 or scope == 2:
             section_list = Section.objects.all(
-                ).filter(Q(name__icontains=q) 
+                ).filter((Q(name__icontains=q) 
                          | Q(author__icontains=q)
                          | Q(director__icontains=q)
                          | Q(actor__icontains=q)
                          | Q(author_description__icontains=q)
-                         | Q(description__icontains=q)
-                         & (
-                         Q(section_type__exact=scope)
-                         | Q(section_type__exact=(scope+4))
+                         | Q(description__icontains=q))
+                         & Q(section_type__exact=(scope+4)
                          )
                          ).order_by("-content_number")
             comment_list = Comment.objects.all(
@@ -703,8 +705,19 @@ class SearchView(ListView):
                          | Q(content__icontains=q)
                          & Q(type_comment__exact=scope)
                          )
-            return section_list, comment_list
+            a.extend(section_list)
+            a.extend(comment_list)
         else:
+            section_list = Section.objects.all(
+                ).filter((Q(name__icontains=q) 
+                         | Q(author__icontains=q)
+                         | Q(director__icontains=q)
+                         | Q(actor__icontains=q)
+                         | Q(author_description__icontains=q)
+                         | Q(description__icontains=q))
+                         & Q(section_type__exact=(scope+4)
+                         )
+                         ).order_by("-content_number")
             post_list = Post.objects.all(
                 ).filter(Q(title__icontains=q)
                          & Q(type_post__exact=scope)
@@ -716,8 +729,12 @@ class SearchView(ListView):
             postpartcomment_list = PostPartComment.objects.all(
                 ).filter(Q(content__icontains=q)
                          & Q(type_postpartcomment__exact=scope)
-                         ).order_by("-updated_at")
-            return post_list,postpart_list, postpartcomment_list
+            ).order_by("-updated_at")
+            a.extend(section_list)
+            a.extend(post_list)
+            a.extend(postpart_list)
+            a.extend(postpartcomment_list)
+        return a
     
 #验证码
 def captcha(request):
