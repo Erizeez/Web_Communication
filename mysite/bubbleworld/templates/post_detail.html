@@ -7,7 +7,7 @@
 	<br>
     	<div class="container">
     		<div class="col">
-    			<div class="card">
+    			<div class="card" style="overflow:auto;mix-blend-mode: overlay;">
                     <div class="card-body">
                         <div class="row">
                                 <div class="col">
@@ -25,14 +25,15 @@
             <br>
 
     {% for uni in postpart_list %}
-    			<div class="card">
+    			<div class="card" >
                   	<div class="card-body">
                   		<div class="row">
 
                                 <div class="col-lg-5">
                                     <img src="{{uni.author.avatar}}">
                                 </div>
-                                <div class="col">
+
+                                <div class="col"><br>
                                     <a style="text-align: left;font-family:雅黑;font-weight:bold;font-size:21px;">{{ uni.content |safe}}</a><br>
                                     
                                 </div>
@@ -58,7 +59,7 @@
                             </form><br>
                            
                             {% for uni_c in uni.postpart.all %}
-                                <div class="card">
+                                <div class="card" >
                     <div class="card-body">
                         <div class="row">
 
@@ -91,7 +92,7 @@
     		<br>
     {% endfor %}
 
-    		<div class="card">
+    		<div class="card" style="overflow:auto;mix-blend-mode: overlay;">
                     <div class="card-body">
                         <div class="col">
                                 <div class="row">

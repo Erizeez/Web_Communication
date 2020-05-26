@@ -10,7 +10,7 @@
                 <!-- -->
                     <div class="col">
                         <div class="row">
-                            <div class="card col">
+                            <div  class="card col">
                                 <div  class="card-body" align="center">
                                     {% if section_obj.section_type == 1 %}
                                      <form id="createform" method="get" action="{% url 'book_create' %}">
@@ -91,7 +91,7 @@
                                         </div>
                         <div class="col">
                             <a href="{{uni.get_absolute_url}}">
-                            <div class="card">
+                            <div class="card" style="overflow:auto;mix-blend-mode: overlay;">
                                 <div class="card-body">
                                     <p class="card-title font-weight-bold">标题:{{uni.title}}</p>
                                     <div class="row" style="align-items:center;">
@@ -150,7 +150,7 @@
                     <br>
                     <div class="col">
                       {% for section in sections_hot %}
-                        <div class="card col col-lg-6">
+                        <div class="card col col-lg-6" style="overflow:auto;mix-blend-mode: overlay;">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
@@ -220,7 +220,7 @@
                       <br>
                     <div class="col">
                       {% for section in sections_new %}
-                        <div class="card col col-lg-6">
+                        <div class="card col col-lg-6" style="overflow:auto;mix-blend-mode: overlay;">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
@@ -269,7 +269,7 @@
                     <br>
                     <div class="col">
                         {% for section in sections_new %}
-                        <div class="card col col-lg-6">
+                        <div class="card col col-lg-6" style="overflow:auto;mix-blend-mode: overlay;">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
