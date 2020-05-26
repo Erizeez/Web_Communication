@@ -15,6 +15,8 @@ from django.utils.timezone import now, timedelta
 from datetime import datetime
 from django.core.cache import cache
 from bubbleworld.captcha import create_captcha
+from django.utils import timezone
+import datetime
 from io import BytesIO
 
 import logging
@@ -207,6 +209,10 @@ class SectionView(BaseMixin, ListView):
             kwargs['hasuser'] = True
         else:
             kwargs['hasuser'] = False
+        if Section.objects.all().filter(pk = kwargs['section'])[0].admins.all().filter(pk = self.request.user.pk):
+            kwargs['hasadmin'] = True
+        else:
+            kwargs['hasadmin'] = False
         return super(SectionView, self).get_context_data(**kwargs)
 
     def get_queryset(self):
@@ -380,6 +386,7 @@ class SectionCreate(BaseMixin, CreateView):
             formdata['section_type'] = 8
         section_obj = Section(**formdata)
         section_obj.save()
+        section_obj.admins.add(user)
         section_obj.users.add(user)
         section_instance.content_number += 1
         section_instance.save()
@@ -387,6 +394,12 @@ class SectionCreate(BaseMixin, CreateView):
         return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_obj.pk))
 
 def section_join(request, section_pk):
+    section_instance = Section.objects.all().filter(pk=section_pk)[0]
+    section_instance.users.add(request.user)
+    section_instance.save()
+    return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_pk))
+
+def section_admin(request, section_pk):
     section_instance = Section.objects.all().filter(pk=section_pk)[0]
     section_instance.users.add(request.user)
     section_instance.save()
@@ -415,8 +428,9 @@ class CommentCreate(BaseMixin, CreateView):
         formdata['author'] = user
         comment_obj = Comment(**formdata)
         comment_obj.save()
+        section_instance.star = (section_instance.star*section_instance.content_number + formdata['star']) / (section_instance.content_number+1)
+        section_instance.updated_at = datetime.datetime.now()
         section_instance.content_number+=1
-        section_instance.star = (section_instance.star*section_instance.content_number + formdata['star']) / section_instance.content_number
         section_instance.save()
         messages.success(self.request, "发布成功")
         return HttpResponseRedirect(
@@ -531,7 +545,8 @@ class PostCreate(BaseMixin, CreateView):
         formdata['type_post'] = section_instance.section_type
         post_instance = Post(**formdata)
         post_instance.save()
-        section_instance.content_number += 1
+        section_instance.content_number -= 1
+        section_instance.updated_at = datetime.datetime.now()
         section_instance.save()
         messages.success(self.request, "发布成功")
         return HttpResponseRedirect(
@@ -588,6 +603,9 @@ class PostPartCreate(BaseMixin, CreateView):
         postpart_instance.save()
         post_instance.content_number += 1
         post_instance.save()
+        section_instance.content_number -= 2
+        section_instance.updated_at = datetime.datetime.now()
+        section_instance.save()
         messages.success(self.request, "发布成功")
         return HttpResponseRedirect(
             reverse_lazy('post_detail', kwargs={"post_pk": post_instance.pk}))   
@@ -644,9 +662,11 @@ class PostPartCommentCreate(BaseMixin, CreateView):
             return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_instance.pk))
         formdata['postpart'] = postpart_instance
         formdata['author'] = author
-        formdata['type_postpartcomment'] = postpart_instance.type_postpartcomment
+        formdata['type_postpartcomment'] = postpart_instance.type_postpart
         postpartcomment_instance = PostPartComment(**formdata)
         postpartcomment_instance.save()
+        section_instance.updated_at = datetime.datetime.now()
+        section_instance.save()
         messages.success(self.request, "发布成功")
         return HttpResponseRedirect(
             reverse_lazy('post_detail', kwargs={"post_pk": postpart_instance.post.pk}))   

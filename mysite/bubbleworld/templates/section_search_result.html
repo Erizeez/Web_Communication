@@ -13,11 +13,24 @@
         {% for target in target_list %}
             <div class="card">
                 <div class="card-body">
+                    <div class="row">
                     <div class="col">
                         
                         <div id="row">
-                            <a class="line-limit-length" href="{% modelurl target %}">{% modelcontent target %}</a>
+                            <a class="line-limit-length" href="{% modelurl target %}">{{target.name}}</a>
                         </div>
+                        <div id="row">
+                            <a class="line-limit-length" href="{% modelurl target %}" style="font-size:18px;">简介：{{target.description}}</a>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div id="row">
+                            <a class="line-limit-length" href="{% modelurl target %}" style="font-size:18px;">内容数量：{{target.content_number}}</a>
+                        </div>
+                        <div id="row">
+                            <a class="line-limit-length" href="{% modelurl target %}" style="font-size:18px;">更新时间：{{target.updated_at}}</a>
+                        </div>
+                    </div>
                     </div>
                 </div>  
             </div> 

@@ -217,6 +217,8 @@ class Section(models.Model):
         return self.name
     def get_join_url(self):
         return reverse('section_join',  args = [str(self.pk)])
+    def get_admin_url(self):
+        return reverse('section_admin',  args = [str(self.pk)])
 
     
     
@@ -243,7 +245,7 @@ class Post(models.Model):
             default = 0
             )
     content_number = models.IntegerField(
-            default = 1
+            default = 0
             )
     last_response = models.ForeignKey(
             settings.AUTH_USER_MODEL,
@@ -308,7 +310,7 @@ class PostPart(models.Model):
             default = 0
             )
     content_number = models.IntegerField(
-            default = 1
+            default = 0
             )
     last_response = models.ForeignKey(
             settings.AUTH_USER_MODEL,

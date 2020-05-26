@@ -172,7 +172,7 @@
                         <form id="sectionsearchform" method="get" action="{% url 'section_search' %}">
                             <input name="q" type="text" class="form-control" aria-label="Text input with dropdown button">
                             <input name="scope" class="scopec" type="text" value="{{section_obj.pk}}" hidden>
-                            <input name="sort" type="text" value="" hidden>
+                            <input name="sort" class="sort" type="text" value="" hidden>
                         </form>
                         <button class="btn btn-outline-secondary" type="button" onclick="ssearch(ssort)">
                     <img src="/static/open-iconic/svg/magnifying-glass.svg">
@@ -189,6 +189,7 @@
             </div>
         </div>
         <br>
+        <div class="row" align="center">
                 <div class="container">
                     <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">
                     {%if section_obj.section_type == 4%}
