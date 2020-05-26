@@ -670,6 +670,7 @@ class SearchView(BaseMixin, ListView):
                          | Q(actor__icontains=q)
                          | Q(author_description__icontains=q)
                          | Q(description__icontains=q)
+                         & Q(section_type__gt = 4)
                          ).order_by("-content_number")
             comment_list = Comment.objects.all(
                 ).filter(Q(title__icontains=q)
@@ -690,6 +691,9 @@ class SearchView(BaseMixin, ListView):
             a.extend(postpart_list)
             a.extend(postpartcomment_list)
         elif scope == 1 or scope == 2:
+            if not self.request.user.is_authenticated:
+                messages.success(self.request, "请登录")
+                return []
             section_list = Section.objects.all(
                 ).filter((Q(name__icontains=q) 
                          | Q(author__icontains=q)

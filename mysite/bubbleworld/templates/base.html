@@ -44,9 +44,10 @@ filter: blur(60px);position:fixed;">
             <span class="navbar-toggler-icon"></span>
             </button>
             <div class="navbar-nav">
+                <div class="dropdown">
                     <button class="btn btn-outline-secondary dropdown-toggle" id="dLabel" type="button" data-toggle="dropdown">
                         <span class="buttonText">全部</span>
-                        <span class="caret"></span>
+                        <span class="caret"></span></button>
                     
                     <div class="dropdown-menu" role="menu" style="text-align: center; min-width:fit-content;" aria-labelledby="dLabel">
                         <a class="dropdown-item" href="#" onclick="shows($(this).text())">全部</a>
@@ -54,7 +55,7 @@ filter: blur(60px);position:fixed;">
                         <a class="dropdown-item" href="#" onclick="shows($(this).text())">影视</a>
                         <a class="dropdown-item" href="#" onclick="shows($(this).text())">小组</a>
                         <a class="dropdown-item" href="#" onclick="shows($(this).text())">话题</a>
-                    </div></button>
+                    </div>
                 </div>
                     <script>
                         var searchscope = 0
@@ -75,6 +76,7 @@ filter: blur(60px);position:fixed;">
                             searchscope = a;
                         }
                     </script>
+                </div>
             <div class="navbar-nav" id="collapsibleNavbar">
                 <form id="searchform" method="get" action="{% url 'search' %}">
                 <input name="q" type="text" class="form-control" aria-label="Text input with dropdown button">
@@ -86,6 +88,7 @@ filter: blur(60px);position:fixed;">
                     <button class="btn btn-outline-secondary" type="button" onclick="search(searchscope)">
                         <img src="/static/open-iconic/svg/magnifying-glass.svg">
                     </button>
+                    {% if user.is_authenticated %}
                     <script>
                         function search(a) {
                             var tmpform = document.getElementById('searchform');
@@ -93,6 +96,20 @@ filter: blur(60px);position:fixed;">
                             tmpform.submit();
                         }
                     </script> 
+                    {% else %}
+                    <script>
+                        function search(a) {
+                            var tmpform = document.getElementById('searchform');
+                            if(a==0){
+                                $('.scopec').val(a);
+                                tmpform.submit();
+                            }else{
+                                window.location.href="{% url 'user_login'%}";
+                            }
+                            
+                        }
+                    </script> 
+                    {% endif %}
             </div>
             <div class="collapse navbar-collapse col-lg-4" id="collapsibleNavbar">
                 <ul class="navbar-nav">
