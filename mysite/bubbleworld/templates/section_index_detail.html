@@ -159,7 +159,7 @@
                                 </div>
                             </div>
                                 <script>
-                                    var sort = "-content_number"
+                                    var ssort = "-content_number"
 
                                     function sshows(a) {
                                         $('.buttonSectionText').text(a)
@@ -171,7 +171,7 @@
                                             a="-updated_at";
                                         }else if(a=="时间升序"){
                                             a="updated_at";
-                                        sort = a;
+                                        ssort = a;
                                     }
                                 </script>
                             </div>
@@ -179,12 +179,11 @@
                 <form id="sectionsearchform" method="get" action="{% url 'section_search' %}">
                 <input name="q" type="text" class="form-control" aria-label="Text input with dropdown button">
                 <input name="scope" class="scopec" type="text" value="{{section_obj.pk}}" hidden>
-                <input name="sort" class="sort" type="text" value="" hidden>
+                <input name="sort" type="text" value="" hidden>
                 </form>
             </div>
             <div class="navbar-nav" id="collapsibleNavbar">
-                    <!-- searchscope为为搜范围字符串 -->
-                    <button class="btn btn-outline-secondary" type="button" onclick="ssearch(searchscope)">
+                    <button class="btn btn-outline-secondary" type="button" onclick="ssearch(ssort)">
                         <img src="/static/open-iconic/svg/magnifying-glass.svg">
                     </button>
                     <script>
