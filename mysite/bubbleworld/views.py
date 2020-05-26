@@ -646,12 +646,12 @@ class PostPartCommentDelete(DeleteView):
 
 
     
-#搜索（需要细化）
+#搜索
 
 class SearchView(BaseMixin, ListView):
     template_name = 'search_result.html'
     context_object_name = 'target_list'
-    paginate_by = 2
+    paginate_by = 30
 
     def get_context_data(self, **kwargs):
         kwargs['q'] = self.request.GET.get('q', '')

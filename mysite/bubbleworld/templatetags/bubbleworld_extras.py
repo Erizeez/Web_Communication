@@ -4,7 +4,23 @@ from bubbleworld.models import User, Tag, Section, Post, PostPart, PostPartComme
 register = template.Library()
 
 @register.simple_tag(takes_context=False)
-def modeltype(context):
+def modelcontent(context):
+    if isinstance(context, Section):
+        content = context.name
+    elif isinstance(context, Comment):
+        content = context.content
+    elif isinstance(context, Post):
+        content = context.title
+    elif isinstance(context, PostPart):
+        content = context.content
+    elif isinstance(context, PostPartComment):
+        content = context.content
+    else:
+        content = -1
+    return content
+
+@register.simple_tag(takes_context=False)
+def modelurl(context):
     if isinstance(context, Section):
         typ = 0
     elif isinstance(context, Comment):
@@ -17,5 +33,5 @@ def modeltype(context):
         typ = 4
     else:
         typ = -1
-    return {'type':typ}
+    return typ
     

@@ -43,20 +43,19 @@ filter: blur(60px);position:fixed;">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
             <span class="navbar-toggler-icon"></span>
             </button>
-
-            <div class="input-group col-lg-4">
-                <div class="input-group-prepend">
-                    <button class="btn btn-outline-secondary dropdown-toggle" id="dLable" type="button" data-toggle="dropdown">
+            <div class="navbar-nav">
+                    <button class="btn btn-outline-secondary dropdown-toggle" id="dLabel" type="button" data-toggle="dropdown">
                         <span class="buttonText">全部</span>
                         <span class="caret"></span>
-                    </button>
+                    
                     <div class="dropdown-menu" role="menu" style="text-align: center; min-width:fit-content;" aria-labelledby="dLabel">
                         <a class="dropdown-item" href="#" onclick="shows($(this).text())">全部</a>
                         <a class="dropdown-item" href="#" onclick="shows($(this).text())">书籍</a>
                         <a class="dropdown-item" href="#" onclick="shows($(this).text())">影视</a>
                         <a class="dropdown-item" href="#" onclick="shows($(this).text())">小组</a>
                         <a class="dropdown-item" href="#" onclick="shows($(this).text())">话题</a>
-                    </div>
+                    </div></button>
+                </div>
                     <script>
                         var searchscope = 0
 
@@ -76,11 +75,13 @@ filter: blur(60px);position:fixed;">
                             searchscope = a;
                         }
                     </script>
-                </div>
+            <div class="navbar-nav" id="collapsibleNavbar">
                 <form id="searchform" method="get" action="{% url 'search' %}">
                 <input name="q" type="text" class="form-control" aria-label="Text input with dropdown button">
                 <input name="scope" class="scopec" type="text" value="" hidden>
-                <div class="input-group-append">
+                </form>
+            </div>
+            <div class="navbar-nav" id="collapsibleNavbar">
                     <!-- searchscope为为搜范围字符串 -->
                     <button class="btn btn-outline-secondary" type="button" onclick="search(searchscope)">
                         <img src="/static/open-iconic/svg/magnifying-glass.svg">
@@ -92,10 +93,7 @@ filter: blur(60px);position:fixed;">
                             tmpform.submit();
                         }
                     </script> 
-                </div>
-            </form>
             </div>
-
             <div class="collapse navbar-collapse col-lg-4" id="collapsibleNavbar">
                 <ul class="navbar-nav">
                     <li class="nav-item">

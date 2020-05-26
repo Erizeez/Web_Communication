@@ -1,32 +1,99 @@
 {% extends "./base.html" %}
 
 {% block content %} 
+{% load bubbleworld_extras %}
 <body>
 
 <div id="all_uni">
 	<br>
     <div class="container">
     	<div class="col">
-
-    		<div class="card">
+            <nav aria-label="Page navigation">
+    <div class="col" style="font-family:雅黑;font-weight:bold;font-size:24px;mix-blend-mode: overlay;">
+        {% for target in target_list %}
+            <div class="card">
                 <div class="card-body">
                     <div class="col">
-                        <div id="all_post">
-                            {% load bubbleworld_extras %}
-    {% for section in target_list %}
-    
-    {%modeltype section%}
-
-djfosd
-
-            <a href="{{ section.get_absolute_url }}">{{ forloop.counter }}:{{ section.name }}</a><br>{{ section.content }}
-    {% endfor %}
-</div>
-
-
+                        
+                        <div id="row">
+                            <a class="line-limit-length" href="{% modelurl target %}">{% modelcontent target %}</a>
+                        </div>
                     </div>
                 </div>  
-            </div>  
+            </div> 
+            <br>
+            {% endfor %} 
+    </div>
+    <br>
+    <div class="pagination"  style="overflow:auto;">
+       
+        <div class="col">
+            
+        {% if page_obj.has_previous %}
+        <li style="font-family:雅黑;font-weight:bold;font-size:24px;mix-blend-mode: difference;"><a href="{% url 'search' %}?q={{q}}&scope={{scope}}&page={{ page_obj.previous_page_number }}">
+            <div class="card">
+                <div class="card-body">
+        上一页
+            </div>
+            </div>
+            </a></li>
+        {% else %}
+        <li class="disabled" style="font-family:雅黑;font-weight:bold;font-size:24px;mix-blend-mode: saturation;"><a><div class="card">
+                <div class="card-body">
+        上一页
+            </div>
+            </div></a></li>
+        {% endif %}
+                
+        </div>
+
+        {% for page in paginator.page_range %}
+        <div class="col">
+        {% if page == page_obj.number %}
+        <li class="active" style="font-family:雅黑;font-weight:bold;font-size:24px;mix-blend-mode: difference;">
+            <a href="{% url 'search' %}?q={{q}}&scope={{scope}}&page={{ page }}">
+                <div class="card">
+                <div class="card-body">
+            {{ page }}
+                </div>
+            </div>
+        </a>
+        </li>
+        {% else %}
+        <li style="font-family:雅黑;font-weight:bold;font-size:24px;mix-blend-mode: overlay;"><a href="{% url 'search' %}?q={{q}}&scope={{scope}}&page={{ page }}">
+            <div class="card">
+                <div class="card-body">
+        {{ page }}
+            </div>
+            </div>
+            </a></li>
+        {% endif %}
+        </div>
+        {% endfor %}
+
+        <div class="col">
+        <!--#下一页-->
+        {% if page_obj.has_next %}
+        <li style="font-family:雅黑;font-weight:bold;font-size:24px;mix-blend-mode: difference;"><a href="{% url 'search' %}?q={{q}}&scope={{scope}}&page={{ page_obj.next_page_number }}">
+            <div class="card">
+                <div class="card-body">
+        下一页
+             </div>
+            </div>
+            </a></li>
+        {% else %}
+        <li class="disabled" style="font-family:雅黑;font-weight:bold;font-size:24px;mix-blend-mode: saturation;"><a><div class="card">
+                <div class="card-body">
+        下一页
+             </div>
+            </div></a></li>
+        {% endif %}
+               
+        </div>
+    </div>
+</nav>
+            
+            
 		</div>
 	</div>
 </div>
