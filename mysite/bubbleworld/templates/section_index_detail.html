@@ -145,29 +145,29 @@
                             <div class="navbar-nav">
                                 <div class="col">
                                 <div class="dropdown">
-                                    <button class="btn btn-outline-secondary dropdown-toggle" id="dLabel" type="button" data-toggle="dropdown">
-                                        <span class="buttonText">热度降序</span>
+                                    <button class="btn btn-outline-secondary dropdown-toggle" id="dSLabel" type="button" data-toggle="dropdown">
+                                        <span class="buttonSectionText">热度降序</span>
                                         <span class="caret"></span>
                                     </button>
                     
-                                    <div class="dropdown-menu" role="menu" style="text-align: center; min-width:fit-content;" aria-labelledby="dLabel">
-                                        <a class="dropdown-item" href="#" onclick="shows($(this).text())">热度降序</a>
-                                        <a class="dropdown-item" href="#" onclick="shows($(this).text())">热度升序</a>
-                                        <a class="dropdown-item" href="#" onclick="shows($(this).text())">时间降序</a>
-                                        <a class="dropdown-item" href="#" onclick="shows($(this).text())">时间升序</a>
+                                    <div class="dropdown-menu" role="menu" style="text-align: center; min-width:fit-content;" aria-labelledby="dSLabel">
+                                        <a class="dropdown-item" href="#" onclick="sshows($(this).text())">热度降序</a>
+                                        <a class="dropdown-item" href="#" onclick="sshows($(this).text())">热度升序</a>
+                                        <a class="dropdown-item" href="#" onclick="sshows($(this).text())">时间降序</a>
+                                        <a class="dropdown-item" href="#" onclick="sshows($(this).text())">时间升序</a>
                                     </div>
                                 </div>
                             </div>
                                 <script>
-                                    var sort = 0
+                                    var sort = "-content_number"
 
-                                    function shows(a) {
-                                      $('.buttonText').text(a)
-                                     if(a=="热度降序"){
-                                           a="-content_number";
-                                      }else if(a=="热度升序"){
+                                    function sshows(a) {
+                                        $('.buttonSectionText').text(a)
+                                        if(a=="热度降序"){
+                                            a="-content_number";
+                                        }else if(a=="热度升序"){
                                             a="content_number";
-                                      }else if(a=="时间降序"){
+                                        }else if(a=="时间降序"){
                                             a="-updated_at";
                                         }else if(a=="时间升序"){
                                             a="updated_at";
@@ -176,7 +176,7 @@
                                 </script>
                             </div>
             <div class="navbar-nav" id="collapsibleNavbar">
-                <form id="sectionsearchform" method="get" action="{% url 'search' %}">
+                <form id="sectionsearchform" method="get" action="{% url 'section_search' %}">
                 <input name="q" type="text" class="form-control" aria-label="Text input with dropdown button">
                 <input name="scope" class="scopec" type="text" value="{{section_obj.pk}}" hidden>
                 <input name="sort" class="sort" type="text" value="" hidden>
@@ -184,11 +184,11 @@
             </div>
             <div class="navbar-nav" id="collapsibleNavbar">
                     <!-- searchscope为为搜范围字符串 -->
-                    <button class="btn btn-outline-secondary" type="button" onclick="search(searchscope)">
+                    <button class="btn btn-outline-secondary" type="button" onclick="ssearch(searchscope)">
                         <img src="/static/open-iconic/svg/magnifying-glass.svg">
                     </button>
                     <script>
-                        function search(a) {
+                        function ssearch(a) {
                             var tmpform = document.getElementById('sectionsearchform');
                             $('.sort').val(a);
                             tmpform.submit();
