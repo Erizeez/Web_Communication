@@ -771,7 +771,7 @@ class SectionSearchView(BaseMixin, ListView):
         kwargs['q'] = self.request.GET.get('q', '')
         kwargs['scope'] = int(self.request.GET.get('scope', ''))
         kwargs['sort'] = str(self.request.GET.get('sort', ''))
-        return super(SearchView, self).get_context_data(**kwargs)
+        return super(SectionSearchView, self).get_context_data(**kwargs)
 
     def get_queryset(self):
         q = self.request.GET.get('q', '')
