@@ -1,0 +1,38 @@
+{% extends "./base.html" %}
+{% block css %} 
+
+<script src="https://cdn.ckeditor.com/ckeditor5/19.0.0/classic/ckeditor.js"></script>
+<style>
+    img:hover
+    {
+    mix-blend-mode: difference;
+    }
+    </style>
+{% endblock %}
+
+
+{% block content %} 
+<body>
+	<br>
+    <div class="container">
+    	<div class="col">
+    		<div class="card" style="overflow:auto;mix-blend-mode: overlay;">
+                <div class="card-body">
+                	<div id="editor"></div>
+						<form id="myform" action="" method="post">{% csrf_token %}
+							{{ form.media }}
+							{{ form.as_p }}
+							<input name="section_pk" type="text" value="{{section}}" hidden>
+							验证码：<input id="captcha" name="captcha" type="text"></input>
+							<img onclick="this.setAttribute('src','/bubbleworld/captcha')" src="{% url 'captcha' %}" title="点击重新获取"/><br><br>
+							<div align="center">
+								<a onclick="document.getElementById('myform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+{% endblock %}

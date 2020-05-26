@@ -13,7 +13,7 @@ init_chars = ''.join((
         ))
 
 def create_captcha(
-        size = (100, 40),
+        size = (120, 40),
         chars = init_chars,
         img_type = 'GIF',
         mode = 'RGB',
@@ -22,8 +22,8 @@ def create_captcha(
         font_size = 20,
         font_type = 'bubbleworld/fonts/Apple.ttf',
         length = 4,
-        draw_points = True,
-        point_chance = 2
+        draw_points = False,
+        point_chance = 0
         ):
     width, height = size
     img = Image.new(mode, size, bg_color)

@@ -1,11 +1,11 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, reverse
 from django.template import RequestContext
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View, TemplateView, ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from bubbleworld.models import User, Follow, Navigation, Tag, Section, Post, PostPart, PostPartComment, Comment, CommentReport, Notice
-from bubbleworld.form import UserForm, TagForm, SectionForm, PostForm, PostPartForm, CommentForm, CommentReportForm, MessageForm
+from bubbleworld.form import *
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
@@ -15,7 +15,8 @@ from django.utils.timezone import now, timedelta
 from datetime import datetime
 from django.core.cache import cache
 from bubbleworld.captcha import create_captcha
-from io import StringIO
+from io import BytesIO
+
 import logging
 # Create your views here.
 
@@ -177,13 +178,13 @@ def section_index_all(request):
 #单个板块
 def section_index_detail(request, section_pk):
     section_obj = Section.objects.get(pk=section_pk)
-    sections_new= section_obj.section_parent_section.all().order_by('created_at')
-    sections_hot= section_obj.section_parent_section.all().order_by('content_number')
+    sections_new= section_obj.section_parent_section.all().order_by('-created_at')[0:10]
+    sections_hot= section_obj.section_parent_section.all().order_by('-content_number')[0:10]
     section_users = section_obj.users.all()
     if section_obj.section_type == 1 or section_obj.section_type == 2:
-        uni_obj = Comment.objects.all().filter(type_comment=section_obj.section_type).order_by('like_number')
+        uni_obj = Comment.objects.all().filter(type_comment=section_obj.section_type).order_by('like_user')[0:10]
     else:
-        uni_obj = Post.objects.all().filter(type_post=section_obj.section_type).order_by('content_number')
+        uni_obj = Post.objects.all().filter(type_post=section_obj.section_type).order_by('content_number')[0:10]
     return render(
         request,
         'section_index_detail.html', {
@@ -195,44 +196,30 @@ def section_index_detail(request, section_pk):
             'section_users': section_users
         }) 
 
-class SectionView(ListView):
+class SectionView(BaseMixin, ListView):
     template_name = 'section_detail.html'
-    context_object_name = 'target_list'
+    context_object_name = 'uni_list'
     paginate_by = PAGE_NUM
 
     def get_context_data(self, **kwargs):
-        kwargs['section'] = self.request.GET.get('section', '')
+        kwargs['section'] = self.request.GET.get('section_pk', '')
         return super(SectionView, self).get_context_data(**kwargs)
 
     def get_queryset(self):
-        section = self.request.GET.get('section', '')
-        
-        section_instance = Section.objects.get(name = section)
-        section_list = section_instance.section_parent_section.all()
-        if section_instance.section_type == 1 and section_instance.section_type == 2:
-            post_list = Post.objects.only(
-                'title',
-                'section',
-                'content').filter(Q(section in section_list))
-            comment_list = Comment.objects.only(
-                'section',
-                'content').filter(Q(section in section_list))
-            
-        target_list = post_list + comment_list
-        return target_list
+        section = self.request.GET.get('section_pk', '')
+        section_instance = Section.objects.all().filter(pk = section)[0]
+        if section_instance.section_type == 5 or section_instance.section_type == 6:
+            uni_list = section_instance.comment_section.all()
+        else:
+            uni_list = section_instance.post_section.all()
+        if not uni_list.exists():
+            return [section_instance,]
+        else:
+            return uni_list
 
-def section_detail(request, section_pk, args):
-    section_obj = Section.objects.get(pk=section_pk)
-    sections = section_obj.section_parent_section.all().order_by('created_at')
-
-    return render(
-        request,
-        'section_index_detail.html', {
-            'section_obj': section_obj,
-            'sections': sections
-        }) 
     
 #评论详细界面
+'''
 def comment_detail(request, comment_pk):
     comment_pk = int(comment_pk)
     comment = Comment.objects.get(pk=comment_pk)
@@ -248,15 +235,57 @@ def comment_detail(request, comment_pk):
             'message_number': k
         },
         context_instance=RequestContext(request))
-    
-    
-    
+'''  
+def comment_detail(request, comment_pk):
+    comment_pk = int(comment_pk)
+    comment = Comment.objects.get(pk=comment_pk)
+    navigation_list = Navigation.objects.all()
+    return render(
+        request,
+        'comment_detail.html', {
+            'comment': comment,
+            'navigation_list': navigation_list,
+            'like_number': comment.like_number,
+            'dislike_number': comment.dislike_number,
+        }) 
+def like_comment(request, comment_pk):
+    comment_pk = int(comment_pk)
+    comment = Comment.objects.get(pk=comment_pk)
+    user = User.objects.get(username = request.user.username)
+    if not comment.like_user.all().filter(pk=user.pk):
+        if comment.dislike_user.all().filter(pk=user.pk):
+            comment.dislike_user.remove(user)
+        comment.like_user.add(user)
+        comment.like_number = comment.like_user.all().count()
+        comment.dislike_number = comment.dislike_user.all().count()
+        comment.save()
+    return HttpResponseRedirect(
+        reverse('comment_detail', args=(str(comment_pk)))
+        )
+
+def dislike_comment(request, comment_pk):
+    comment_pk = int(comment_pk)
+    comment = Comment.objects.get(pk=comment_pk)
+    user = User.objects.get(username = request.user.username)
+    if not comment.dislike_user.all().filter(pk=user.pk):
+        if comment.like_user.all().filter(pk=user.pk):
+            comment.like_user.remove(user)
+        comment.dislike_user.add(user)
+        comment.like_number = comment.like_user.all().count()
+        comment.dislike_number = comment.dislike_user.all().count()
+        comment.save()
+    return HttpResponseRedirect(
+        reverse('comment_detail', args=(str(comment_pk)))
+        )
+
+
 #帖子详细界面
 def post_detail(request, post_pk):
     post_pk = int(post_pk)
     post = Post.objects.get(pk=post_pk)
+    navigation_list = Navigation.objects.all()
     #间帖列表
-    postpart_list = post.postpart_list.all()
+    postpart_list = post.post.all().order_by("created_at")
     #统计帖子的访问访问次数
     if 'HTTP_X_FORWARDED_FOR' in request.META:
         ip = request.META['HTTP_X_FORWARDED_FOR']
@@ -271,11 +300,12 @@ def post_detail(request, post_pk):
         visited_ips.append(ip)
     cache.set(title, visited_ips, 15 * 60)
     return render(
+        request,
         'post_detail.html', {
             'post': post,
-            'postpart_list': postpart_list
-        },
-        context_instance=RequestContext(request))
+            'postpart_list': postpart_list,
+            'navigation_list': navigation_list
+        })
     
     
 #消息通知
@@ -323,34 +353,176 @@ class UserPostView(ListView):
         user_posts = Post.objects.filter(author=self.request.user)
         return user_posts        
     
-
-    
-#发帖
-
-class PostCreate(CreateView):
-    model = Post
-    template_name = 'form.html'
-    form_class = PostForm
-
+class SectionCreate(BaseMixin, CreateView):
+    model = Section
+    template_name = 'section_create.html'
+    form_class = SectionForm
     def form_valid(self, form):
         captcha = self.request.POST.get('captcha', None)
         formdata = form.cleaned_data
-        if self.request.session.get('captcha', None) != captcha:
-            return HttpResponse("验证码错误！<a href='/'>返回</a>")
+        section_instance = Section.objects.get(pk = self.request.GET.get('section_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
         user = User.objects.get(username = self.request.user.username)
-        section_instance = Section.objects.get(name = formdata['section'])
+        
         if user.privilege == 1 and admin_check(user, section_instance):
-            return HttpResponse("您已被封禁！<a href='/'>返回</a>")
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
+        formdata['parent_section'] = section_instance
+        if section_instance.section_type == 3:
+            formdata['section_type'] = 7
+        else:
+            formdata['section_type'] = 8
+        section_obj = Section(**formdata)
+        section_obj.save()
+        section_obj.users.add(user)
+        section_instance.content_number += 1
+        section_instance.save()
+        messages.success(self.request, "发布成功")
+        return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_obj.pk))
+
+class CommentCreate(BaseMixin, CreateView):
+    model = Comment
+    template_name = 'post_create.html'
+    form_class = CommentForm
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        section_instance = Section.objects.get(pk = self.request.GET.get('section_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect("/bubbleworld/comment_create/?section_pk=" + str(section_instance.pk))
+        user = User.objects.get(username = self.request.user.username)
+        
+        if user.privilege == 1 and admin_check(user, section_instance):
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect("/bubbleworld/comment_create/?section_pk=" + str(section_instance.pk))
+        if len(formdata['content']) < 25:
+            messages.success(self.request, "内容长度不得小于25")
+            return HttpResponseRedirect("/bubbleworld/comment_create/?section_pk=" + str(section_instance.pk))
+        formdata['section'] = section_instance
         formdata['author'] = user
-        formdata['last_response'] = user
+        comment_obj = Comment(**formdata)
+        comment_obj.save()
+        section_instance.content_number+=1
+        section_instance.star = (section_instance.star*section_instance.content_number + formdata['star']) / section_instance.content_number
+        section_instance.save()
+        messages.success(self.request, "发布成功")
+        return HttpResponseRedirect(
+            reverse_lazy('comment_detail', kwargs={"comment_pk": comment_obj.pk}))
+class CommentReportCreate(BaseMixin, CreateView):
+    model = Comment
+    template_name = 'post_create.html'
+    form_class = CommentReportForm
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        comment_instance = Comment.objects.get(pk = self.request.GET.get('comment_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect(
+            reverse_lazy('comment_detail', kwargs={"comment_pk": comment_instance.pk}))
+        user = User.objects.get(username = self.request.user.username)  
+        if user.privilege == 1:
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect(
+            reverse_lazy('comment_detail', kwargs={"comment_pk": comment_instance.pk}))
+        if len(formdata['content']) < 25:
+            messages.success(self.request, "内容长度不得小于25")
+            return HttpResponseRedirect(
+            reverse_lazy('comment_detail', kwargs={"comment_pk": comment_instance.pk}))
+        formdata['comment'] = comment_instance
+        formdata['author'] = user
+        commentreport_obj = CommentReport(**formdata)
+        commentreport_obj.save()
+        messages.success(self.request, "举报成功")
+        return HttpResponseRedirect(
+            reverse_lazy('comment_detail', kwargs={"comment_pk": comment_instance.pk}))
+
+
+class BookCreate(BaseMixin, CreateView):
+    model = Section
+    template_name = 'section_create.html'
+    form_class = BookForm
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        section_instance = Section.objects.get(pk = self.request.GET.get('section_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
+        user = User.objects.get(username = self.request.user.username)
+        
+        if user.privilege == 1 and admin_check(user, section_instance):
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
+        formdata['parent_section'] = section_instance
+        formdata['section_type'] = 5
+        section_obj = Section(**formdata)
+        section_obj.save()
+        section_obj.users.add(user)
+        section_instance.content_number += 1
+        section_instance.save()
+        messages.success(self.request, "发布成功")
+        return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_obj.pk))
+
+
+class FilmCreate(BaseMixin, CreateView):
+    model = Section
+    template_name = 'section_create.html'
+    form_class = FilmForm
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        section_instance = Section.objects.get(pk = self.request.GET.get('section_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
+        user = User.objects.get(username = self.request.user.username)
+        
+        if user.privilege == 1 and admin_check(user, section_instance):
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
+        formdata['parent_section'] = section_instance
+        formdata['section_type'] = 6
+        section_obj = Section(**formdata)
+        section_obj.save()
+        section_obj.users.add(user)
+        section_instance.content_number += 1
+        section_instance.save()
+        messages.success(self.request, "发布成功")
+        return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_obj.pk))
+    
+#发帖
+
+class PostCreate(BaseMixin, CreateView):
+    model = Post
+    template_name = 'post_create.html'
+    form_class = PostForm
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        section_instance = Section.objects.get(pk = self.request.GET.get('section_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect("/bubbleworld/post_create/?section_pk=" + str(section_instance.pk))
+        author = User.objects.get(username = self.request.user.username)
+        
+        if author.privilege == 1 and admin_check(author, section_instance):
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect("/bubbleworld/post_create/?section_pk=" + str(section_instance.pk))
+        formdata['section'] = section_instance
+        formdata['author'] = author
+        formdata['last_response'] = author
+        formdata['type_post'] = section_instance.section_type
         post_instance = Post(**formdata)
         post_instance.save()
-        
-        formdata['post'] = post_instance
-        postpart_instance = PostPart(**formdata)
-        postpart_instance.save()
- 
-    
+        section_instance.content_number += 1
+        section_instance.save()
+        messages.success(self.request, "发布成功")
+        return HttpResponseRedirect(
+            reverse_lazy('post_detail', kwargs={"post_pk": post_instance.pk}))   
 #编辑贴
 @login_required(login_url=reverse_lazy('user_login'))
 class PostUpdate(UpdateView):
@@ -359,14 +531,49 @@ class PostUpdate(UpdateView):
     
     
 #删帖
-@login_required(login_url=reverse_lazy('user_login'))
-class PostDelete(DeleteView):
-    model = Post
-    template_name = 'delete_confirm.html'   
+def delete_post(request, post_pk):
+    post_obj = Post.objects.all().filter(pk=post_pk)[0]
+    section_pk = post_obj.section.pk
+    post_obj.delete()
+    section_obj = Section.objects.all().filter(pk=section_pk)[0]
+    section_obj.content_number -= 1
+    return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_pk))
+        
+    
 
 #回帖
-@login_required(login_url=reverse_lazy('user_login'))
-def create_PostPart(request):
+class PostPartCreate(BaseMixin, CreateView):
+    model = PostPart
+    template_name = 'postpart_create.html'
+    form_class = PostPartForm
+
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        post_instance = Post.objects.get(pk = self.request.GET.get('post_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect("/bubbleworld/postpart_create/?post_pk=" + str(post_instance.pk))
+        author = User.objects.get(username = self.request.user.username)
+        
+        if author.privilege == 1 and admin_check(author, post_instance):
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect("/bubbleworld/postpart_create/?post_pk=" + str(post_instance.pk))
+        if len(formdata['content']) < 25:
+            messages.success(self.request, "内容长度不得小于25")
+            return HttpResponseRedirect("/bubbleworld/postpart_create/?post_pk=" + str(post_instance.pk))
+        formdata['post'] = post_instance
+        formdata['author'] = author
+        formdata['last_response'] = author
+        formdata['type_postpart'] = post_instance.type_post
+        postpart_instance = PostPart(**formdata)
+        postpart_instance.save()
+        post_instance.content_number += 1
+        post_instance.save()
+        messages.success(self.request, "发布成功")
+        return HttpResponseRedirect(
+            reverse_lazy('post_detail', kwargs={"post_pk": post_instance.pk}))   
+'''
     if request.method == 'POST':
         content = request.POST.get("comment", "")
         post_id = request.POST.get("post_id", "")
@@ -380,7 +587,7 @@ def create_PostPart(request):
         post_instance.save()
 
     return HttpResponse("回复成功") 
-
+'''
 #编辑回帖
 @login_required(login_url=reverse_lazy('user_login'))
 class PostPartUpdate(UpdateView):
@@ -396,24 +603,31 @@ class PostPartDelete(DeleteView):
     success_url = reverse_lazy('user_postpart')
    
 #间帖评论
-@login_required(login_url=reverse_lazy('user_login'))
-def create_PostPartComment(request):
-    if request.method == 'POST':
-        content = request.POST.get("comment", "")
-        postpart_id = request.POST.get("postpart_id", "")
-        user = User.objects.get(username=request.user)
-        postpart_instance = PostPart.objects.get(pk=postpart_id)
-        postpart_instance.concontent_number += 1
-        postpart_instance.last_response = user
-        post_instance = postpart_instance.post
-        post_instance.concontent_number += 1
-        post_instance.last_response = user
+class PostPartCommentCreate(BaseMixin, CreateView):
+    model = PostPartComment
+    template_name = 'postpartcomment_create.html'
+    form_class = PostPartCommentForm
 
-        c = Comment(postpart=postpart_instance, author=user, content=content)
-        c.save()
-        post_instance.save()
-
-    return HttpResponse("回复成功") 
+    def form_valid(self, form):
+        captcha = self.request.POST.get('captcha', None)
+        formdata = form.cleaned_data
+        postpart_instance = PostPart.objects.get(pk = self.request.GET.get('postpart_pk', ''))
+        if self.request.session.get('captcha', None).upper() != captcha.upper():
+            messages.success(self.request, "验证码错误")
+            return HttpResponseRedirect("/bubbleworld/postpartcomment_create/?postpart_pk=" + str(postpart_instance.pk))
+        author = User.objects.get(username = self.request.user.username)
+        
+        if author.privilege == 1 and admin_check(author, postpart_instance):
+            messages.success(self.request, "您已被封禁")
+            return HttpResponseRedirect("/bubbleworld/postpartcomment_create/?postpart_pk=" + str(postpart_instance.pk))
+        formdata['postpart'] = postpart_instance
+        formdata['author'] = author
+        formdata['type_postpartcomment'] = postpart_instance.type_postpartcomment
+        postpartcomment_instance = PostPartComment(**formdata)
+        postpartcomment_instance.save()
+        messages.success(self.request, "发布成功")
+        return HttpResponseRedirect(
+            reverse_lazy('post_detail', kwargs={"post_pk": postpart_instance.post.pk}))   
 
 #编辑间帖评论
 @login_required(login_url=reverse_lazy('user_login'))
@@ -432,48 +646,135 @@ class PostPartCommentDelete(DeleteView):
 
 
     
-#搜索（需要细化）
+#搜索
 
-class SearchView(ListView):
+class SearchView(BaseMixin, ListView):
     template_name = 'search_result.html'
     context_object_name = 'target_list'
-    paginate_by = PAGE_NUM
+    paginate_by = 30
 
     def get_context_data(self, **kwargs):
-        kwargs['q'] = self.request.GET.get('srchtxt', '')
-        kwargs['section'] = self.request.GET.get('section', '')
+        kwargs['q'] = self.request.GET.get('q', '')
+        kwargs['scope'] = int(self.request.GET.get('scope', ''))
         return super(SearchView, self).get_context_data(**kwargs)
 
     def get_queryset(self):
-        q = self.request.GET.get('srchtxt', '')
-        section = self.request.GET.get('section', '')
-        
-        if section == "all":
-            post_list = Post.objects.only(
-                'title',
-                'content').filter(Q(title__icontains=q) | Q(content__icontains=q))
-            comment_list = Comment.objects.only(
-                'content').filter(Q(content__icontains=q))
+        q = self.request.GET.get('q', '')
+        scope = int(self.request.GET.get('scope', ''))
+        a=[]
+        if scope == 0:
+            section_list = Section.objects.all(
+                ).filter(Q(section_type__gt = 4)
+                         & (Q(name__icontains=q) 
+                         | Q(author__icontains=q)
+                         | Q(director__icontains=q)
+                         | Q(actor__icontains=q)
+                         | Q(author_description__icontains=q)
+                         | Q(description__icontains=q)
+                         )
+                         ).order_by("-content_number")
+            comment_list = Comment.objects.all(
+                ).filter(Q(title__icontains=q)
+                         | Q(content__icontains=q)
+                         )
+            post_list = Post.objects.all(
+                ).filter(Q(title__icontains=q)
+                         ).order_by("-content_number")
+            postpart_list = PostPart.objects.all(
+                ).filter(Q(content__icontains=q)
+                         ).order_by("-content_number")
+            postpartcomment_list = PostPart.objects.all(
+                ).filter(Q(content__icontains=q)
+            ).order_by("-updated_at")
+            a.extend(section_list)
+            a.extend(comment_list)
+            a.extend(post_list)
+            a.extend(postpart_list)
+            a.extend(postpartcomment_list)
+        elif scope == 1 or scope == 2:
+            section_list = Section.objects.all(
+                ).filter((Q(name__icontains=q) 
+                         | Q(author__icontains=q)
+                         | Q(director__icontains=q)
+                         | Q(actor__icontains=q)
+                         | Q(author_description__icontains=q)
+                         | Q(description__icontains=q))
+                         & Q(section_type__exact=(scope+4)
+                         )
+                         ).order_by("-content_number")
+            comment_list = Comment.objects.all(
+                ).filter(Q(title__icontains=q)
+                         | Q(content__icontains=q)
+                         & Q(type_comment__exact=scope)
+                         )
+            a.extend(section_list)
+            a.extend(comment_list)
         else:
-            section_instance = Section.objects.get(name = section)
-            section_list = section_instance.section_parent_section.all()
-            post_list = Post.objects.only(
-                'title',
-                'section',
-                'content').filter(Q(section in section_list) | Q(title__icontains=q) | Q(content__icontains=q))
-            comment_list = Comment.objects.only(
-                'section',
-                'content').filter(Q(section in section_list) | Q(title__icontains=q) | Q(content__icontains=q))
-            
-        target_list = post_list + comment_list
-        return target_list
-    
+            section_list = Section.objects.all(
+                ).filter((Q(name__icontains=q) 
+                         | Q(author__icontains=q)
+                         | Q(director__icontains=q)
+                         | Q(actor__icontains=q)
+                         | Q(author_description__icontains=q)
+                         | Q(description__icontains=q))
+                         & Q(section_type__exact=(scope+4)
+                         )
+                         ).order_by("-content_number")
+            post_list = Post.objects.all(
+                ).filter(Q(title__icontains=q)
+                         & Q(type_post__exact=scope)
+                         ).order_by("-content_number")
+            postpart_list = PostPart.objects.all(
+                ).filter(Q(content__icontains=q)
+                         & Q(type_postpart__exact=scope)
+                         ).order_by("-content_number")
+            postpartcomment_list = PostPartComment.objects.all(
+                ).filter(Q(content__icontains=q)
+                         & Q(type_postpartcomment__exact=scope)
+            ).order_by("-updated_at")
+            a.extend(section_list)
+            a.extend(post_list)
+            a.extend(postpart_list)
+            a.extend(postpartcomment_list)
+        return a
+
+#功能主页搜索
+
+class SectionSearchView(BaseMixin, ListView):
+    template_name = 'section_search_result.html'
+    context_object_name = 'target_list'
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        kwargs['q'] = self.request.GET.get('q', '')
+        kwargs['scope'] = int(self.request.GET.get('scope', ''))
+        kwargs['sort'] = str(self.request.GET.get('sort', ''))
+        return super(SearchView, self).get_context_data(**kwargs)
+
+    def get_queryset(self):
+        q = self.request.GET.get('q', '')
+        scope = int(self.request.GET.get('scope', ''))
+        sort = str(self.request.GET.get('sort', ''))
+        a=[]
+        section_list = Section.objects.all(
+                ).filter((Q(name__icontains=q) 
+                         | Q(author__icontains=q)
+                         | Q(director__icontains=q)
+                         | Q(actor__icontains=q)
+                         | Q(author_description__icontains=q)
+                         | Q(description__icontains=q))
+                         & Q(section_type__exact=(scope+4)
+                         )
+                         ).order_by(sort)
+        a.extend(section_list)
+        return a
+
 #验证码
 def captcha(request):
-    mstream = StringIO.StringIO()
+    mstream = BytesIO()
     captcha = create_captcha()
     img = captcha[0]
-    img.save(mstream, "GIF")
+    img.save(mstream, "PNG")
     request.session['captcha'] = captcha[1]
     return HttpResponse(mstream.getvalue(), "image/gif")
     

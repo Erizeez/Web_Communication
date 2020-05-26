@@ -1,0 +1,80 @@
+{% extends "./base.html" %}
+
+{% block content %} 
+<body>
+
+<div id="all_uni">
+	<br>
+    	<div class="container">
+    		<div class="col">
+    			<div class="card">
+                    <div class="card-body">
+                        <div>
+                            <a href="/bubbleworld/section_detail/?section_pk={{comment.section.pk}}" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">评论</a>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col">
+                                    <img src="{{comment.author.avatar}}">
+                            </div>
+                            <div class="col" align="right">
+                                    <a style="text-align: left;font-family:雅黑;font-weight:bold;font-size:21px;">评分：{{ comment.star }}/5</a><br>
+                            </div>
+                            <div class="col">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col" class="line-limit-length">
+                                    <a style="text-align: left;font-family:雅黑;font-weight:bold;font-size:21px;">{{ comment.content |safe}}</a><br>
+                                    
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                    <a style="text-align: left;font-family:雅黑;font-weight:bold;font-size:15px;">作者：{{ comment.author }}</a><br>
+                            </div>
+                            <div class="col">
+                                    <a style="text-align: right;font-family:雅黑;font-weight:bold;font-size:12px;">发布时间：{{ comment.created_at }}</a><br>
+                            </div>
+                        </div>  
+                    </div>
+              </div>
+              <br>
+                <div class="row">
+                    <div class="col">
+                        <a href="{{comment.get_like_url}}">
+                            <div class="card">
+                                <div class="card-body" style="text-align:center;font-family:雅黑;font-weight:bold;font-size:21px;">
+                                    {{like_number}}&nbsp&nbsp赞同
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a href="{{comment.get_dislike_url}}">
+                            <div class="card">
+                                <div class="card-body" style="text-align:center;font-family:雅黑;font-weight:bold;font-size:21px;">
+                                    {{dislike_number}}&nbsp&nbsp反对
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    </div><br>
+                        <a href="#">
+                            <div class="card">
+                                <div class="card-body" style="text-align:center;font-family:雅黑;font-weight:bold;font-size:21px;">
+                                    <form id="reportform" method="get" action="{% url 'commentreport_create' %}">
+                                            <input name="comment_pk" type="text" value="{{comment.pk}}" hidden>
+                                            <a onclick="document.getElementById('reportform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">举报</a>
+                                        </form>
+                                </div>
+                            </div>
+                        </a>
+              <br>
+              
+		</div>
+	</div>
+</div>
+</body>
+{% endblock %}
