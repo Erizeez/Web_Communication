@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View, TemplateView, ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
-from bubbleworld.models import User, Follow, Navigation, Tag, Section, Post, PostPart, AdminApply, PostPartComment, Comment, CommentReport, Notice
+from bubbleworld.models import User, Navigation, Section, Post, PostPart, AdminApply, PostPartComment, Comment, CommentReport
 from bubbleworld.form import *
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
@@ -798,6 +798,21 @@ class SectionSearchView(BaseMixin, ListView):
                          )
                          ).order_by(sort)
         a.extend(section_list)
+        return a
+    
+class HandleApply(BaseMixin, ListView):
+    template_name = 'handle_apply.html'
+    context_object_name = 'target_list'
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        return super(HandleApply, self).get_context_data(**kwargs)
+
+    def get_queryset(self):
+        a = []
+        for section_obj in Section.objects.all().filter(section_type = 8):
+            if self.request.user in section_obj.admins.all():
+                a.extend(section_obj.post_section.all())
         return a
 
 #验证码

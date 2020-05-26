@@ -1,6 +1,6 @@
 #coding:utf-8
 from django import forms
-from bubbleworld.models import User, Tag, Section, Post, PostPart, PostPartComment, Comment, CommentReport, Message
+from bubbleworld.models import User, Section, Post, PostPart, PostPartComment, Comment, CommentReport
 
 
 class UserForm(forms.ModelForm):
@@ -80,13 +80,7 @@ class UserForm(forms.ModelForm):
             user.save()
         return user
         
-class TagForm(forms.ModelForm):
-    class Meta:
-        model = Tag
-        fields = (
-                'name',
-                )
-        
+
 class SectionForm(forms.ModelForm):
     class Meta:
         model = Section
@@ -152,12 +146,7 @@ class CommentReportForm(forms.ModelForm):
                 'title',
                 'content',
                 )
-class MessageForm(forms.ModelForm):
-    class Meta:
-        model = Message
-        fields = (
-                'content',
-                )
+
         
 
         

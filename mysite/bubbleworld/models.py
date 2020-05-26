@@ -20,23 +20,11 @@ class User(AbstractUser):
             default = '/static/open-iconic/png/person-3x.png',
             verbose_name = u'头像'
             )
-    #权限默认为0，即已注册用户, 1为被封禁，-1为游客
+    #权限默认为0，即已注册用户, 1为被封禁, 2为系统管理员
     privilege = models.CharField(
             max_length = 200,
             default = 0,
             verbose_name = u'权限'
-            )
-    follow_to = models.ManyToManyField(
-            'self',
-            blank = True,
-        #   null = True,
-            related_name = 'followto'
-            )    
-    black_list = models.ManyToManyField(
-            'self',
-            blank = True,
-         #   null = True,
-            related_name = 'black_list'
             )
     
     class Meta:
@@ -51,37 +39,6 @@ class User(AbstractUser):
         return self.get_username()
 
 
-class Follow(models.Model):
-    sender = models.ForeignKey(
-            settings.AUTH_USER_MODEL,
-            on_delete = models.CASCADE,
-            related_name = 'sender',
-            )
-    receiver = models.ForeignKey(
-            settings.AUTH_USER_MODEL,
-            on_delete = models.CASCADE,
-            related_name = 'receiver',
-            )
-    #0-不允许 1-允许 
-    status = models.IntegerField(
-            default=1
-            )
-    created_at = models.DateTimeField(
-            auto_now_add=True
-            )
-    updated_at = models.DateTimeField(
-            auto_now=True
-            )
-    
-    class Meta:
-        db_table = 'follow'
-        verbose_name = u'关注'
-        verbose_name_plural = u'关注'
-    
-    def description(self):
-        return u' %s 关注了 %s' % (self.follow_from, self.follow_to)
-
-    
 class Navigation(models.Model):
     name = models.CharField(
             max_length = 30,
@@ -101,25 +58,6 @@ class Navigation(models.Model):
         db_table = 'navigation'
         verbose_name = u'导航'
         verbose_name_plural = u'导航'
-        ordering = ['-created_time']
-    
-    def __unicode__(self):
-        return self.name
-    
-    
-class Tag(models.Model):
-    name = models.CharField(
-            max_length = 20
-            )
-    created_time = models.DateTimeField(
-            u'创建时间',
-            default = timezone.now
-            )
-    
-    class Meta:
-        db_table = 'tag'
-        verbose_name = u'标签'
-        verbose_name_plural = u'标签'
         ordering = ['-created_time']
     
     def __unicode__(self):
@@ -193,13 +131,6 @@ class Section(models.Model):
             decimal_places = 1
             )
     
-    tags = models.ManyToManyField(
-            'Tag',
-            blank = True,
-      #      null = True,
-            related_name = 'tags'
-            )
-    
     created_at = models.DateTimeField(
             default = timezone.now
             )
@@ -259,13 +190,6 @@ class Post(models.Model):
     #是否加精
     essence = models.BooleanField(
             default = False
-            )
-    
-    tags = models.ManyToManyField(
-            'Tag',
-            blank = True,
-       #     null = True,
-            related_name = 'post_tags'
             )
     
     created_at = models.DateTimeField(
@@ -522,86 +446,8 @@ class CommentReport(models.Model):
     def __unicode__(self):
         return self.title
 
+   
 
-#私信
-class Message(models.Model):  
-    sender = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        related_name='message_sender',
-        on_delete = models.CASCADE
-        )
-    receiver = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        related_name='message_receiver',
-        on_delete = models.CASCADE
-        )
-    content = models.TextField()
-    created_at = models.DateTimeField(
-            auto_now_add=True
-            )
-    updated_at = models.DateTimeField(
-            auto_now=True
-            )
-
-    def description(self):
-        return u'%s 向你发送了信息 %s' % (self.sender, self.content)
-
-    class Meta:
-        db_table = 'message'
-        verbose_name = u'信息'
-        verbose_name_plural = u'信息'     
-    
-class Notice(models.Model):
-    sender = models.ForeignKey(
-            settings.AUTH_USER_MODEL,
-            related_name = 'notice_sender',
-            on_delete = models.CASCADE
-            )
-    receiver = models.ForeignKey(
-            settings.AUTH_USER_MODEL,
-            related_name = 'notice_receiver',
-            on_delete = models.CASCADE
-            )
-    content_type = models.ForeignKey(
-            ContentType,
-            related_name = 'content_type',
-            on_delete = models.CASCADE
-            )
-    object_id = models.PositiveIntegerField()
-    event = fields.GenericForeignKey(
-            'content_type','object_id'
-            )
-    status = models.BooleanField(
-            default = False
-            )
-    #通知类型：0-系统通知 1-评论 2-follow相关通知 3-私信
-    type = models.IntegerField()
-    created_at = models.DateTimeField(
-            auto_now_add = True
-            )
-    updated_at = models.DateTimeField(
-            auto_now = True
-            )
-    class Meta:
-        db_table = 'notice'
-        verbose_name = u'通知'
-        verbose_name_plural = u'通知'
-        ordering = ['-created_at']
-    
-    def __unicode__(self):
-        return u' %s 的消息： %s' % (
-                self.sender, self.description
-                )
-    
-    def description(self):
-        if self.event:
-            return self.event
-        else:
-            return "No event"
-    
-    def read(self):
-       if not self.status:
-           self.status = True
     
     
 def post_save(sender, instance, signal, *args, **kwargs):
@@ -640,35 +486,16 @@ def comment_delete(sender, instance, signal, *args, **kwargs):
     section.content_number -= 1
     section.save()
     
-def follow_save(sender, instance, signal, *args, **kwargs):
-    entity = instance
-    event = Notice(
-            sender = entity.sender,
-            receiver = entity.receiver,
-            event = entity,
-            type = 2
-            )
-    event.save()
-    
-def message_save(sender, instance, signal, *args, **kwargs):
-    entity = instance
-    event = Notice(
-        sender = entity.sender,
-        receiver = entity.receiver,
-        event = entity,
-        type = 3
-        )
-    event.save()
+
     
 #注册消息响应函数
 signals.post_save.connect(comment_save, sender=Comment)
 signals.post_delete.connect(comment_delete, sender=Comment)
-signals.post_save.connect(follow_save, sender=Follow)
 signals.post_save.connect(post_save, sender=Post)
 signals.post_delete.connect(post_delete, sender=Post)
 signals.post_save.connect(postpart_save, sender=PostPart)
 signals.post_delete.connect(postpart_delete, sender=PostPart)
-signals.post_save.connect(message_save, sender=Message)
+
     
     
     
