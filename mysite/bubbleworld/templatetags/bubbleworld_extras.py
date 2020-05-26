@@ -1,6 +1,8 @@
 from django import template
 from bubbleworld.models import User, Tag, Section, Post, PostPart, PostPartComment, Comment, CommentReport, Message
-
+from django.shortcuts import render, get_object_or_404, reverse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse_lazy
 register = template.Library()
 
 @register.simple_tag(takes_context=False)
@@ -22,16 +24,16 @@ def modelcontent(context):
 @register.simple_tag(takes_context=False)
 def modelurl(context):
     if isinstance(context, Section):
-        typ = 0
+        url = "/bubbleworld/section_detail/?section_pk=" + str(context.pk)
     elif isinstance(context, Comment):
-        typ = 1
+        url = reverse_lazy('comment_detail', kwargs={"comment_pk": context.pk})
     elif isinstance(context, Post):
-        typ = 2
+        url = reverse_lazy('post_detail', kwargs={"post_pk": context.pk})
     elif isinstance(context, PostPart):
-        typ = 3
+        url = reverse_lazy('post_detail', kwargs={"post_pk": context.post.pk})
     elif isinstance(context, PostPartComment):
-        typ = 4
+        url = reverse_lazy('post_detail', kwargs={"post_pk": context.postpart.post.pk})
     else:
-        typ = -1
-    return typ
+        url = -1
+    return url
     

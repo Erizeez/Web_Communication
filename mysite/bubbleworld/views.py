@@ -664,13 +664,14 @@ class SearchView(BaseMixin, ListView):
         a=[]
         if scope == 0:
             section_list = Section.objects.all(
-                ).filter(Q(name__icontains=q) 
+                ).filter(Q(section_type__gt = 4)
+                         & (Q(name__icontains=q) 
                          | Q(author__icontains=q)
                          | Q(director__icontains=q)
                          | Q(actor__icontains=q)
                          | Q(author_description__icontains=q)
                          | Q(description__icontains=q)
-                         & Q(section_type__gt = 4)
+                         )
                          ).order_by("-content_number")
             comment_list = Comment.objects.all(
                 ).filter(Q(title__icontains=q)
