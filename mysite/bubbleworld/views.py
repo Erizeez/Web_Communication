@@ -692,9 +692,6 @@ class SearchView(BaseMixin, ListView):
             a.extend(postpart_list)
             a.extend(postpartcomment_list)
         elif scope == 1 or scope == 2:
-            if not self.request.user.is_authenticated:
-                messages.success(self.request, "请登录")
-                return []
             section_list = Section.objects.all(
                 ).filter((Q(name__icontains=q) 
                          | Q(author__icontains=q)
@@ -740,7 +737,38 @@ class SearchView(BaseMixin, ListView):
             a.extend(postpart_list)
             a.extend(postpartcomment_list)
         return a
-    
+
+#功能主页搜索
+
+class SectionSearchView(BaseMixin, ListView):
+    template_name = 'section_search_result.html'
+    context_object_name = 'target_list'
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        kwargs['q'] = self.request.GET.get('q', '')
+        kwargs['scope'] = int(self.request.GET.get('scope', ''))
+        kwargs['sort'] = str(self.request.GET.get('sort', ''))
+        return super(SearchView, self).get_context_data(**kwargs)
+
+    def get_queryset(self):
+        q = self.request.GET.get('q', '')
+        scope = int(self.request.GET.get('scope', ''))
+        sort = str(self.request.GET.get('sort', ''))
+        a=[]
+        section_list = Section.objects.all(
+                ).filter((Q(name__icontains=q) 
+                         | Q(author__icontains=q)
+                         | Q(director__icontains=q)
+                         | Q(actor__icontains=q)
+                         | Q(author_description__icontains=q)
+                         | Q(description__icontains=q))
+                         & Q(section_type__exact=(scope+4)
+                         )
+                         ).order_by(sort)
+        a.extend(section_list)
+        return a
+
 #验证码
 def captcha(request):
     mstream = BytesIO()

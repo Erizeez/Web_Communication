@@ -67,6 +67,7 @@ urlpatterns = [
  #       login_required(views.PostUpdate.as_view()),
   #      name='post_update'),
     url(r'^search/$', views.SearchView.as_view(), name='search'),
+    url(r'^section_search/$', views.SectionSearchView.as_view(), name='section_search'),
     url(r'^captcha/$', 
         views.captcha, 
         name='captcha'),

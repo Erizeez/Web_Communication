@@ -40,9 +40,6 @@ filter: blur(60px);position:fixed;">
 </video>
         <nav class="navbar navbar-expand-sm bg-light navbar-light">
             <a class="navbar-brand col-lg-2" href="/bubbleworld" style="color:black;">Bubble World</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-            <span class="navbar-toggler-icon"></span>
-            </button>
             <div class="navbar-nav">
                 <div class="dropdown">
                     <button class="btn btn-outline-secondary dropdown-toggle" id="dLabel" type="button" data-toggle="dropdown">
@@ -88,7 +85,6 @@ filter: blur(60px);position:fixed;">
                     <button class="btn btn-outline-secondary" type="button" onclick="search(searchscope)">
                         <img src="/static/open-iconic/svg/magnifying-glass.svg">
                     </button>
-                    {% if user.is_authenticated %}
                     <script>
                         function search(a) {
                             var tmpform = document.getElementById('searchform');
@@ -96,20 +92,7 @@ filter: blur(60px);position:fixed;">
                             tmpform.submit();
                         }
                     </script> 
-                    {% else %}
-                    <script>
-                        function search(a) {
-                            var tmpform = document.getElementById('searchform');
-                            if(a==0){
-                                $('.scopec').val(a);
-                                tmpform.submit();
-                            }else{
-                                window.location.href="{% url 'user_login'%}";
-                            }
-                            
-                        }
-                    </script> 
-                    {% endif %}
+                    
             </div>
             <div class="collapse navbar-collapse col-lg-4" id="collapsibleNavbar">
                 <ul class="navbar-nav">
