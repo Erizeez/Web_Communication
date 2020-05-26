@@ -1,0 +1,41 @@
+{% extends "./base.html" %}
+
+{% block content %} 
+<body>
+	<div class="container">
+		<div class="col">
+			<br>
+			<div class="card">
+                <div class="card-body">
+                	<form method="post" action="{% url 'modify_password' %}" />
+				{% csrf_token %}
+				<fieldset>
+                         <div class="control-group">
+						<label class="control-label" for="password" style="font-family:雅黑;font-size:24px;mix-blend-mode: difference;">密码</label>
+						<div class="controls">
+							<input type="password" class="" id="password" placeholder="请输入密码" name="password" />
+						</div>
+					</div>
+                                        
+				</fieldset>
+				<br>
+				<div class="pull-right">
+					<button type="submit" class="btn btn-secondary btn-large" style="font-family:雅黑;font-weight:bold;font-size:18px;">
+						确定
+					</button>
+					<input type="hidden" name="next" value="{{ next }}" />
+				</div>
+			</form>
+                </div>
+            </div>
+            <br>
+			<div class="card">
+                <div class="card-body">
+                	<a href="{% url handle_apply %}"></a>
+                </div>
+            </div>
+            <br>
+		</div>
+	</div>
+</body>
+{% endblock %}

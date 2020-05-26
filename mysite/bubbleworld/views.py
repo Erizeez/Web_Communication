@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View, TemplateView, ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
-from bubbleworld.models import User, Follow, Navigation, Tag, Section, Post, PostPart, PostPartComment, Comment, CommentReport, Notice
+from bubbleworld.models import User, Follow, Navigation, Tag, Section, Post, PostPart, AdminApply, PostPartComment, Comment, CommentReport, Notice
 from bubbleworld.form import *
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
@@ -132,7 +132,22 @@ def user_register(request, template_name = 'register.html'):
                     )
     else:
         return render(request, 'register.html')
-  
+
+def modify_password(request, template_name = 'show_accounts.html'):
+    if request.method == 'POST':
+        user = request.user
+        user.set_password(request.POST.get('password'))
+        user.save()
+        return render(
+        request,
+        'show_accounts.html'
+        )
+    else:
+        return render(
+        request,
+        'show_accounts.html'
+        )
+
 #基本信息
 class BaseMixin(object):
     def get_context_data(self, *args, **kwargs):
@@ -393,6 +408,14 @@ class SectionCreate(BaseMixin, CreateView):
         messages.success(self.request, "发布成功")
         return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_obj.pk))
 
+def show_accounts(request):
+    return render(
+        request,
+        'show_accounts.html'
+        )
+
+
+
 def section_join(request, section_pk):
     section_instance = Section.objects.all().filter(pk=section_pk)[0]
     section_instance.users.add(request.user)
@@ -400,9 +423,9 @@ def section_join(request, section_pk):
     return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_pk))
 
 def section_admin(request, section_pk):
-    section_instance = Section.objects.all().filter(pk=section_pk)[0]
-    section_instance.users.add(request.user)
-    section_instance.save()
+    if not AdminApply.objects.all().filter(section=Section.objects.all().filter(pk=section_pk)[0], user=request.user):        
+        adminapply_instance = AdminApply(section=Section.objects.all().filter(pk=section_pk)[0], user=request.user)
+        adminapply_instance.save()
     return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_pk))
 
 class CommentCreate(BaseMixin, CreateView):
@@ -551,12 +574,7 @@ class PostCreate(BaseMixin, CreateView):
         messages.success(self.request, "发布成功")
         return HttpResponseRedirect(
             reverse_lazy('post_detail', kwargs={"post_pk": post_instance.pk}))   
-#编辑贴
-@login_required(login_url=reverse_lazy('user_login'))
-class PostUpdate(UpdateView):
-    model = Post
-    template_name = 'form.html'
-    
+
     
 #删帖
 def delete_post(request, post_pk):
@@ -609,27 +627,7 @@ class PostPartCreate(BaseMixin, CreateView):
         messages.success(self.request, "发布成功")
         return HttpResponseRedirect(
             reverse_lazy('post_detail', kwargs={"post_pk": post_instance.pk}))   
-'''
-    if request.method == 'POST':
-        content = request.POST.get("comment", "")
-        post_id = request.POST.get("post_id", "")
-        user = User.objects.get(username=request.user)
-        post_instance = Post.objects.get(pk=post_id)
-        post_instance.concontent_number += 1
-        post_instance.last_response = user
 
-        p = PostPart(post=post_instance, author=user, content=content)
-        p.save()
-        post_instance.save()
-
-    return HttpResponse("回复成功") 
-'''
-#编辑回帖
-@login_required(login_url=reverse_lazy('user_login'))
-class PostPartUpdate(UpdateView):
-    model = PostPart
-    template_name = 'form.html'
-    success_url = reverse_lazy('user_postpart')
     
 #删除回帖
 @login_required(login_url=reverse_lazy('user_login'))
@@ -671,12 +669,6 @@ class PostPartCommentCreate(BaseMixin, CreateView):
         return HttpResponseRedirect(
             reverse_lazy('post_detail', kwargs={"post_pk": postpart_instance.post.pk}))   
 
-#编辑间帖评论
-@login_required(login_url=reverse_lazy('user_login'))
-class PostPartCommentUpdate(UpdateView):
-    model = PostPartComment
-    template_name = 'form.html'
-    success_url = reverse_lazy('user_postpart')
     
 #删除间帖评论
 @login_required(login_url=reverse_lazy('user_login'))
@@ -684,10 +676,7 @@ class PostPartCommentDelete(DeleteView):
     model = PostPart
     template_name = 'delete_confirm.html'
     success_url = reverse_lazy('user_postpart')
-    
-
-
-    
+   
 #搜索
 
 class SearchView(BaseMixin, ListView):

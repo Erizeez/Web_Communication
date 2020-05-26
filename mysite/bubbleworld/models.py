@@ -377,6 +377,35 @@ class PostPartComment(models.Model):
                 self.author, self.postpart.post, 
                 self.content)
 
+class AdminApply(models.Model):
+    section = models.ForeignKey(
+            Section,
+            on_delete = models.CASCADE,
+            related_name = 'adminapply_section',
+            )
+    user = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            related_name = 'adminapply_author',
+            on_delete = models.CASCADE
+            )
+    created_at = models.DateTimeField(
+            default = timezone.now
+            )
+
+    
+    class Meta:
+        db_table = 'adminapply'
+        verbose_name = u'管理员申请'
+        verbose_name_plural = u'管理员申请'
+        ordering = ['-created_at']
+    
+    def __unicode__(self):
+        return self.user + self.section
+    
+    def description(self):
+        return u' %s 申请了管理员（%s）' % (
+                self.user, self.section)
+
 class IntegerRangeField(models.IntegerField):
     def __init__(self, verbose_name=None, name=None, min_value=None, max_value=None, **kwargs):
         self.min_value, self.max_value = min_value, max_value

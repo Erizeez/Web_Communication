@@ -120,6 +120,15 @@
 
                                     {{ uni_list.0.name }}</a><br>
                                 </div>
+                                {% if uni_list.0.parent_section.section_type == 4%}
+                                    <div class="col-sm-1" align="right">
+                                        {% if hasadmin %}
+                                            <a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">已加入</a>
+                                        {% else %}
+                                            <a href="{{ uni_list.0.get_admin_url }}" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">申请管理员</a>
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
                                 <div class="col-sm-1" align="right">
                                         {% if hasuser %}
                                             <a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">已加入</a>
