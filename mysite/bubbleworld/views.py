@@ -203,15 +203,19 @@ class SectionView(BaseMixin, ListView):
 
     def get_context_data(self, **kwargs):
         kwargs['section'] = self.request.GET.get('section_pk', '')
+        if Section.objects.all().filter(pk = kwargs['section'])[0].users.all().filter(pk = self.request.user.pk):
+            kwargs['hasuser'] = True
+        else:
+            kwargs['hasuser'] = False
         return super(SectionView, self).get_context_data(**kwargs)
 
     def get_queryset(self):
         section = self.request.GET.get('section_pk', '')
         section_instance = Section.objects.all().filter(pk = section)[0]
         if section_instance.section_type == 5 or section_instance.section_type == 6:
-            uni_list = section_instance.comment_section.all()
+            uni_list = section_instance.comment_section.all()[0:10]
         else:
-            uni_list = section_instance.post_section.all()
+            uni_list = section_instance.post_section.all()[0:10]
         if not uni_list.exists():
             return [section_instance,]
         else:
@@ -382,6 +386,12 @@ class SectionCreate(BaseMixin, CreateView):
         messages.success(self.request, "发布成功")
         return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_obj.pk))
 
+def section_join(request, section_pk):
+    section_instance = Section.objects.all().filter(pk=section_pk)[0]
+    section_instance.users.add(request.user)
+    section_instance.save()
+    return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_pk))
+
 class CommentCreate(BaseMixin, CreateView):
     model = Comment
     template_name = 'post_create.html'
@@ -509,9 +519,12 @@ class PostCreate(BaseMixin, CreateView):
             return HttpResponseRedirect("/bubbleworld/post_create/?section_pk=" + str(section_instance.pk))
         author = User.objects.get(username = self.request.user.username)
         
-        if author.privilege == 1 and admin_check(author, section_instance):
+        if author.privilege == 1:
             messages.success(self.request, "您已被封禁")
             return HttpResponseRedirect("/bubbleworld/post_create/?section_pk=" + str(section_instance.pk))
+        if not section_instance.users.all().filter(pk=author.pk):
+            messages.success(self.request, "您需要先加入小组")
+            return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_instance.pk))
         formdata['section'] = section_instance
         formdata['author'] = author
         formdata['last_response'] = author
@@ -551,6 +564,7 @@ class PostPartCreate(BaseMixin, CreateView):
         captcha = self.request.POST.get('captcha', None)
         formdata = form.cleaned_data
         post_instance = Post.objects.get(pk = self.request.GET.get('post_pk', ''))
+        section_instance = post_instance.section
         if self.request.session.get('captcha', None).upper() != captcha.upper():
             messages.success(self.request, "验证码错误")
             return HttpResponseRedirect("/bubbleworld/postpart_create/?post_pk=" + str(post_instance.pk))
@@ -559,9 +573,13 @@ class PostPartCreate(BaseMixin, CreateView):
         if author.privilege == 1 and admin_check(author, post_instance):
             messages.success(self.request, "您已被封禁")
             return HttpResponseRedirect("/bubbleworld/postpart_create/?post_pk=" + str(post_instance.pk))
+        if not section_instance.users.all().filter(pk=author.pk):
+            messages.success(self.request, "您需要先加入小组")
+            return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_instance.pk))
         if len(formdata['content']) < 25:
             messages.success(self.request, "内容长度不得小于25")
             return HttpResponseRedirect("/bubbleworld/postpart_create/?post_pk=" + str(post_instance.pk))
+        
         formdata['post'] = post_instance
         formdata['author'] = author
         formdata['last_response'] = author
@@ -612,6 +630,7 @@ class PostPartCommentCreate(BaseMixin, CreateView):
         captcha = self.request.POST.get('captcha', None)
         formdata = form.cleaned_data
         postpart_instance = PostPart.objects.get(pk = self.request.GET.get('postpart_pk', ''))
+        section_instance = postpart_instance.post.section
         if self.request.session.get('captcha', None).upper() != captcha.upper():
             messages.success(self.request, "验证码错误")
             return HttpResponseRedirect("/bubbleworld/postpartcomment_create/?postpart_pk=" + str(postpart_instance.pk))
@@ -620,6 +639,9 @@ class PostPartCommentCreate(BaseMixin, CreateView):
         if author.privilege == 1 and admin_check(author, postpart_instance):
             messages.success(self.request, "您已被封禁")
             return HttpResponseRedirect("/bubbleworld/postpartcomment_create/?postpart_pk=" + str(postpart_instance.pk))
+        if not section_instance.users.all().filter(pk=author.pk):
+            messages.success(self.request, "您需要先加入小组")
+            return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_instance.pk))
         formdata['postpart'] = postpart_instance
         formdata['author'] = author
         formdata['type_postpartcomment'] = postpart_instance.type_postpartcomment

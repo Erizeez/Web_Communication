@@ -120,7 +120,14 @@
 
                                     {{ uni_list.0.name }}</a><br>
                                 </div>
-                                <div class="col" align="right">
+                                <div class="col-sm-1" align="right">
+                                        {% if hasuser %}
+                                            <a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">已加入</a>
+                                        {% else %}
+                                            <a href="{{ uni_list.0.get_join_url }}" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">加入</a>
+                                        {% endif %}
+                                </div>
+                                <div class="col-sm-1" align="right">
                                     <form id="myform" method="get" action="{% url 'post_create' %}">
                                             <input name="section_pk" type="text" value="{{section}}" hidden>
                                             <a onclick="document.getElementById('myform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a>
@@ -312,12 +319,20 @@
                                     {%endif%}
                                     {{ uni_list.0.section.name }}</a><br>
                                 </div>
-                                <div class="col" align="right">
+                                    <div class="col-sm-1" align="right">
+                                        {% if hasuser %}
+                                            <a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">已加入</a>
+                                        {% else %}
+                                            <a href="{{ uni_list.0.section.get_join_url }}" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">加入</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-sm-1" align="right">
                                     <form id="myform" method="get" action="{% url 'post_create' %}">
                                             <input name="section_pk" type="text" value="{{section}}" hidden>
                                             <a onclick="document.getElementById('myform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a>
-                                        </form>
-                                </div>
+                                    </form>
+                                    </div>  
+                                
                         </div>
                     </div>
                 </div>
