@@ -178,7 +178,7 @@ class IndexView(BaseMixin, ListView):
         kwargs['online_ips_count'] = get_online_ips_count()
         kwargs['hot_posts'] = self.queryset.order_by("-last_response")[0:10]
         kwargs['hot_comments'] = self.queryset.order_by("-updated_at")[0:10]
-        return super(IndexView, self).get_context_data(**kwargs)
+        return super(IndexView, self).get_context_data(**kwargs).order_by('-content_number')[0:10]
 
 #所有版块
 
