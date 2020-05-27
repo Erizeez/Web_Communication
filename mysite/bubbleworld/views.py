@@ -170,14 +170,14 @@ class IndexView(BaseMixin, ListView):
     queryset = Post.objects.all()
     template_name = 'index.html'
     context_object_name = 'post_list'
-    #分页-每页数目
-    paginate_by = PAGE_NUM  
 
     def get_context_data(self, **kwargs):
         kwargs['foruminfo'] = get_forum_info()
         kwargs['online_ips_count'] = get_online_ips_count()
-        kwargs['hot_posts'] = self.queryset.order_by("-last_response")[0:10]
-        kwargs['hot_comments'] = self.queryset.order_by("-updated_at")[0:10]
+        kwargs['hot_topics'] = Section.objects.all().filter(section_type=7).order_by("-updated_at")[0:4]
+        kwargs['hot_books'] = Section.objects.all().filter(section_type=5).order_by("-updated_at")[0:4]
+        kwargs['hot_films'] = Section.objects.all().filter(section_type=6).order_by("-updated_at")[0:4]
+        kwargs['hot_comments'] = Comment.objects.all().order_by("-updated_at")[0:4]
         return super(IndexView, self).get_context_data(**kwargs)
 
 #所有版块
@@ -245,7 +245,40 @@ class SectionView(BaseMixin, ListView):
             else:
                 return uni_list
         
+def section_details(request, section_pk):
+    section_pk = int(section_pk)
+    section = Section.objects.get(pk=section_pk)
+    navigation_list = Navigation.objects.all()
+    context = {}
+    context['section'] = request.GET.get('section_pk', '')
+    if Section.objects.all().filter(pk = section_pk)[0].users.all().filter(pk = request.user.pk):
+        context['hasuser'] = True
+    else:
+        context['hasuser'] = False
+    if Section.objects.all().filter(pk = section_pk)[0].admins.all().filter(pk = request.user.pk):
+        context['hasadmin'] = True
+    else:
+        context['hasadmin'] = False
+    if section.section_type == 5 or section.section_type == 6:
+        uni_list = section.comment_section.all()[0:20]
+        if not uni_list.exists():
+            context['uni_list'] = [section,]
+        else:
+            context['uni_list'] = uni_list
+    else:
+        tmp_list = []
+        tmp_list.extend(section.post_section.all().filter(upper_placed=True).order_by("-updated_at"))
+        tmp_list.extend(section.post_section.all().filter(upper_placed=False).order_by("-updated_at"))
+        uni_list = tmp_list[0:30]
+        if len(uni_list) == 0:
+            context['uni_list'] = [section,]
+        else:
+            context['uni_list'] = uni_list
 
+
+    return render(
+        request,
+        'section_detail.html',context)
     
 #评论详细界面
 
@@ -463,7 +496,7 @@ class CommentReportCreate(BaseMixin, CreateView):
             messages.success(self.request, "您已被封禁")
             return HttpResponseRedirect(
             reverse_lazy('comment_detail', kwargs={"comment_pk": comment_instance.pk}))
-        if len(formdata['content']) < 25:
+        if len(formdata['content']) < 15:
             messages.success(self.request, "内容长度不得小于25")
             return HttpResponseRedirect(
             reverse_lazy('comment_detail', kwargs={"comment_pk": comment_instance.pk}))

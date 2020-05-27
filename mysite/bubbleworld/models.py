@@ -149,7 +149,8 @@ class Section(models.Model):
         return reverse('section_join',  args = [str(self.pk)])
     def get_admin_url(self):
         return reverse('section_admin',  args = [str(self.pk)])
-
+    def get_absolute_url(self):
+        return reverse("section_details",  args = [str(self.pk)])
     
     
 class Post(models.Model):

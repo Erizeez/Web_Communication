@@ -38,6 +38,9 @@ urlpatterns = [
     url(r'^post_detail/(?P<post_pk>\d+)/$',
         views.post_detail,
         name='post_detail'),
+    url(r'^section_details/(?P<section_pk>\d+)/$',
+        views.section_details,
+        name='section_details'),
     url(r'^section_create/$',
         login_required(views.SectionCreate.as_view()),
         name='section_create'),
@@ -77,7 +80,6 @@ urlpatterns = [
     url(r'^cancel_post_useful/(?P<post_pk>\d+)/$',
         login_required(views.cancel_post_useful),
         name='cancel_post_useful'),
-    
     url(r'^pass_apply/(?P<adminapply_pk>\d+)/$',
         login_required(views.pass_apply),
         name='pass_apply'),
