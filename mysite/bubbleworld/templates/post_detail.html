@@ -11,7 +11,10 @@
                     <div class="card-body">
                         <div class="row">
                                 <div class="col">
-                                    <a href="/bubbleworld/section_detail/?section_pk={{post.section.pk}}" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">{{ post.title }}</a><br>
+                                    <a href="/bubbleworld/section_detail/?section_pk={{post.section.pk}}" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">{{ post.title }}
+                                        {% if post.essence %}
+                                        <img src="/static/open-iconic/svg/star.svg">
+                                        {% endif%}</a><br>
                                 </div>
                                 <div class="col" align="right">
                                     <form id="myform" method="get" action="{% url 'postpart_create' %}">

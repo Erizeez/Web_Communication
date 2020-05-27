@@ -5,20 +5,101 @@
 <body>
 
 <div id="all_uni">
-	<br>
+    <br>
+  
     <div class="container">
-    	<div class="col">
+            <div class="row justify-content-center">
+                <div class="align-self-center">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary dropdown-toggle" id="dSLabel" type="button" data-toggle="dropdown">
+                    <span class="buttonSectionText">热度降序</span>
+                    <span class="caret"></span></button>
+
+                            <div class="dropdown-menu" role="menu" style="text-align: center; min-width:fit-content;" aria-labelledby="dSLabel">
+                                <a class="dropdown-item" href="#" onclick="sshows($(this).text())">热度降序</a>
+                                <a class="dropdown-item" href="#" onclick="sshows($(this).text())">热度升序</a>
+                                <a class="dropdown-item" href="#" onclick="sshows($(this).text())">时间降序</a>
+                                <a class="dropdown-item" href="#" onclick="sshows($(this).text())">时间升序</a>
+                            </div>
+                            <script>
+                                var ssort = "-content_number"
+
+                                function sshows(a) {
+                                    $('.buttonSectionText').text(a)
+                                    if (a == "热度降序") {
+                                        a = "-content_number";
+                                    } else if (a == "热度升序") {
+                                        a = "content_number";
+                                    } else if (a == "时间降序") {
+                                        a = "-updated_at";
+                                    } else if (a == "时间升序") {
+                                        a = "updated_at";
+                                    }
+                                    ssort = a;
+                                }
+                            </script>
+                        </div>
+                        <form id="postsearchform" method="get" action="{% url 'handle_post' %}">
+                            <input name="q" type="text" class="form-control" aria-label="Text input with dropdown button">
+                            <input name="scope" class="scopec" type="text" value="{{section_obj.pk}}" hidden>
+                            <input name="sort" class="sort" type="text" value="" hidden>
+                        </form>
+                        <button class="btn btn-outline-secondary" type="button" onclick="ssearch(ssort)">
+                    <img src="/static/open-iconic/svg/magnifying-glass.svg">
+                </button>
+                        <script>
+                            function ssearch(a) {
+                                var tmpform = document.getElementById('postsearchform');
+                                $('.sort').val(a);
+                                tmpform.submit();
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+    	<div class="col"> 
+            
+    <br>
             <nav aria-label="Page navigation">
-    <div class="col" style="font-family:雅黑;font-weight:bold;font-size:24px;mix-blend-mode: overlay;">
+    <div class="col" style="mix-blend-mode: overlay;">
         {% for target in target_list %}
             <div class="card">
                 <div class="card-body">
+
                     <div class="col">
                         
-                        <div id="row">
-                            <a class="line-limit-length" href="{% modelurl target %}">{% modelcontent target %}</a>
+                        <div class="row">
+                            <a class="line-limit-length" href="{% modelurl target %}" style="font-family:雅黑;font-weight:bold;font-size:24px;">{{target.title}}</a>
                         </div>
+                        <div class="row">
+                            <a href="{% modelurl target %}">作者：{{target.author.username}}</a>
+                        </div>
+                        <br>
+                        <div class="row" align="center">
+                            <div class="col">
+                            {% if target.upper_placed %}
+                                <a href="{{target.cancel_top_url}}">取消置顶</a>
+                            {% else %}
+                                <a href="{{target.get_top_url}}">置顶</a>
+                            {% endif %}
+                            
+                            </div>
+                            <div class="col">
+                            {% if target.essence %}
+                                <a href="{{target.cancel_useful_url}}">取消加精</a>
+                            {% else %}
+                                <a href="{{target.get_useful_url}}">加精</a>
+                            {% endif %}
+                                
+                            </div>
+                            <div class="col">
+                                <a href="{{target.get_delete_url}}">删除</a>
+                            </div>
+                        </div>
+
                     </div>
+                    
                 </div>  
             </div> 
             <br>

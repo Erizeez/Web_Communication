@@ -178,7 +178,7 @@ class IndexView(BaseMixin, ListView):
         kwargs['online_ips_count'] = get_online_ips_count()
         kwargs['hot_posts'] = self.queryset.order_by("-last_response")[0:10]
         kwargs['hot_comments'] = self.queryset.order_by("-updated_at")[0:10]
-        return super(IndexView, self).get_context_data(**kwargs).order_by('-content_number')[0:10]
+        return super(IndexView, self).get_context_data(**kwargs)
 
 #所有版块
 
@@ -230,33 +230,25 @@ class SectionView(BaseMixin, ListView):
         section = self.request.GET.get('section_pk', '')
         section_instance = Section.objects.all().filter(pk = section)[0]
         if section_instance.section_type == 5 or section_instance.section_type == 6:
-            uni_list = section_instance.comment_section.all()[0:10]
+            uni_list = section_instance.comment_section.all()[0:20]
+            if not uni_list.exists():
+                return [section_instance,]
+            else:
+                return uni_list
         else:
-            uni_list = section_instance.post_section.all()[0:10]
-        if not uni_list.exists():
-            return [section_instance,]
-        else:
-            return uni_list
+            tmp_list = []
+            tmp_list.extend(section_instance.post_section.all().filter(upper_placed=True).order_by("-updated_at"))
+            tmp_list.extend(section_instance.post_section.all().filter(upper_placed=False).order_by("-updated_at"))
+            uni_list = tmp_list[0:30]
+            if len(uni_list) == 0:
+                return [section_instance,]
+            else:
+                return uni_list
+        
 
     
 #评论详细界面
-'''
-def comment_detail(request, comment_pk):
-    comment_pk = int(comment_pk)
-    comment = Comment.objects.get(pk=comment_pk)
-    comment_list = Comment.comment_set.all()
-    if request.user.is_authenticated():
-        k = Notice.objects.filter(receiver=request.user, status=False).count()
-    else:
-        k = 0
-    return render(
-        'comment_detail.html', {
-            'comment': comment,
-            'comment_list': comment_list,
-            'message_number': k
-        },
-        context_instance=RequestContext(request))
-'''  
+
 def comment_detail(request, comment_pk):
     comment_pk = int(comment_pk)
     comment = Comment.objects.get(pk=comment_pk)
@@ -573,7 +565,7 @@ class PostCreate(BaseMixin, CreateView):
 
     
 #删帖
-def delete_post(request, post_pk):
+def post_delete(request, post_pk):
     post_obj = Post.objects.all().filter(pk=post_pk)[0]
     section_pk = post_obj.section.pk
     post_obj.delete()
@@ -581,7 +573,33 @@ def delete_post(request, post_pk):
     section_obj.content_number -= 1
     return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(section_pk))
         
+#置顶
+def post_top(request, post_pk):
+    post_obj = Post.objects.all().filter(pk=post_pk)[0]
+    post_obj.upper_placed = True
+    post_obj.save()
+    return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(post_obj.section.pk))
+
+#加精
+def post_useful(request, post_pk):
+    post_obj = Post.objects.all().filter(pk=post_pk)[0]
+    post_obj.essence = True
+    post_obj.save()
+    return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(post_obj.section.pk))
     
+#取消置顶
+def cancel_post_top(request, post_pk):
+    post_obj = Post.objects.all().filter(pk=post_pk)[0]
+    post_obj.upper_placed = False
+    post_obj.save()
+    return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(post_obj.section.pk))
+
+#取消加精
+def cancel_post_useful(request, post_pk):
+    post_obj = Post.objects.all().filter(pk=post_pk)[0]
+    post_obj.essence = False
+    post_obj.save()
+    return HttpResponseRedirect("/bubbleworld/section_detail/?section_pk=" + str(post_obj.section.pk))
 
 #回帖
 class PostPartCreate(BaseMixin, CreateView):
@@ -800,16 +818,37 @@ class HandlePost(BaseMixin, ListView):
     template_name = 'handle_post.html'
     context_object_name = 'target_list'
     paginate_by = 20
+    
+    template_name = 'handle_post.html'
+    context_object_name = 'target_list'
+    paginate_by = 20
 
     def get_context_data(self, **kwargs):
+        kwargs['q'] = self.request.GET.get('q', '')
+        kwargs['sort'] = str(self.request.GET.get('sort', ''))
         return super(HandlePost, self).get_context_data(**kwargs)
 
     def get_queryset(self):
-        a = []
-        for section_obj in Section.objects.all().filter(section_type = 8):
-            if self.request.user in section_obj.admins.all():
-                a.extend(section_obj.post_section.all())
+        q = self.request.GET.get('q', '')
+        sort = str(self.request.GET.get('sort', ''))
+        user_tmp = User.objects.all().filter(username=q)
+        a=[]
+        if q:
+            for section_obj in Section.objects.all().filter(section_type = 8):
+                if self.request.user in section_obj.admins.all():
+                    a.extend(section_obj.post_section.all().filter(
+                            Q(title__icontains=q) 
+                         
+                         ).order_by(sort))
+        else:
+            for section_obj in Section.objects.all().filter(section_type = 8):
+                if self.request.user in section_obj.admins.all():
+                    a.extend(section_obj.post_section.all().order_by("-updated_at"))
         return a
+
+
+        
+ 
     
 class HandleApply(BaseMixin, ListView):
     template_name = 'handle_apply.html'

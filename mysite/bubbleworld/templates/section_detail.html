@@ -352,7 +352,11 @@
                         <div class="col">
                                 <div class="row">
                                     <div class="col">
-                                        <a href="{{ uni.get_absolute_url }} " style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">{{ uni.title }}</a><br>
+                                        <a href="{{ uni.get_absolute_url }} " style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">{{ uni.title }}</a>
+                                        {% if uni.essence %}
+                                        <img src="/static/open-iconic/svg/star.svg">
+                                        {% endif%}
+                                        <br>
                                     </div>
                                     <div class="col" align="right">
                                         <a style="text-align: right;font-family:雅黑;font-weight:bold;font-size:15px;">作者：{{ uni.author }}</a>

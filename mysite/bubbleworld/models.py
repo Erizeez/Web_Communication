@@ -212,6 +212,16 @@ class Post(models.Model):
     
     def get_absolute_url(self):
         return reverse("post_detail",  args = [str(self.pk)])
+    def get_top_url(self):
+        return reverse("post_top",  args = [str(self.pk)])
+    def get_useful_url(self):
+        return reverse("post_useful",  args = [str(self.pk)])
+    def get_delete_url(self):
+        return reverse("post_delete",  args = [str(self.pk)])
+    def cancel_useful_url(self):
+        return reverse("cancel_post_useful",  args = [str(self.pk)])
+    def cancel_top_url(self):
+        return reverse("cancel_post_top",  args = [str(self.pk)])
     
     
 class PostPart(models.Model):
