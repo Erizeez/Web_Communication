@@ -116,10 +116,9 @@ class Section(models.Model):
             max_length = 2000,
             verbose_name = u'描述'
             )
-    img = models.CharField(
-            max_length = 200,
-            default = '/static/img/book/白夜行.jpg',
-            verbose_name = u'图标'
+    img = models.ImageField(
+            upload_to='photo',
+            verbose_name = u'图像'
             )
     content_number = models.IntegerField(
             default = 0

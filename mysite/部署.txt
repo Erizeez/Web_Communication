@@ -1,0 +1,33 @@
+放置在/home
+更新apt  apt update ,apt upgrade
+安装虚拟环境并启用
+pip3 install virtualenv
+virtualenv env1
+cd env1 
+source ./bin/activate 
+如果要退出 deactivate
+安装组件
+pip install django
+配置mysql
+apt-get install mysql-server
+apt-get install mysql-client
+apt-get install libmysqlclient-dev
+mysql_secure_installation
+vim /etc/mysql/conf.d/mysql.cnf
+在 [mysql] 标签的下一行添加下面的配置default-character-set=utf8
+vim /etc/mysql/mysql.conf.d/mysqld.cnf
+找到 [mysqld] 标签，在其下一行添加下面的配置character-set-server=utf8
+service mysql restart
+mysql -uroot -p
+CREATE USER 'test'@'localhost' IDENTIFIED BY 'software';
+create database test；
+GRANT ALL PRIVILEGES ON *.* TO 'test'@'%' IDENTIFIED BY 'software' WITH GRANT RANT OPTION;
+在/mysite/settings.py修改数据库配置
+pip install django-ckeditor
+pip install pillow
+pip install mysqlclient
+python manage.py migrate
+python manage.py loaddata init.json 
+pip install uwsgi
+建立管理员账号
+python manage.py createsuperuser

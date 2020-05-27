@@ -941,7 +941,6 @@ def captcha(request):
     img.save(mstream, "PNG")
     request.session['captcha'] = captcha[1]
     return HttpResponse(mstream.getvalue(), "image/gif")
-    
 
 
 

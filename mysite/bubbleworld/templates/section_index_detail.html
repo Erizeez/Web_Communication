@@ -97,7 +97,7 @@
                                         </form>
                                         <a onclick="document.getElementById('hotform1{{ forloop.counter }}').submit()">
                                             <div class="col">
-                                                <img src="{{section.img}}" alt="..." class="img-thumbnail">
+                                                <img src="/static/{{section.img}}" alt="..." class="img-thumbnail">
                                                 <p type="button" style="text-align: center;">{{section.name}}  {{section.author}}</p>
                                             </div>
                                         </a>
@@ -116,7 +116,7 @@
                                         </form>
                                         <a onclick="document.getElementById('hotform1{{ forloop.counter }}').submit()">
                                         <div class="col">
-                                            <img src="{{section.img}}" alt="..." class="img-thumbnail">
+                                            <img src="/static/{{section.img}}" alt="..." class="img-thumbnail">
                                             <p type="button" style="text-align: center;">{{section.name}}  {{section.author}}</p>
                                         </div>
                                         </a>
@@ -140,7 +140,7 @@
                                     
                                     <div class="row" style="align-items:center;">
                                         <div class="col col-lg-3">
-                                            <img src="{{uni.section.img}}" alt="..." class="img-thumbnail" style="width:auto ;height:auto;">
+                                            <img src="/static/{{uni.section.img}}" alt="..." class="img-thumbnail" style="width:auto ;height:auto;">
                                         </div>
                         <div class="col">
                             <a href="{{uni.get_absolute_url}}">

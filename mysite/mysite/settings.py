@@ -27,7 +27,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 SITE_ID=1
 
 # Application definition
@@ -129,7 +129,11 @@ AUTH_USER_MODEL = "bubbleworld.User"
 
 LOGIN_URL = '/bubbleworld/accounts/login/'
 
+MEDIA_ROOT = 'static/'
+
 #登录超时设置
+
+
 
 SESSION_SAVE_EVERY_REQUEST = True
 
