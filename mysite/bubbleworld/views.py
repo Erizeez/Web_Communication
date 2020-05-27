@@ -159,10 +159,6 @@ class BaseMixin(object):
                 '-created_at')[0:10]
             context['last_posts'] = Post.objects.all().order_by(
                 'created_at')[0:10]
-            if self.request.user.is_authenticated:
-                k = Notice.objects.filter(
-                    receiver=self.request.user, status=False).count()
-                context['message_number'] = k
                 
         except Exception:
             logger.error(u'[BaseMixin]加载基本信息出错')
@@ -800,6 +796,21 @@ class SectionSearchView(BaseMixin, ListView):
         a.extend(section_list)
         return a
     
+class HandlePost(BaseMixin, ListView):
+    template_name = 'handle_post.html'
+    context_object_name = 'target_list'
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        return super(HandlePost, self).get_context_data(**kwargs)
+
+    def get_queryset(self):
+        a = []
+        for section_obj in Section.objects.all().filter(section_type = 8):
+            if self.request.user in section_obj.admins.all():
+                a.extend(section_obj.post_section.all())
+        return a
+    
 class HandleApply(BaseMixin, ListView):
     template_name = 'handle_apply.html'
     context_object_name = 'target_list'
@@ -810,10 +821,45 @@ class HandleApply(BaseMixin, ListView):
 
     def get_queryset(self):
         a = []
-        for section_obj in Section.objects.all().filter(section_type = 8):
-            if self.request.user in section_obj.admins.all():
-                a.extend(section_obj.post_section.all())
+        a.extend(AdminApply.objects.all().order_by("-created_at"))
         return a
+    
+class HandleReport(BaseMixin, ListView):
+    template_name = 'handle_report.html'
+    context_object_name = 'target_list'
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        return super(HandleReport, self).get_context_data(**kwargs)
+
+    def get_queryset(self):
+        a = []
+        a.extend(CommentReport.objects.all().order_by("-created_at"))
+        return a
+
+def pass_apply(request, adminapply_pk):
+    adminapply_obj = AdminApply.objects.all().filter(pk=adminapply_pk)[0]
+    section_obj = adminapply_obj.section
+    section_obj.admins.add(adminapply_obj.user)
+    section_obj.save()
+    adminapply_obj.delete()
+    return HttpResponseRedirect(reverse_lazy("handle_apply"))
+    
+def refuse_apply(request, adminapply_pk):
+    adminapply_obj = AdminApply.objects.all().filter(pk=adminapply_pk)[0]
+    adminapply_obj.delete()
+    return HttpResponseRedirect(reverse_lazy("handle_apply"))
+
+def pass_report(request, report_pk):
+    commentreport_obj = CommentReport.objects.all().filter(pk=report_pk)[0]
+    commentreport_obj.comment.delete()
+    commentreport_obj.delete()
+    return HttpResponseRedirect(reverse_lazy("handle_report"))
+    
+def refuse_report(request, report_pk):
+    commentreport_obj = CommentReport.objects.all().filter(pk=report_pk)[0]
+    commentreport_obj.delete()
+    return HttpResponseRedirect(reverse_lazy("handle_report"))
 
 #验证码
 def captcha(request):

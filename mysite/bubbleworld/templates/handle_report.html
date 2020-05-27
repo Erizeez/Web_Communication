@@ -16,12 +16,18 @@
                     <div id="col">
                     <div class="row">
                         <div id="col">
-                            <a>申请用户：{{ target.user }}</a>
+                            <a>举报人：{{ target.author }}</a>
                         </div>
                         &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
                         <div id="col">
-                            <a>申请小组：{{ target.section.name }}</a>
+                            <a href="{{ target.comment.get_absolute_url }}">被举报评价</a>
                         </div>
+                    </div>
+                    <div class="row">
+                        <a>举报标题：{{target.title}}</a>
+                    </div>
+                    <div class="row">
+                        <a>举报内容：{{target.content}}</a>
                     </div>
                     <br>
                     <div class="row" align="center">

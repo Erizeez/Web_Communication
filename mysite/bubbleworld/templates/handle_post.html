@@ -9,31 +9,16 @@
     <div class="container">
     	<div class="col">
             <nav aria-label="Page navigation">
-    <div style="font-family:雅黑;font-weight:bold;font-size:15px;mix-blend-mode: overlay;">
+    <div class="col" style="font-family:雅黑;font-weight:bold;font-size:24px;mix-blend-mode: overlay;">
         {% for target in target_list %}
             <div class="card">
                 <div class="card-body">
-                    <div id="col">
-                    <div class="row">
-                        <div id="col">
-                            <a>申请用户：{{ target.user }}</a>
-                        </div>
-                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                        <div id="col">
-                            <a>申请小组：{{ target.section.name }}</a>
+                    <div class="col">
+                        
+                        <div id="row">
+                            <a class="line-limit-length" href="{% modelurl target %}">{% modelcontent target %}</a>
                         </div>
                     </div>
-                    <br>
-                    <div class="row" align="center">
-                        <div id="col">
-                            <a href="{{target.get_pass_url}}">通过</a>
-                        </div>
-                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-                        <div id="col">
-                            <a href="{{target.get_refuse_url}}">拒绝</a>
-                        </div>
-                    </div>
-                </div>
                 </div>  
             </div> 
             <br>

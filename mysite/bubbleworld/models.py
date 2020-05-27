@@ -21,8 +21,7 @@ class User(AbstractUser):
             verbose_name = u'头像'
             )
     #权限默认为0，即已注册用户, 1为被封禁, 2为系统管理员
-    privilege = models.CharField(
-            max_length = 200,
+    privilege = models.IntegerField(
             default = 0,
             verbose_name = u'权限'
             )
@@ -329,6 +328,10 @@ class AdminApply(models.Model):
     def description(self):
         return u' %s 申请了管理员（%s）' % (
                 self.user, self.section)
+    def get_pass_url(self):
+        return reverse('pass_apply',  args = [str(self.pk)])
+    def get_refuse_url(self):
+        return reverse('refuse_apply',  args = [str(self.pk)])
 
 class IntegerRangeField(models.IntegerField):
     def __init__(self, verbose_name=None, name=None, min_value=None, max_value=None, **kwargs):
@@ -445,7 +448,10 @@ class CommentReport(models.Model):
     
     def __unicode__(self):
         return self.title
-
+    def get_pass_url(self):
+        return reverse('pass_report',  args = [str(self.pk)])
+    def get_refuse_url(self):
+        return reverse('refuse_report',  args = [str(self.pk)])
    
 
     

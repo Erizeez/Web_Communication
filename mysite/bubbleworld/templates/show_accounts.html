@@ -6,6 +6,20 @@
 		<div class="col">
 			<br>
 			<div class="card">
+                <div class="card-body" style="font-family:雅黑;font-weight:bold;font-size:18px;">
+                	<div class="col">
+                		<div class="row">
+                			<img src="{{user.avatar}}">
+                		</div>
+                		<div class="row">
+							<a>{{user.username}}</a>
+                		</div>
+                	
+                	</div>	
+                </div>
+            </div>
+            <br>
+			<div class="card">
                 <div class="card-body">
                 	<form method="post" action="{% url 'modify_password' %}" />
 				{% csrf_token %}
@@ -31,10 +45,23 @@
             <br>
 			<div class="card">
                 <div class="card-body" style="font-family:雅黑;font-weight:bold;font-size:18px;">
-                	<a href="{% url 'handle_apply' %}">管理帖子</a>
+                	<a href="{% url 'handle_post' %}">管理帖子</a>
                 </div>
             </div>
             <br>
+            {% if user.privilege == 2 %}
+            <div class="card">
+                <div class="card-body" style="font-family:雅黑;font-weight:bold;font-size:18px;">
+                	<a href="{% url 'handle_apply' %}">处理管理员申请</a>
+                </div>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-body" style="font-family:雅黑;font-weight:bold;font-size:18px;">
+                	<a href="{% url 'handle_report' %}">处理举报</a>
+                </div>
+            </div>
+            {% endif %}
 		</div>
 	</div>
 </body>
