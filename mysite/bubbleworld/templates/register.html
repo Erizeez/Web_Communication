@@ -71,7 +71,7 @@ filter: blur(60px);">
 	
 	<div id="login-content" align="center" class="clearfix">
 	
-	<form method="post" action="{% url 'user_register' %}" />
+	<form method="post" action="{% url 'user_register' %}" enctype="multipart/form-data">
 				{% csrf_token %}
 				<fieldset>
 					<div class="control-group">
@@ -81,7 +81,7 @@ filter: blur(60px);">
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="username" style="font-family:雅黑;font-size:24px;mix-blend-mode: difference;">头像</label>
+						<label class="control-label" for="avatar" style="font-family:雅黑;font-size:24px;mix-blend-mode: difference;">头像</label>
 						<div class="controls">
 							<input type="file" name="avatar">
 						</div>

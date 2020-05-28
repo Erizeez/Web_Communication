@@ -106,18 +106,16 @@ def user_register(request, template_name = 'register.html'):
         
         email = request.POST.get('email')
         
-        form = UserForm(request.POST)
+        form = UserForm(request.POST, request.FILES)
         errors = []
         if form.is_valid():
-            current_site = request.build_absolute_uri
            
             new_user = form.save()
             user = authenticate(
                     username = username,
                     password = password
                     )
-            user.avatar = request.FILES.get('avatar')
-            user.save()
+          
             login(request, user)
             return HttpResponseRedirect(reverse_lazy('index'))
         else:

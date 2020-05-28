@@ -39,7 +39,8 @@ class UserForm(forms.ModelForm):
                     'required': u"密码不能为空"
                     }
             )
-    
+    avatar = forms.ImageField(
+        )
     class Meta:
         model = User
         fields = (
@@ -77,7 +78,6 @@ class UserForm(forms.ModelForm):
     def save(self, commit = True): 
         user = super(UserForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password"])
-        user.avatar = self.cleaned_data['avatar']
         if commit:
             user.save()
         return user
