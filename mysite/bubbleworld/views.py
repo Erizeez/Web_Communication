@@ -568,7 +568,7 @@ class PostCreate(BaseMixin, CreateView):
         formdata['type_post'] = section_instance.section_type
         post_instance = Post(**formdata)
         post_instance.save()
-        section_instance.content_number -= 1
+        section_instance.content_number += 1
         section_instance.updated_at = datetime.datetime.now()
         section_instance.save()
         messages.success(self.request, "发布成功")
@@ -647,7 +647,7 @@ class PostPartCreate(BaseMixin, CreateView):
         postpart_instance.save()
         post_instance.content_number += 1
         post_instance.save()
-        section_instance.content_number -= 2
+        section_instance.content_number += 1
         section_instance.updated_at = datetime.datetime.now()
         section_instance.save()
         messages.success(self.request, "发布成功")
@@ -689,6 +689,12 @@ class PostPartCommentCreate(BaseMixin, CreateView):
         formdata['type_postpartcomment'] = postpart_instance.type_postpart
         postpartcomment_instance = PostPartComment(**formdata)
         postpartcomment_instance.save()
+        post_instance = postpart_instance.post
+        post_instance.content_number += 1
+        post_instance.save()
+        postpart_instance.content_number += 1
+        postpart_instance.save()
+        section_instance.content_number += 1
         section_instance.updated_at = datetime.datetime.now()
         section_instance.save()
         messages.success(self.request, "发布成功")

@@ -86,8 +86,7 @@ class SectionForm(forms.ModelForm):
         model = Section
         fields = (
                 'name',
-                'description',
-                'img',
+                'description'
                 )
 class BookForm(forms.ModelForm):
     class Meta:

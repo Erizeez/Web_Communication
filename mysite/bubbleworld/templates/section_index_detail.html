@@ -287,15 +287,11 @@
 
                                 <div class="col">
                                     管理员：
-                                    {% for user in section.users.all %}
+                                    {% for user in section.admins.all %}
                                     {{user}}&nbsp
                                     {% endfor %}
                                 </div>
-                                <div class="col">
-                                    {% for tag in section.tags.all %}
-                                    <p>#{{tag.name}}</p>
-                                    {% endfor %}
-                                </div>
+                                
 
                                 
                             </div>
@@ -353,15 +349,11 @@
 
                                 <div class="col">
                                     管理员：
-                                    {% for user in section.users.all %}
+                                    {% for user in section.admins.all %}
                                     {{user}}&nbsp
                                     {% endfor %}
                                 </div>
-                                <div class="col">
-                                    {% for tag in section.tags.all %}
-                                    <p>#{{tag.name}}</p>
-                                    {% endfor %}
-                                </div>
+                            
 
                                 
                             </div>
@@ -402,15 +394,11 @@
 
                                 <div class="col">
                                     管理员：
-                                    {% for user in section.users.all %}
+                                    {% for user in section.admins.all %}
                                     {{user}}&nbsp
                                     {% endfor %}
                                 </div>
-                                <div class="col">
-                                    {% for tag in section.tags.all %}
-                                    <p>#{{tag.name}}</p>
-                                    {% endfor %}
-                                </div>                          
+                                             
                             </div>
                         </div>
                         </div>
@@ -438,7 +426,7 @@
                 <div class="border"></div>
                 <div style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">
                     板块:{{ section_obj.name}}<br/>管理员:
-                    {% for user in section_obj.users.all %}
+                    {% for user in section_obj.admins.all %}
                         {{user}}&nbsp
                     {% endfor %}
                     <br>
