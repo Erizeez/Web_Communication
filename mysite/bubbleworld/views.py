@@ -519,12 +519,12 @@ class BookCreate(BaseMixin, CreateView):
         section_instance = Section.objects.get(pk = self.request.GET.get('section_pk', ''))
         if self.request.session.get('captcha', None).upper() != captcha.upper():
             messages.success(self.request, "验证码错误")
-            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
+            return HttpResponseRedirect("/bubbleworld/book_create/?section_pk=" + str(section_instance.pk))
         user = User.objects.get(username = self.request.user.username)
         
         if user.privilege == 1 and admin_check(user, section_instance):
             messages.success(self.request, "您已被封禁")
-            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
+            return HttpResponseRedirect("/bubbleworld/book_create/?section_pk=" + str(section_instance.pk))
         formdata['parent_section'] = section_instance
         formdata['section_type'] = 5
         section_obj = Section(**formdata)
@@ -546,12 +546,12 @@ class FilmCreate(BaseMixin, CreateView):
         section_instance = Section.objects.get(pk = self.request.GET.get('section_pk', ''))
         if self.request.session.get('captcha', None).upper() != captcha.upper():
             messages.success(self.request, "验证码错误")
-            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
+            return HttpResponseRedirect("/bubbleworld/film_create/?section_pk=" + str(section_instance.pk))
         user = User.objects.get(username = self.request.user.username)
         
         if user.privilege == 1 and admin_check(user, section_instance):
             messages.success(self.request, "您已被封禁")
-            return HttpResponseRedirect("/bubbleworld/section_create/?section_pk=" + str(section_instance.pk))
+            return HttpResponseRedirect("/bubbleworld/film_create/?section_pk=" + str(section_instance.pk))
         formdata['parent_section'] = section_instance
         formdata['section_type'] = 6
         section_obj = Section(**formdata)

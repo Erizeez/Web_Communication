@@ -19,9 +19,7 @@ vim /etc/mysql/mysql.conf.d/mysqld.cnf
 找到 [mysqld] 标签，在其下一行添加下面的配置character-set-server=utf8
 service mysql restart
 mysql -uroot -p
-CREATE USER 'test'@'localhost' IDENTIFIED BY 'software';
 create database test；
-GRANT ALL PRIVILEGES ON *.* TO 'test'@'%' IDENTIFIED BY 'software' WITH GRANT RANT OPTION;
 在/mysite/settings.py修改数据库配置
 pip install django-ckeditor
 pip install pillow
@@ -31,3 +29,7 @@ python manage.py loaddata init.json
 pip install uwsgi
 建立管理员账号
 python manage.py createsuperuser
+apt-get install python-dev nginx
+pip install supervisor
+uwsgi --http :8001 --home /home/mysite/Env/first --chdir /home/mysite/mysite -w mysite.wsgi --static-map /static=/var/www/
+将MEDIA_ROOT 改成/var/www/
