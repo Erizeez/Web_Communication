@@ -1,14 +1,7 @@
 放置在/home
 更新apt  apt update ,apt upgrade
-安装虚拟环境并启用
-pip3 install virtualenv
-virtualenv env1
-cd env1 
-source ./bin/activate 
-如果要退出 deactivate
-安装组件
-pip install django
-配置mysql
+
+配置数据库
 apt-get install mysql-server
 apt-get install mysql-client
 apt-get install libmysqlclient-dev
@@ -20,16 +13,33 @@ vim /etc/mysql/mysql.conf.d/mysqld.cnf
 service mysql restart
 mysql -uroot -p
 create database test；
-在/mysite/settings.py修改数据库配置
-pip install django-ckeditor
-pip install pillow
-pip install mysqlclient
+
+安装虚拟环境并启用
+pip3 install virtualenv
+virtualenv env
+source env/bin/activate 
+安装环境
+pip install -r requirements.txt
+如果要退出 deactivate
+
+验证开发环境
+/mysite/settings.py修改数据库配置
+	添加STATIC_ROOT = '/var/www/'
+	运行python manage.py collectstatic
+	删除STATIC_ROOT 
+	更改MEDIA_ROOT = '/var/www/'
+python manage.py makemigrations bubbleworld
 python manage.py migrate
 python manage.py loaddata init.json 
-pip install uwsgi
 建立管理员账号
 python manage.py createsuperuser
-apt-get install python-dev nginx
-pip install supervisor
-uwsgi --http :8001 --home /home/mysite/Env/first --chdir /home/mysite/mysite -w mysite.wsgi --static-map /static=/var/www/
-将MEDIA_ROOT 改成/var/www/
+运行开发环境 
+python manage.py runserver
+
+测试生产环境
+uwsgi --http :8001 --home /home/sites/www.bubbleworld.online/env/ --chdir /home/sites/www.bubbleworld.online/mysite/ -w mysite.wsgi --static-map /static=/var/www/ 
+
+运行生产环境
+uwsgi mysite.ini
+
+网站管理员需要进入admin控制台将用户权限改为2

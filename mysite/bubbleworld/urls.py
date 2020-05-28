@@ -3,7 +3,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from bubbleworld import views
-
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 admin.autodiscover()
 
 urlpatterns = [
@@ -105,3 +105,4 @@ urlpatterns = [
         views.captcha, 
         name='captcha'),
      ]
+urlpatterns += staticfiles_urlpatterns()

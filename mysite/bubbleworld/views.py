@@ -25,13 +25,6 @@ import logging
 logger = logging.getLogger(__name__)
 PAGE_NUM = 50
 
-def get_online_ips_count():
-    online_ips = cache.get('online_ips', [])
-    if online_ips:
-        online_ips = cache.get_many(online_ips).keys()
-        return len(online_ips)
-    return 0
-
 
 def admin_check(user, section):
         while section.parent_section != "self":
@@ -173,7 +166,6 @@ class IndexView(BaseMixin, ListView):
 
     def get_context_data(self, **kwargs):
         kwargs['foruminfo'] = get_forum_info()
-        kwargs['online_ips_count'] = get_online_ips_count()
         kwargs['hot_topics'] = Section.objects.all().filter(section_type=7).order_by("-updated_at")[0:4]
         kwargs['hot_books'] = Section.objects.all().filter(section_type=5).order_by("-updated_at")[0:4]
         kwargs['hot_films'] = Section.objects.all().filter(section_type=6).order_by("-updated_at")[0:4]
@@ -332,19 +324,6 @@ def post_detail(request, post_pk):
     navigation_list = Navigation.objects.all()
     #间帖列表
     postpart_list = post.post.all().order_by("created_at")
-    #统计帖子的访问访问次数
-    if 'HTTP_X_FORWARDED_FOR' in request.META:
-        ip = request.META['HTTP_X_FORWARDED_FOR']
-    else:
-        ip = request.META['REMOTE_ADDR']
-    title = post.title
-    visited_ips = cache.get(title, [])
-
-    if ip not in visited_ips:
-        post.view_times += 1
-        post.save()
-        visited_ips.append(ip)
-    cache.set(title, visited_ips, 15 * 60)
     return render(
         request,
         'post_detail.html', {

@@ -84,11 +84,14 @@
                         <div class="row">
                             <div class="col">
                                 <div class="row">
+                                    
                                     {% if section_obj.section_type == 1 %}
+
                                     <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">新书速递</h5>
                                     {% else %}
                                     <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">影视速递</h5>
                                     {% endif %}
+                                </div>
                                     <br>
                                     <div class="row">
                                         {% for section in sections_new %}
@@ -103,12 +106,13 @@
                                         </a>
                                         {% endfor %}
                                     </div>           
-                                </div>
+                                
                             
                                 <div class="row">
                                     
                                     <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">当下最热</h5>
                                     <br>
+                                </div>
                                     <div class="row">
                                         {% for section in sections_hot %}
                                         <form id="hotform1{{ forloop.counter }}" method="get" action="{% url 'section_detail' %}">
@@ -122,7 +126,7 @@
                                         </a>
                                         {% endfor %}
                                     </div>
-                                </div>
+                                
                             </div>
                             <!-- -->
                             <div class="col-lg-1">
