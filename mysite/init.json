@@ -1,0 +1,70 @@
+[
+	{
+		"model": "bubbleworld.section",
+		"pk": 1,
+		"fields": {
+			"name": "书籍",
+			"section_type": "1",
+			"description": "这里有很多书籍"
+		}
+	},
+	{
+		"model": "bubbleworld.section",
+		"pk": 2,
+		"fields": {
+			"name": "电影",
+			"section_type": "2",
+			"description": "这里有很多影视"
+		}
+	},
+	{
+		"model": "bubbleworld.section",
+		"pk": 3,
+		"fields": {
+			"name": "话题",
+			"section_type": "3",
+			"description": "分享并参与一个话题"
+		}
+	},
+	{
+		"model": "bubbleworld.section",
+		"pk": 4,
+		"fields": {
+			"name": "小组",
+			"section_type": "4",
+			"description": "来参与一个小组"
+		}
+	},
+	{
+		"model": "bubbleworld.navigation",
+		"pk": 1,
+		"fields": {
+			"name": "书籍",
+			"url": "/bubbleworld/section/1"
+		}
+	},
+	{
+		"model": "bubbleworld.navigation",
+		"pk": 2,
+		"fields": {
+			"name": "影视",
+			"url": "/bubbleworld/section/2"
+		}
+	},
+	{
+		"model": "bubbleworld.navigation",
+		"pk": 4,
+		"fields": {
+			"name": "小组",
+			"url": "/bubbleworld/section/4"
+		}
+	},
+	{
+		"model": "bubbleworld.navigation",
+		"pk": 3,
+		"fields": {
+			"name": "话题",
+			"url": "/bubbleworld/section/3"
+		}
+	}
+]

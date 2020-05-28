@@ -1,0 +1,416 @@
+{% extends "./base.html" %}
+
+{% block content %} 
+<body>
+{% if uni_list.0.parent_section %}
+    {%if uni_list.0.parent_section.section_type == 1 or uni_list.0.parent_section.section_type == 2%}
+<br>
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="row">
+                    <br>
+                    <img src="/static/{{uni_list.0.img}}" alt="..." class="img-thumbnail">
+                    </div>
+                    <div class="row">
+                        &nbsp&nbsp&nbsp
+                        <a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">暂无评分</a><br>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                </div>
+                <div class="col-sm-6">
+                    {%if uni_list.0.parent_section.section_type == 1%}
+                    <br>
+                    <div class="row">
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            书名:&nbsp&nbsp&nbsp
+                        </a>
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            {{uni_list.0.name}}
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            作者:&nbsp&nbsp&nbsp
+                        </a>
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            {{uni_list.0.author}}
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            描述:&nbsp&nbsp&nbsp
+                        </a>
+                        <a  style="text-align: left;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            {{uni_list.0.description}}
+                        </a>
+                    </div>
+                    {%else%}
+                    <br>
+                    <div class="row">
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            电影:&nbsp&nbsp&nbsp
+                        </a>
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            {{uni_list.0.name}}
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            导演:&nbsp&nbsp&nbsp
+                        </a>
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            {{uni_list.0.director}}
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            主演:&nbsp&nbsp&nbsp
+                        </a>
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            {{uni_list.0.actor}}
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            描述:&nbsp&nbsp&nbsp
+                        </a>
+                        <a  style="text-align: left;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            {{uni_list.0.description}}
+                        </a>
+                    </div>
+
+                    {%endif%}
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="card">
+        <div class="card-body">
+                <form id="createform" method="get" action="{% url 'comment_create' %}" align="center">
+                    <input name="section_pk" type="text" value="{{uni_list.0.pk}}" hidden>
+                    <a onclick="document.getElementById('createform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a>
+                </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+    {%else%}
+<div id="all_uni">
+    <br>
+        <div class="container">
+            <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                                <div class="col">
+                                    <a href="/bubbleworld/section/{{uni_list.0.parent_section.pk}}" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                                    {%if uni_list.0.parent_section.section_type == 4%}
+                                    小组：
+                                    {%else%}
+                                    话题：
+                                    {%endif%}
+
+                                    {{ uni_list.0.name }}</a><br>
+                                </div>
+                                {% if uni_list.0.parent_section.section_type == 4%}
+                                    <div class="col-sm-1" align="right">
+                                        {% if hasadmin %}
+                                            <a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">管理员</a>
+                                        {% else %}
+                                            <a href="{{ uni_list.0.get_admin_url }}" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">申请管理员</a>
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
+                                <div class="col-sm-1" align="right">
+                                        {% if hasuser %}
+                                            <a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">已加入</a>
+                                        {% else %}
+                                            <a href="{{ uni_list.0.get_join_url }}" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">加入</a>
+                                        {% endif %}
+                                </div>
+                                <div class="col-sm-1" align="right">
+                                    <form id="myform" method="get" action="{% url 'post_create' %}">
+                                            <input name="section_pk" type="text" value="{{section}}" hidden>
+                                            <a onclick="document.getElementById('myform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a>
+                                        </form>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="col">
+                
+            <br>
+    
+            <div class="card">
+                    <div class="card-body">
+                        <div class="col">
+                                <div class="row">
+                                    <div class="col" align="center">
+                                        <form id="myform" method="get" action="{% url 'post_create' %}">
+                                            <input name="section_pk" type="text" value="{{section}}" hidden>
+                                            <a onclick="document.getElementById('myform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a>
+                                        </form>
+                                    </div>
+                                </div>
+                        </div>
+                </div>
+            </div>                  
+                    
+        </div>
+    </div>
+</div>
+    {%endif%}
+
+
+
+{% else %}
+    {%if uni_list.0.section.parent_section.section_type == 1 or uni_list.0.section.parent_section.section_type == 2%}
+<br>
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="row">
+                    <br>
+                    <img  src="{{uni_list.0.section.img}}" alt="..." class="img-thumbnail">
+                    </div>
+                    <br>
+                    <div class="row">
+                        &nbsp&nbsp&nbsp
+                        <a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">评分：{{ uni_list.0.section.star }} / 5.0</a><br>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                </div>
+                <div class="col-sm-6">
+                    {%if uni_list.0.section.parent_section.section_type == 1%}
+                    <br>
+                    <div class="row">
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            书名:&nbsp&nbsp&nbsp
+                        </a>
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            {{uni_list.0.section.name}}
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            作者:&nbsp&nbsp&nbsp
+                        </a>
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            {{uni_list.0.section.author}}
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            描述:&nbsp&nbsp&nbsp
+                        </a>
+                        <a  style="text-align: left;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            {{uni_list.0.section.description}}
+                        </a>
+                    </div>
+                    {%else%}
+                    <br>
+                    <div class="row">
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            电影:&nbsp&nbsp&nbsp
+                        </a>
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            {{uni_list.0.section.name}}
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            导演:&nbsp&nbsp&nbsp
+                        </a>
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            {{uni_list.0.section.director}}
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            主演:&nbsp&nbsp&nbsp
+                        </a>
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            {{uni_list.0.section.actor}}
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a  style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            描述:&nbsp&nbsp&nbsp
+                        </a>
+                        <a  style="text-align: left;font-family:雅黑;font-weight:bold;font-size:24px;">
+                            {{uni_list.0.section.description}}
+                        </a>
+                    </div>
+
+                    {%endif%}
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <br>
+    {% for uni in uni_list %}
+                <div class="card" style="overflow:auto;mix-blend-mode: overlay;">
+                    <div class="card-body">
+                        <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <a href="{{ uni.get_absolute_url }} " class="line-limit-length" style="text-align: left;font-family:雅黑;font-weight:bold;font-size:18px;">{{ uni.content }}</a><br>
+                                    </div>
+                                    <div class="col" align="right">
+                                        <a style="text-align: right;font-family:雅黑;font-weight:bold;font-size:15px;">作者：{{ uni.author }}</a>
+                                        
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    
+                                    <div class="col" align="right">
+                                        <a style="text-align: right;font-family:雅黑;font-weight:bold;font-size:12px;">发布时间：{{ uni.created_at }}</a><br>
+                                    </div>
+                                </div>
+                        </div>
+                </div>
+            </div>
+            <br>
+    {% endfor %}
+            <div class="card">
+                    <div class="card-body">
+                        <div class="col">
+                                <div class="row">
+                                    <div class="col" align="center">
+                                        <form id="myform" method="get" action="{% url 'comment_create' %}">
+                                            <input name="section_pk" type="text" value="{{section}}" hidden>
+                                            <a onclick="document.getElementById('myform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a>
+                                        </form>
+                                    </div>
+                                </div>
+                        </div>
+                </div>
+            </div>
+
+</div>
+
+    {%else%}
+<div id="all_uni">
+    <br>
+        <div class="container">
+            <div class="card" style="overflow:auto;mix-blend-mode: overlay;">
+                    <div class="card-body">
+                        <div class="row">
+                                <div class="col">
+                                    <a href="/bubbleworld/section/{{uni_list.0.section.parent_section.pk}}" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:24px;">
+                                    {%if uni_list.0.section.parent_section.section_type == 4%}
+                                    小组：
+                                    {%else%}
+                                    话题：
+                                    {%endif%}
+                                    {{ uni_list.0.section.name }}</a><br>
+                                </div>
+                                    {% if uni_list.0.section.parent_section.section_type == 4%}
+                                    <div class="col-sm-1" align="right">
+                                        {% if hasadmin %}
+                                            <a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">已加入</a>
+                                        {% else %}
+                                            <a href="{{ uni_list.0.section.get_admin_url }}" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">申请管理员</a>
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="col-sm-1" align="right">
+                                        {% if hasuser %}
+                                            <a style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">已加入</a>
+                                        {% else %}
+                                            <a href="{{ uni_list.0.section.get_join_url }}" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">加入</a>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-sm-1" align="right">
+                                    <form id="myform" method="get" action="{% url 'post_create' %}">
+                                            <input name="section_pk" type="text" value="{{section}}" hidden>
+                                            <a onclick="document.getElementById('myform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a>
+                                    </form>
+                                    </div>  
+                                
+                        </div>
+                    </div>
+                </div>
+            <div class="col">
+                
+            <br>
+    {% for uni in uni_list %}
+                <div class="card" style="overflow:auto;mix-blend-mode: overlay;">
+                    <div class="card-body">
+                        <div class="col">
+                                <div class="row">
+                                    <div class="col">
+                                        <a href="{{ uni.get_absolute_url }} " style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">{{ uni.title }}</a>
+                                        {% if uni.essence %}
+                                        <img src="/static/open-iconic/svg/star.svg">
+                                        {% endif%}
+                                        <br>
+                                    </div>
+                                    <div class="col" align="right">
+                                        <a style="text-align: right;font-family:雅黑;font-weight:bold;font-size:15px;">作者：{{ uni.author }}</a>
+
+
+                                        {% if uni.author == user %}
+                                        
+                                    
+                                            <a href="/bubbleworld/post_delete/{{uni.pk}}" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:12px;">删除</a>
+                                        
+                                        
+                                        {% else %}
+                                            <br>
+                                        {% endif %}
+                                        
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-2">
+                                        <a class="line-limit-length" style="text-align: left;font-family:雅黑;font-weight:bold;font-size:12px;">最新回复：{{ uni.post.all.0.content }}</a><br>
+                                    </div>
+                                    <div class="col" align="right">
+                                        <a style="text-align: right;font-family:雅黑;font-weight:bold;font-size:12px;">发布时间：{{ uni.created_at }}</a><br>
+                                    </div>
+                                </div>
+                        </div>
+                </div>
+            </div>
+            <br>
+    {% endfor %}
+            <div class="card" style="overflow:auto;mix-blend-mode: overlay;">
+                    <div class="card-body">
+                        <div class="col">
+                                <div class="row">
+                                    <div class="col" align="center">
+                                        <form id="myform" method="get" action="{% url 'post_create' %}">
+                                            <input name="section_pk" type="text" value="{{section}}" hidden>
+                                            <a onclick="document.getElementById('myform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a>
+                                        </form>
+                                    </div>
+                                </div>
+                        </div>
+                </div>
+            </div>                  
+                    
+        </div>
+    </div>
+</div>
+
+
+
+    {%endif%}
+{%endif%}
+
+
+</body>
+{% endblock %}

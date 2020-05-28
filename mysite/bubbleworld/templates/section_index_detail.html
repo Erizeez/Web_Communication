@@ -1,0 +1,452 @@
+{% extends "./base.html" %}
+{% block css %}
+
+ {% endblock %}
+{% block content %} 
+<body>
+{% if section_obj.section_type == 1 or section_obj.section_type == 2 %}
+  <br>
+  <div class="container">
+            <div class="row justify-content-center">
+                <div class="align-self-center">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary dropdown-toggle" id="dSLabel" type="button" data-toggle="dropdown">
+                    <span class="buttonSectionText">热度降序</span>
+                    <span class="caret"></span></button>
+
+                            <div class="dropdown-menu" role="menu" style="text-align: center; min-width:fit-content;" aria-labelledby="dSLabel">
+                                <a class="dropdown-item" href="#" onclick="sshows($(this).text())">热度降序</a>
+                                <a class="dropdown-item" href="#" onclick="sshows($(this).text())">热度升序</a>
+                                <a class="dropdown-item" href="#" onclick="sshows($(this).text())">时间降序</a>
+                                <a class="dropdown-item" href="#" onclick="sshows($(this).text())">时间升序</a>
+                            </div>
+                            <script>
+                                var ssort = "-content_number"
+
+                                function sshows(a) {
+                                    $('.buttonSectionText').text(a)
+                                    if (a == "热度降序") {
+                                        a = "-content_number";
+                                    } else if (a == "热度升序") {
+                                        a = "content_number";
+                                    } else if (a == "时间降序") {
+                                        a = "-updated_at";
+                                    } else if (a == "时间升序") {
+                                        a = "updated_at";
+                                    }
+                                    ssort = a;
+                                }
+                            </script>
+                        </div>
+                        <form id="sectionsearchform" method="get" action="{% url 'section_search' %}">
+                            <input name="q" type="text" class="form-control" aria-label="Text input with dropdown button">
+                            <input name="scope" class="scopec" type="text" value="{{section_obj.pk}}" hidden>
+                            <input name="sort" class="sort" type="text" value="" hidden>
+                        </form>
+                        <button class="btn btn-outline-secondary" type="button" onclick="ssearch(ssort)">
+                    <img src="/static/open-iconic/svg/magnifying-glass.svg">
+                </button>
+                        <script>
+                            function ssearch(a) {
+                                var tmpform = document.getElementById('sectionsearchform');
+                                $('.sort').val(a);
+                                tmpform.submit();
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+    <div class="container">
+                <!-- -->
+                    <div class="col">
+                        <div class="row">
+                            <div  class="card col" style="mix-blend-mode: overlay;">
+                                <div  class="card-body" align="center">
+                                    {% if section_obj.section_type == 1 %}
+                                     <form id="createform" method="get" action="{% url 'book_create' %}">
+                                            <input name="section_pk" type="text" value="{{section_obj.pk}}" hidden>
+                                            <a onclick="document.getElementById('createform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布新书</a>
+                                        </form>
+                                    {% else%}
+                                        <form id="createform" method="get" action="{% url 'film_create' %}">
+                                            <input name="section_pk" type="text" value="{{section_obj.pk}}" hidden>
+                                            <a onclick="document.getElementById('createform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布电影</a>
+                                        </form>
+
+                                    {% endif%}
+                                 </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col">
+                                <div class="row">
+                                    
+                                    {% if section_obj.section_type == 1 %}
+
+                                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">新书速递</h5>
+                                    {% else %}
+                                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">影视速递</h5>
+                                    {% endif %}
+                                </div>
+                                    <br>
+                                    <div class="row">
+                                        {% for section in sections_new %}
+                                        <form id="hotform1{{ forloop.counter }}" method="get" action="{% url 'section_detail' %}">
+                                        <input name="section_pk" type="text" value="{{section.pk}}" hidden>
+                                        </form>
+                                        <a onclick="document.getElementById('hotform1{{ forloop.counter }}').submit()">
+                                            <div class="col">
+                                                <img src="/static/{{section.img}}" alt="..." class="img-thumbnail">
+                                                <p type="button" style="text-align: center;">{{section.name}}  {{section.author}}</p>
+                                            </div>
+                                        </a>
+                                        {% endfor %}
+                                    </div>           
+                                
+                            
+                                <div class="row">
+                                    
+                                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">当下最热</h5>
+                                    <br>
+                                </div>
+                                    <div class="row">
+                                        {% for section in sections_hot %}
+                                        <form id="hotform1{{ forloop.counter }}" method="get" action="{% url 'section_detail' %}">
+                                        <input name="section_pk" type="text" value="{{section.pk}}" hidden>
+                                        </form>
+                                        <a onclick="document.getElementById('hotform1{{ forloop.counter }}').submit()">
+                                        <div class="col">
+                                            <img src="/static/{{section.img}}" alt="..." class="img-thumbnail">
+                                            <p type="button" style="text-align: center;">{{section.name}}  {{section.author}}</p>
+                                        </div>
+                                        </a>
+                                        {% endfor %}
+                                    </div>
+                                
+                            </div>
+                            <!-- -->
+                            <div class="col-lg-1">
+                            </div>
+                            <div class="border"></div>
+                            <div class="col">
+                                <div class="container">
+                                    {% if section_obj.section_type == 1 %}
+                                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">热门书评</h5>
+                                    {% else %}
+                                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">热门影评</h5>
+                                    {% endif %}
+                                    <br>
+                                    {% for uni in uni_obj %}
+                                    
+                                    <div class="row" style="align-items:center;">
+                                        <div class="col col-lg-3">
+                                            <img src="/static/{{uni.section.img}}" alt="..." class="img-thumbnail" style="width:auto ;height:auto;">
+                                        </div>
+                        <div class="col">
+                            <a href="{{uni.get_absolute_url}}">
+                            <div class="card" style="overflow:auto;mix-blend-mode: overlay;">
+                                <div class="card-body">
+                                    <p class="card-title font-weight-bold">标题:{{uni.title}}</p>
+                                    <div class="row" style="align-items:center;">
+                                        <div class="col-lg-7">
+                                            <p>作者:{{uni.author}}</p>
+                                        </div>
+                                        <div class="col">
+                                                <img src="/static/open-iconic/svg/thumb-up.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                                <p style="font-size:xx-small;">{{uni.like_number}}</p>
+                                        </div>
+                                        <div class="col">
+                                                <img src="/static/open-iconic/svg/thumb-down.svg" alt="thumb-down" style="width: 16px;height: 16px;" type="button">
+                                                <p style="font-size:xx-small;">{{uni.dislike_number}}</p>
+                                        </div>
+                                    </div>
+                                    <p class="card-text">{{uni.content}}
+                                    </p>
+                                </div>
+                            </div>
+                        </a>
+                        </div>
+                    </div>
+                    <br>
+                    
+                    {% endfor %}
+                </div>
+                            </div>
+
+
+                        </div>
+<!-- -->
+
+                
+
+                
+            </div>
+
+    
+
+            <!-- 当下最热 -->
+            
+
+{% else %}
+    <br>
+    <div class="container">
+            <div class="row justify-content-center">
+                <div class="align-self-center">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary dropdown-toggle" id="dSLabel" type="button" data-toggle="dropdown">
+                    <span class="buttonSectionText">热度降序</span>
+                    <span class="caret"></span></button>
+
+                            <div class="dropdown-menu" role="menu" style="text-align: center; min-width:fit-content;" aria-labelledby="dSLabel">
+                                <a class="dropdown-item" href="#" onclick="sshows($(this).text())">热度降序</a>
+                                <a class="dropdown-item" href="#" onclick="sshows($(this).text())">热度升序</a>
+                                <a class="dropdown-item" href="#" onclick="sshows($(this).text())">时间降序</a>
+                                <a class="dropdown-item" href="#" onclick="sshows($(this).text())">时间升序</a>
+                            </div>
+                            <script>
+                                var ssort = "-content_number"
+
+                                function sshows(a) {
+                                    $('.buttonSectionText').text(a)
+                                    if (a == "热度降序") {
+                                        a = "-content_number";
+                                    } else if (a == "热度升序") {
+                                        a = "content_number";
+                                    } else if (a == "时间降序") {
+                                        a = "-updated_at";
+                                    } else if (a == "时间升序") {
+                                        a = "updated_at";
+                                    }
+                                    ssort = a;
+                                }
+                            </script>
+                        </div>
+                        <form id="sectionsearchform" method="get" action="{% url 'section_search' %}">
+                            <input name="q" type="text" class="form-control" aria-label="Text input with dropdown button">
+                            <input name="scope" class="scopec" type="text" value="{{section_obj.pk}}" hidden>
+                            <input name="sort" class="sort" type="text" value="" hidden>
+                        </form>
+                        <button class="btn btn-outline-secondary" type="button" onclick="ssearch(ssort)">
+                    <img src="/static/open-iconic/svg/magnifying-glass.svg">
+                </button>
+                        <script>
+                            function ssearch(a) {
+                                var tmpform = document.getElementById('sectionsearchform');
+                                $('.sort').val(a);
+                                tmpform.submit();
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row" align="center">
+                <div class="container">
+                    <h5 type="button" style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">
+                    {%if section_obj.section_type == 4%}
+                    小组 
+                    {%else%}
+                    话题 
+                    {%endif%}
+                    热度最高</h5>              
+                    <br>
+                    <div class="col">
+                      {% for section in sections_hot %}
+                        <div class="card col col-lg-6" style="overflow:auto;mix-blend-mode: overlay;">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    
+                      
+                        <form id="hotform1{{ forloop.counter }}" method="get" action="{% url 'section_detail' %}">
+                        <input name="section_pk" type="text" value="{{section.pk}}" hidden>
+      
+                        
+                            <a onclick="document.getElementById('hotform1{{ forloop.counter }}').submit()">
+                        {{section.name}}</a>
+        
+                        </form>
+
+                                    
+                                </div>
+                                <div class="col col-lg-4">
+                                    <div class="row">
+                                        <img src="/static/open-iconic/svg/box.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                        <p style="font-size:xx-small;">&nbsp&nbsp{{section.content_number}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+
+                                <div class="col">
+                                    管理员：
+                                    {% for user in section.users.all %}
+                                    {{user}}&nbsp
+                                    {% endfor %}
+                                </div>
+                                <div class="col">
+                                    {% for tag in section.tags.all %}
+                                    <p>#{{tag.name}}</p>
+                                    {% endfor %}
+                                </div>
+
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                      <br>
+                      {% endfor %}
+                      
+                      <div class="card col col-lg-6">
+                        <div  class="card-body">
+                            <form id="createform" method="get" action="{% url 'section_create' %}">
+                                            <input name="section_pk" type="text" value="{{section_obj.pk}}" hidden>
+                                            <a onclick="document.getElementById('createform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a>
+                                        </form>
+                        </div>
+                    </div>
+                    </div>
+                    
+                </div>
+                <br>
+            </div>
+            <br>
+            <div class="border"></div>
+            <br>
+            <div class="row" align="center">
+                <div class="container">
+                    {% if section_obj.section_type == 4 %}
+                      <h5 type="button"  style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">小组 最新建立</h5>
+                      <br>
+                    <div class="col">
+                      {% for section in sections_new %}
+                        <div class="card col col-lg-6" style="overflow:auto;mix-blend-mode: overlay;">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <form id="newform2{{ forloop.counter }}" method="get" action="{% url 'section_detail' %}">
+                        <input name="section_pk" type="text" value="{{section.pk}}" hidden>
+      
+                        
+                            <a onclick="document.getElementById('newform2{{ forloop.counter }}').submit()">
+                        {{section.name}}</a>
+        
+                        </form>
+                                </div>
+                                <div class="col col-lg-4">
+                                    <div class="row">
+                                        <img src="/static/open-iconic/svg/box.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                        <p style="font-size:xx-small;">&nbsp&nbsp{{section.content_number}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+
+                                <div class="col">
+                                    管理员：
+                                    {% for user in section.users.all %}
+                                    {{user}}&nbsp
+                                    {% endfor %}
+                                </div>
+                                <div class="col">
+                                    {% for tag in section.tags.all %}
+                                    <p>#{{tag.name}}</p>
+                                    {% endfor %}
+                                </div>
+
+                                
+                            </div>
+                            
+                        </div>
+                        </div>
+                    <br>
+           
+                        {% endfor %}
+                    {% else %}
+                      <h5 type="button"  style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:48px;mix-blend-mode: difference;">话题 最新发布</h5>
+                    
+                    <br>
+                    <div class="col">
+                        {% for section in sections_new %}
+                        <div class="card col col-lg-6" style="overflow:auto;mix-blend-mode: overlay;">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <form id="newform2{{ forloop.counter }}" method="get" action="{% url 'section_detail' %}">
+                        <input name="section_pk" type="text" value="{{section.pk}}" hidden>
+      
+                        
+                            <a onclick="document.getElementById('newform2{{ forloop.counter }}').submit()">
+                        {{section.name}}</a>
+        
+                        </form>
+                                </div>
+                                <div class="col col-lg-4">
+                                    <div class="row">
+                                        <img src="/static/open-iconic/svg/box.svg" alt="thumb-up" style="width: 16px;height: 16px;" type="button">
+                                        <p style="font-size:xx-small;">&nbsp&nbsp{{section.content_number}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+
+                                <div class="col">
+                                    管理员：
+                                    {% for user in section.users.all %}
+                                    {{user}}&nbsp
+                                    {% endfor %}
+                                </div>
+                                <div class="col">
+                                    {% for tag in section.tags.all %}
+                                    <p>#{{tag.name}}</p>
+                                    {% endfor %}
+                                </div>                          
+                            </div>
+                        </div>
+                        </div>
+                  <br>
+
+                        {% endfor %}
+                    {% endif %}
+                   
+                      <div class="card col col-lg-6">
+                        <div  class="card-body">
+                            <form id="createform" method="get" action="{% url 'section_create' %}">
+                                            <input name="section_pk" type="text" value="{{section_obj.pk}}" hidden>
+                                            <a onclick="document.getElementById('createform').submit()" style="text-align: center;font-family:雅黑;font-weight:bold;font-size:18px;">发布</a>
+                                        </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endif %}
+        <div class="row">
+            <div class="col" align="center">
+                <br>
+                <div class="border"></div>
+                <div style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">
+                    板块:{{ section_obj.name}}<br/>管理员:
+                    {% for user in section_obj.users.all %}
+                        {{user}}&nbsp
+                    {% endfor %}
+                    <br>
+                    数量:{{section_obj.content_number}}<br>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+{% endblock %}
