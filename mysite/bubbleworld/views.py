@@ -103,7 +103,9 @@ def user_register(request, template_name = 'register.html'):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        
         email = request.POST.get('email')
+        
         form = UserForm(request.POST)
         errors = []
         if form.is_valid():
@@ -114,6 +116,8 @@ def user_register(request, template_name = 'register.html'):
                     username = username,
                     password = password
                     )
+            user.avatar = request.FILES.get('avatar')
+            user.save()
             login(request, user)
             return HttpResponseRedirect(reverse_lazy('index'))
         else:
@@ -568,7 +572,6 @@ class PostCreate(BaseMixin, CreateView):
         formdata['type_post'] = section_instance.section_type
         post_instance = Post(**formdata)
         post_instance.save()
-        section_instance.content_number += 1
         section_instance.updated_at = datetime.datetime.now()
         section_instance.save()
         messages.success(self.request, "发布成功")
@@ -645,9 +648,6 @@ class PostPartCreate(BaseMixin, CreateView):
         formdata['type_postpart'] = post_instance.type_post
         postpart_instance = PostPart(**formdata)
         postpart_instance.save()
-        post_instance.content_number += 1
-        post_instance.save()
-        section_instance.content_number += 1
         section_instance.updated_at = datetime.datetime.now()
         section_instance.save()
         messages.success(self.request, "发布成功")
@@ -690,11 +690,7 @@ class PostPartCommentCreate(BaseMixin, CreateView):
         postpartcomment_instance = PostPartComment(**formdata)
         postpartcomment_instance.save()
         post_instance = postpart_instance.post
-        post_instance.content_number += 1
         post_instance.save()
-        postpart_instance.content_number += 1
-        postpart_instance.save()
-        section_instance.content_number += 1
         section_instance.updated_at = datetime.datetime.now()
         section_instance.save()
         messages.success(self.request, "发布成功")
