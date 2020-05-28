@@ -20,23 +20,10 @@ class User(AbstractUser):
             default = '/static/open-iconic/png/person-3x.png',
             verbose_name = u'头像'
             )
-    #权限默认为0，即已注册用户, 1为被封禁，-1为游客
-    privilege = models.CharField(
-            max_length = 200,
+    #权限默认为0，即已注册用户, 1为被封禁, 2为系统管理员
+    privilege = models.IntegerField(
             default = 0,
             verbose_name = u'权限'
-            )
-    follow_to = models.ManyToManyField(
-            'self',
-            blank = True,
-        #   null = True,
-            related_name = 'followto'
-            )    
-    black_list = models.ManyToManyField(
-            'self',
-            blank = True,
-         #   null = True,
-            related_name = 'black_list'
             )
     
     class Meta:
@@ -51,37 +38,6 @@ class User(AbstractUser):
         return self.get_username()
 
 
-class Follow(models.Model):
-    sender = models.ForeignKey(
-            settings.AUTH_USER_MODEL,
-            on_delete = models.CASCADE,
-            related_name = 'sender',
-            )
-    receiver = models.ForeignKey(
-            settings.AUTH_USER_MODEL,
-            on_delete = models.CASCADE,
-            related_name = 'receiver',
-            )
-    #0-不允许 1-允许 
-    status = models.IntegerField(
-            default=1
-            )
-    created_at = models.DateTimeField(
-            auto_now_add=True
-            )
-    updated_at = models.DateTimeField(
-            auto_now=True
-            )
-    
-    class Meta:
-        db_table = 'follow'
-        verbose_name = u'关注'
-        verbose_name_plural = u'关注'
-    
-    def description(self):
-        return u' %s 关注了 %s' % (self.follow_from, self.follow_to)
-
-    
 class Navigation(models.Model):
     name = models.CharField(
             max_length = 30,
@@ -101,25 +57,6 @@ class Navigation(models.Model):
         db_table = 'navigation'
         verbose_name = u'导航'
         verbose_name_plural = u'导航'
-        ordering = ['-created_time']
-    
-    def __unicode__(self):
-        return self.name
-    
-    
-class Tag(models.Model):
-    name = models.CharField(
-            max_length = 20
-            )
-    created_time = models.DateTimeField(
-            u'创建时间',
-            default = timezone.now
-            )
-    
-    class Meta:
-        db_table = 'tag'
-        verbose_name = u'标签'
-        verbose_name_plural = u'标签'
         ordering = ['-created_time']
     
     def __unicode__(self):
@@ -179,10 +116,9 @@ class Section(models.Model):
             max_length = 2000,
             verbose_name = u'描述'
             )
-    img = models.CharField(
-            max_length = 200,
-            default = '/static/img/book/白夜行.jpg',
-            verbose_name = u'图标'
+    img = models.ImageField(
+            upload_to='photo',
+            verbose_name = u'图像'
             )
     content_number = models.IntegerField(
             default = 0
@@ -191,13 +127,6 @@ class Section(models.Model):
             default = 0,
             max_digits = 2,
             decimal_places = 1
-            )
-    
-    tags = models.ManyToManyField(
-            'Tag',
-            blank = True,
-      #      null = True,
-            related_name = 'tags'
             )
     
     created_at = models.DateTimeField(
@@ -215,8 +144,12 @@ class Section(models.Model):
     
     def __unicode__(self):
         return self.name
-    
-
+    def get_join_url(self):
+        return reverse('section_join',  args = [str(self.pk)])
+    def get_admin_url(self):
+        return reverse('section_admin',  args = [str(self.pk)])
+    def get_absolute_url(self):
+        return reverse("section_details",  args = [str(self.pk)])
     
     
 class Post(models.Model):
@@ -242,7 +175,7 @@ class Post(models.Model):
             default = 0
             )
     content_number = models.IntegerField(
-            default = 1
+            default = 0
             )
     last_response = models.ForeignKey(
             settings.AUTH_USER_MODEL,
@@ -256,13 +189,6 @@ class Post(models.Model):
     #是否加精
     essence = models.BooleanField(
             default = False
-            )
-    
-    tags = models.ManyToManyField(
-            'Tag',
-            blank = True,
-       #     null = True,
-            related_name = 'post_tags'
             )
     
     created_at = models.DateTimeField(
@@ -286,6 +212,16 @@ class Post(models.Model):
     
     def get_absolute_url(self):
         return reverse("post_detail",  args = [str(self.pk)])
+    def get_top_url(self):
+        return reverse("post_top",  args = [str(self.pk)])
+    def get_useful_url(self):
+        return reverse("post_useful",  args = [str(self.pk)])
+    def get_delete_url(self):
+        return reverse("post_delete",  args = [str(self.pk)])
+    def cancel_useful_url(self):
+        return reverse("cancel_post_useful",  args = [str(self.pk)])
+    def cancel_top_url(self):
+        return reverse("cancel_post_top",  args = [str(self.pk)])
     
     
 class PostPart(models.Model):
@@ -307,7 +243,7 @@ class PostPart(models.Model):
             default = 0
             )
     content_number = models.IntegerField(
-            default = 1
+            default = 0
             )
     last_response = models.ForeignKey(
             settings.AUTH_USER_MODEL,
@@ -373,6 +309,39 @@ class PostPartComment(models.Model):
         return u' %s 回复了帖子（%s）： %s' % (
                 self.author, self.postpart.post, 
                 self.content)
+
+class AdminApply(models.Model):
+    section = models.ForeignKey(
+            Section,
+            on_delete = models.CASCADE,
+            related_name = 'adminapply_section',
+            )
+    user = models.ForeignKey(
+            settings.AUTH_USER_MODEL,
+            related_name = 'adminapply_author',
+            on_delete = models.CASCADE
+            )
+    created_at = models.DateTimeField(
+            default = timezone.now
+            )
+
+    
+    class Meta:
+        db_table = 'adminapply'
+        verbose_name = u'管理员申请'
+        verbose_name_plural = u'管理员申请'
+        ordering = ['-created_at']
+    
+    def __unicode__(self):
+        return self.user + self.section
+    
+    def description(self):
+        return u' %s 申请了管理员（%s）' % (
+                self.user, self.section)
+    def get_pass_url(self):
+        return reverse('pass_apply',  args = [str(self.pk)])
+    def get_refuse_url(self):
+        return reverse('refuse_apply',  args = [str(self.pk)])
 
 class IntegerRangeField(models.IntegerField):
     def __init__(self, verbose_name=None, name=None, min_value=None, max_value=None, **kwargs):
@@ -489,87 +458,12 @@ class CommentReport(models.Model):
     
     def __unicode__(self):
         return self.title
+    def get_pass_url(self):
+        return reverse('pass_report',  args = [str(self.pk)])
+    def get_refuse_url(self):
+        return reverse('refuse_report',  args = [str(self.pk)])
+   
 
-
-#私信
-class Message(models.Model):  
-    sender = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        related_name='message_sender',
-        on_delete = models.CASCADE
-        )
-    receiver = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        related_name='message_receiver',
-        on_delete = models.CASCADE
-        )
-    content = models.TextField()
-    created_at = models.DateTimeField(
-            auto_now_add=True
-            )
-    updated_at = models.DateTimeField(
-            auto_now=True
-            )
-
-    def description(self):
-        return u'%s 向你发送了信息 %s' % (self.sender, self.content)
-
-    class Meta:
-        db_table = 'message'
-        verbose_name = u'信息'
-        verbose_name_plural = u'信息'     
-    
-class Notice(models.Model):
-    sender = models.ForeignKey(
-            settings.AUTH_USER_MODEL,
-            related_name = 'notice_sender',
-            on_delete = models.CASCADE
-            )
-    receiver = models.ForeignKey(
-            settings.AUTH_USER_MODEL,
-            related_name = 'notice_receiver',
-            on_delete = models.CASCADE
-            )
-    content_type = models.ForeignKey(
-            ContentType,
-            related_name = 'content_type',
-            on_delete = models.CASCADE
-            )
-    object_id = models.PositiveIntegerField()
-    event = fields.GenericForeignKey(
-            'content_type','object_id'
-            )
-    status = models.BooleanField(
-            default = False
-            )
-    #通知类型：0-系统通知 1-评论 2-follow相关通知 3-私信
-    type = models.IntegerField()
-    created_at = models.DateTimeField(
-            auto_now_add = True
-            )
-    updated_at = models.DateTimeField(
-            auto_now = True
-            )
-    class Meta:
-        db_table = 'notice'
-        verbose_name = u'通知'
-        verbose_name_plural = u'通知'
-        ordering = ['-created_at']
-    
-    def __unicode__(self):
-        return u' %s 的消息： %s' % (
-                self.sender, self.description
-                )
-    
-    def description(self):
-        if self.event:
-            return self.event
-        else:
-            return "No event"
-    
-    def read(self):
-       if not self.status:
-           self.status = True
     
     
 def post_save(sender, instance, signal, *args, **kwargs):
@@ -608,35 +502,16 @@ def comment_delete(sender, instance, signal, *args, **kwargs):
     section.content_number -= 1
     section.save()
     
-def follow_save(sender, instance, signal, *args, **kwargs):
-    entity = instance
-    event = Notice(
-            sender = entity.sender,
-            receiver = entity.receiver,
-            event = entity,
-            type = 2
-            )
-    event.save()
-    
-def message_save(sender, instance, signal, *args, **kwargs):
-    entity = instance
-    event = Notice(
-        sender = entity.sender,
-        receiver = entity.receiver,
-        event = entity,
-        type = 3
-        )
-    event.save()
+
     
 #注册消息响应函数
 signals.post_save.connect(comment_save, sender=Comment)
 signals.post_delete.connect(comment_delete, sender=Comment)
-signals.post_save.connect(follow_save, sender=Follow)
 signals.post_save.connect(post_save, sender=Post)
 signals.post_delete.connect(post_delete, sender=Post)
 signals.post_save.connect(postpart_save, sender=PostPart)
 signals.post_delete.connect(postpart_delete, sender=PostPart)
-signals.post_save.connect(message_save, sender=Message)
+
     
     
     

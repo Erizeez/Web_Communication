@@ -15,10 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 admin.autodiscover()
 
 urlpatterns = [
     url('admin/', admin.site.urls),
     url('bubbleworld/', include('bubbleworld.urls')),
+    url('', include('jump.urls')),
     ]
+urlpatterns += staticfiles_urlpatterns()

@@ -1,0 +1,45 @@
+放置在/home
+更新apt  apt update ,apt upgrade
+
+配置数据库
+apt-get install mysql-server
+apt-get install mysql-client
+apt-get install libmysqlclient-dev
+mysql_secure_installation
+vim /etc/mysql/conf.d/mysql.cnf
+在 [mysql] 标签的下一行添加下面的配置default-character-set=utf8
+vim /etc/mysql/mysql.conf.d/mysqld.cnf
+找到 [mysqld] 标签，在其下一行添加下面的配置character-set-server=utf8
+service mysql restart
+mysql -uroot -p
+create database test；
+
+安装虚拟环境并启用
+pip3 install virtualenv
+virtualenv env
+source env/bin/activate 
+安装环境
+pip install -r requirements.txt
+如果要退出 deactivate
+
+验证开发环境
+/mysite/settings.py修改数据库配置
+	添加STATIC_ROOT = '/var/www/'
+	运行python manage.py collectstatic
+	删除STATIC_ROOT 
+	更改MEDIA_ROOT = '/var/www/'
+python manage.py makemigrations bubbleworld
+python manage.py migrate
+python manage.py loaddata init.json 
+建立管理员账号
+python manage.py createsuperuser
+运行开发环境 
+python manage.py runserver
+
+测试生产环境
+uwsgi --http :8001 --home /home/sites/www.bubbleworld.online/env/ --chdir /home/sites/www.bubbleworld.online/mysite/ -w mysite.wsgi --static-map /static=/var/www/ 
+
+运行生产环境
+uwsgi mysite.ini
+
+网站管理员需要进入admin控制台将用户权限改为2

@@ -27,7 +27,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 SITE_ID=1
 
 # Application definition
@@ -53,7 +53,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'bubbleworld.middle.CommonMiddleWare',
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -129,7 +128,11 @@ AUTH_USER_MODEL = "bubbleworld.User"
 
 LOGIN_URL = '/bubbleworld/accounts/login/'
 
+MEDIA_ROOT = '/static'
+
 #登录超时设置
+
+
 
 SESSION_SAVE_EVERY_REQUEST = True
 
@@ -139,7 +142,7 @@ SESSION_COOKIE_AGE = 60 * 30
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),
+STATICFILES_DIRS = [os.path.join(BASE_DIR, '/static'),
                     ]
 
 STATICFILES_FINDERS = (

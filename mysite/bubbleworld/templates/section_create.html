@@ -19,7 +19,7 @@
     		<div class="card" style="overflow:auto;mix-blend-mode: overlay;">
                 <div class="card-body">
                 	<div id="editor"></div>
-						<form id="myform" action="" method="post">{% csrf_token %}
+						<form id="myform" action="" method="post" enctype="multipart/form-data">{% csrf_token %}
 							{{ form.media }}
 							{{ form.as_p }}
 							<input name="section_pk" type="text" value="{{section_pk}}" hidden>
