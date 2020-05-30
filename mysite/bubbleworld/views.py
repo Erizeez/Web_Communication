@@ -135,7 +135,7 @@ def modify_password(request, template_name = 'show_accounts.html'):
         user.save()
         return render(
         request,
-        'show_accounts.html'
+        'login.html'
         )
     else:
         return render(
