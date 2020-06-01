@@ -189,7 +189,7 @@ def section_index_detail(request, section_pk):
     sections_hot= section_obj.section_parent_section.all().order_by('-content_number')[0:10]
     section_users = section_obj.users.all()
     if section_obj.section_type == 1 or section_obj.section_type == 2:
-        uni_obj = Comment.objects.all().filter(type_comment=section_obj.section_type).order_by('like_user')[0:10]
+        uni_obj = Comment.objects.all().filter(type_comment=section_obj.section_type).order_by('like_number')[0:10]
     else:
         uni_obj = Post.objects.all().filter(type_post=section_obj.section_type).order_by('content_number')[0:10]
     return render(
@@ -244,9 +244,10 @@ def section_details(request, section_pk):
     section = Section.objects.get(pk=section_pk)
     navigation_list = Navigation.objects.all()
     context = {}
+    context['navigation_list'] = navigation_list
     context['section'] = request.GET.get('section_pk', '')
     if Section.objects.all().filter(pk = section_pk)[0].users.all().filter(pk = request.user.pk):
-        context['hasuser'] = True
+        context['hgggggggasuser'] = True
     else:
         context['hasuser'] = False
     if Section.objects.all().filter(pk = section_pk)[0].admins.all().filter(pk = request.user.pk):
@@ -452,6 +453,7 @@ class CommentCreate(BaseMixin, CreateView):
         formdata['section'] = section_instance
         formdata['author'] = user
         comment_obj = Comment(**formdata)
+        comment_obj.type_comment = section_instance.section_type - 4
         comment_obj.save()
         section_instance.star = (section_instance.star*section_instance.content_number + formdata['star']) / (section_instance.content_number+1)
         section_instance.updated_at = datetime.datetime.now()

@@ -63,7 +63,7 @@
 
         <!-- 书籍 -->
         <div class="col">
-            <h5 style="text-align: center;">流行书籍</h5>
+            <h5 style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">流行书籍</h5>
             <br>
             <div class="row align-items-center">
                 <div class="col">
@@ -95,7 +95,7 @@
 
         <!-- 影视 -->
         <div class="col">
-            <h5 style="text-align: center;">流行影视</h5>
+            <h5 style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">流行影视</h5>
             <br>
             <div class="row align-items-center">
                 <div class="col">
@@ -124,11 +124,11 @@
         </div>
     </div>
     <br>
-    <div class="row">
+    <div class="col">
 
         <!-- 热评 -->
-        <div class="col">
-            <h5 style="text-align: center;">热门评论</h5>
+        <div class="row">
+            <h5 style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">热门评论</h5>
             <br>
             <div class="container">
                 <div class="row">
@@ -216,12 +216,12 @@
         </div>
 
         <div class="border"></div>
-
+        <br>
         <!-- 话题 -->
-        <div class="col col-lg-4">
-            <h5 style="text-align: center;">热门话题</h5>
+        <div class="row">
+            <h5 style="text-align: center;font-family:雅黑;color:white;font-weight:bold;font-size:24px;mix-blend-mode: difference;">热门话题</h5>
             <br>
-            <div class="container">
+            <div class="container" align="center">
                 <div class="row">
                     <div class="card col col-lg-6">
                         <a href="{{hot_topics.0.get_absolute_url}}">
@@ -262,31 +262,7 @@
 </div>
 
 <br>
-<div class="container">
 
-    <div class="table-responsive-lg" style="text-align: center;">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">在线人数</th>
-                    <th scope="col">注册人数</th>
-                    <th scope="col">帖子数</th>
-                    <th scope="col">今日</th>
-                    <th scope="col">昨日</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">{{ online_ips_count }}</th>
-                    <td>{{ foruminfo.account_number }}</td>
-                    <td>{{ foruminfo.post_number }}</td>
-                    <td>{{ foruminfo.today_post_number }}</td>
-                    <td>{{ foruminfo.lastday_post_number }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
 
 
 </div>
