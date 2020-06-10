@@ -41,5 +41,7 @@ uwsgi --http :8001 --home /home/sites/www.bubbleworld.online/env/ --chdir /home/
 
 运行生产环境
 uwsgi mysite.ini
+停止（在对应目录下）
+uwsgi --stop uwsgi.pid
 
 网站管理员需要进入admin控制台将用户权限改为2

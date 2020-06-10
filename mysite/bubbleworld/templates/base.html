@@ -117,7 +117,9 @@ filter: blur(60px);position:fixed;">
             </div>
 
             {% else %}
-            <embed src="{{user.avatar}}" alt="Avatar" style="padding: 0%;">
+            <embed src="/static/{{user.avatar}}" alt="Avatar" style="padding: 0%;max-height:80px;
+         max-width: 80px; 
+         vertical-align:middle;">
             <div class="dropdown col-lg-1">
                 <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding: 10%;">菜单
         

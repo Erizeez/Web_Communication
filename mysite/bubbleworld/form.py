@@ -39,12 +39,14 @@ class UserForm(forms.ModelForm):
                     'required': u"密码不能为空"
                     }
             )
-    
+    avatar = forms.ImageField(
+        )
     class Meta:
         model = User
         fields = (
                 'username',
-                'email'
+                'email',
+                'avatar'
                 )
         
     #clean_xxxx 读取处理相应值
@@ -86,8 +88,7 @@ class SectionForm(forms.ModelForm):
         model = Section
         fields = (
                 'name',
-                'description',
-                'img',
+                'description'
                 )
 class BookForm(forms.ModelForm):
     class Meta:

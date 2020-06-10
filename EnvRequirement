@@ -1,8 +1,14 @@
 Environment Requirement:
-Python >= 3.7
-Django the latest version
-Bootstrap the latest version
-django-ckeditor
+Python3
+asgiref==3.2.7
+Django==3.0.6
+django-ckeditor==5.9.0
+django-js-asset==1.2.2
+mysqlclient==1.4.6
+Pillow==7.1.2
+pytz==2020.1
+sqlparse==0.3.1
+uWSGI==2.0.18
 MySQL
 
 Configure:

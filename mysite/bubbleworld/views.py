@@ -103,17 +103,19 @@ def user_register(request, template_name = 'register.html'):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        
         email = request.POST.get('email')
-        form = UserForm(request.POST)
+        
+        form = UserForm(request.POST, request.FILES)
         errors = []
         if form.is_valid():
-            current_site = request.build_absolute_uri
            
             new_user = form.save()
             user = authenticate(
                     username = username,
                     password = password
                     )
+          
             login(request, user)
             return HttpResponseRedirect(reverse_lazy('index'))
         else:
@@ -133,7 +135,7 @@ def modify_password(request, template_name = 'show_accounts.html'):
         user.save()
         return render(
         request,
-        'show_accounts.html'
+        'login.html'
         )
     else:
         return render(
@@ -187,7 +189,7 @@ def section_index_detail(request, section_pk):
     sections_hot= section_obj.section_parent_section.all().order_by('-content_number')[0:10]
     section_users = section_obj.users.all()
     if section_obj.section_type == 1 or section_obj.section_type == 2:
-        uni_obj = Comment.objects.all().filter(type_comment=section_obj.section_type).order_by('like_user')[0:10]
+        uni_obj = Comment.objects.all().filter(type_comment=section_obj.section_type).order_by('like_number')[0:10]
     else:
         uni_obj = Post.objects.all().filter(type_post=section_obj.section_type).order_by('content_number')[0:10]
     return render(
@@ -242,9 +244,10 @@ def section_details(request, section_pk):
     section = Section.objects.get(pk=section_pk)
     navigation_list = Navigation.objects.all()
     context = {}
+    context['navigation_list'] = navigation_list
     context['section'] = request.GET.get('section_pk', '')
     if Section.objects.all().filter(pk = section_pk)[0].users.all().filter(pk = request.user.pk):
-        context['hasuser'] = True
+        context['hgggggggasuser'] = True
     else:
         context['hasuser'] = False
     if Section.objects.all().filter(pk = section_pk)[0].admins.all().filter(pk = request.user.pk):
@@ -450,6 +453,7 @@ class CommentCreate(BaseMixin, CreateView):
         formdata['section'] = section_instance
         formdata['author'] = user
         comment_obj = Comment(**formdata)
+        comment_obj.type_comment = section_instance.section_type - 4
         comment_obj.save()
         section_instance.star = (section_instance.star*section_instance.content_number + formdata['star']) / (section_instance.content_number+1)
         section_instance.updated_at = datetime.datetime.now()
@@ -568,7 +572,6 @@ class PostCreate(BaseMixin, CreateView):
         formdata['type_post'] = section_instance.section_type
         post_instance = Post(**formdata)
         post_instance.save()
-        section_instance.content_number -= 1
         section_instance.updated_at = datetime.datetime.now()
         section_instance.save()
         messages.success(self.request, "发布成功")
@@ -645,9 +648,6 @@ class PostPartCreate(BaseMixin, CreateView):
         formdata['type_postpart'] = post_instance.type_post
         postpart_instance = PostPart(**formdata)
         postpart_instance.save()
-        post_instance.content_number += 1
-        post_instance.save()
-        section_instance.content_number -= 2
         section_instance.updated_at = datetime.datetime.now()
         section_instance.save()
         messages.success(self.request, "发布成功")
@@ -689,6 +689,8 @@ class PostPartCommentCreate(BaseMixin, CreateView):
         formdata['type_postpartcomment'] = postpart_instance.type_postpart
         postpartcomment_instance = PostPartComment(**formdata)
         postpartcomment_instance.save()
+        post_instance = postpart_instance.post
+        post_instance.save()
         section_instance.updated_at = datetime.datetime.now()
         section_instance.save()
         messages.success(self.request, "发布成功")

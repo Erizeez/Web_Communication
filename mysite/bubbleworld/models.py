@@ -15,8 +15,8 @@ from django.utils import timezone
 
 
 class User(AbstractUser):
-    avatar = models.CharField(
-            max_length = 200,
+    avatar = models.ImageField(
+            upload_to='photo',
             default = '/static/open-iconic/png/person-3x.png',
             verbose_name = u'头像'
             )
